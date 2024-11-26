@@ -1,0 +1,10 @@
+FROM registry.cn-shanghai.aliyuncs.com/odoo-1di0t/odoo:18
+MAINTAINER 1di0t
+
+WORKDIR /custom_addons
+
+USER root
+COPY requirements.odoo.txt .
+RUN pip install -r requirements.odoo.txt -i https://pypi.mirrors.ustc.edu.cn/simple/ --break-system-packages
+
+USER odoo

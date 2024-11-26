@@ -1,0 +1,6 @@
+fastapi[all]
+uvicorn
+pyjwt
+asyncpg
+psycopg2-binary
+aioredis

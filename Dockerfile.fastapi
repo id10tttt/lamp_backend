@@ -1,0 +1,21 @@
+# 使用官方 Python 3.10 镜像作为基础镜像
+FROM registry.cn-shanghai.aliyuncs.com/odoo-1di0t/python:3.10
+
+# 设置工作目录
+WORKDIR /app
+
+USER root
+
+COPY requirements.fastapi.txt .
+
+# 安装依赖
+RUN pip3 install --no-cache-dir -r requirements.fastapi.txt -i https://pypi.mirrors.ustc.edu.cn/simple/
+
+# 复制项目文件到容器
+COPY ./app /app/
+
+# 暴露端口
+EXPOSE 8000
+
+# 启动 FastAPI 服务
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

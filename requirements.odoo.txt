@@ -1,0 +1,4 @@
+redis
+reportlab
+pyjwt
+rlPyCairo
