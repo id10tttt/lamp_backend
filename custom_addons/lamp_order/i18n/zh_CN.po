@@ -1,0 +1,335 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* lamp_order
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0-20241125\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-12-09 14:20+0000\n"
+"PO-Revision-Date: 2024-12-09 14:20+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_sale_order__active_address
+msgid "Active address"
+msgstr "活动地址"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_sale_order__actual_pay
+msgid "Actual Pay"
+msgstr "实付金额"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_sale_order__actual_pick_time
+msgid "Actual Pick time"
+msgstr "实际取货时间"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_sale_order__actual_return_time
+msgid "Actual Return time"
+msgstr "实际归还时间"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_stock_warehouse__address
+msgid "Address"
+msgstr "详细地址"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_sale_order__arrival_time
+msgid "Arrival Time"
+msgstr "到款时间"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_sale_order__balance_amount
+msgid "Balance"
+msgstr "尾款"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_sale_order__billing_days
+msgid "Billing days"
+msgstr "计费天数"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_sale_order__changed
+msgid "Change"
+msgstr "是否变动"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_sale_order__check_pickup_code
+msgid "Check Pickup Code"
+msgstr "验证取货码"
+
+#. module: lamp_order
+#: model:ir.model,name:lamp_order.model_res_partner
+msgid "Contact"
+msgstr "联系人"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_product_product__coupon
+#: model:ir.model.fields,field_description:lamp_order.field_product_template__coupon
+#: model:ir.model.fields,field_description:lamp_order.field_sale_order__coupon
+msgid "Coupon"
+msgstr "优惠券"
+
+#. module: lamp_order
+#: model:ir.model.fields.selection,name:lamp_order.selection__res_partner__user_type__customer
+msgid "Customer"
+msgstr "客户"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_sale_order__defer
+msgid "Defer"
+msgstr "是否延期"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_product_product__delay_price
+#: model:ir.model.fields,field_description:lamp_order.field_product_template__delay_price
+msgid "Delay Price"
+msgstr "延日价格"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_sale_order__deposit
+msgid "Deposit"
+msgstr "定金"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_product_product__device_code
+#: model:ir.model.fields,field_description:lamp_order.field_product_template__device_code
+msgid "Device code"
+msgstr "种类码"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_sale_order__dock
+msgid "Dock"
+msgstr "扣除押金"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_sale_order__full_reduction
+msgid "Full Reduction"
+msgstr "满减优惠"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_product_product__gross_weight
+#: model:ir.model.fields,field_description:lamp_order.field_product_template__gross_weight
+msgid "Gross Weight"
+msgstr "毛重"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_sale_order__is_vip
+msgid "IS VIP"
+msgstr "是否是VIP"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_sale_order__insurance_state
+msgid "Insurance State"
+msgstr "投保状态"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_sale_order__labor_cost
+msgid "Labor Cost"
+msgstr "人工费"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_res_partner__legal_entity_back
+#: model:ir.model.fields,field_description:lamp_order.field_res_users__legal_entity_back
+msgid "Legal Entity Back"
+msgstr "法人背面"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_res_partner__legal_entity_front
+#: model:ir.model.fields,field_description:lamp_order.field_res_users__legal_entity_front
+msgid "Legal Entity Front"
+msgstr "法人正面"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_product_product__logo_size
+#: model:ir.model.fields,field_description:lamp_order.field_product_template__logo_size
+msgid "Logo Size"
+msgstr "Logo尺寸"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_res_partner__money
+#: model:ir.model.fields,field_description:lamp_order.field_res_users__money
+msgid "Money"
+msgstr "客户预留款"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_product_product__monthly_subscription
+#: model:ir.model.fields,field_description:lamp_order.field_product_template__monthly_subscription
+msgid "Monthly Subscription"
+msgstr "包月价格"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_product_product__net_weight
+#: model:ir.model.fields,field_description:lamp_order.field_product_template__net_weight
+msgid "Net Weight"
+msgstr "净重"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_res_partner__odoo_create
+#: model:ir.model.fields,field_description:lamp_order.field_res_users__odoo_create
+msgid "Odoo Create"
+msgstr "Odoo 创建"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_sale_order__order_amount
+msgid "Order Amount"
+msgstr "订单金额"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_product_product__package_type
+#: model:ir.model.fields,field_description:lamp_order.field_product_template__package_type
+msgid "Package Type"
+msgstr "包装方式"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_product_product__packaging_size
+#: model:ir.model.fields,field_description:lamp_order.field_product_template__packaging_size
+msgid "Packaging Size"
+msgstr "包装尺寸"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_sale_order__pay_state
+msgid "Pay State"
+msgstr "补缴状态"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_sale_order__payment_status
+msgid "Payment Status"
+msgstr "付款状态"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_sale_order__payment_time
+msgid "Payment Time"
+msgstr "付款时间"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_sale_order__pick_time
+msgid "Pick Time"
+msgstr "取货时间"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_sale_order__picker
+msgid "Picker"
+msgstr "取货人"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_sale_order__picker_id_card
+msgid "Picker ID Card"
+msgstr "取货人身份证"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_sale_order__picker_phone
+msgid "Picker Phone"
+msgstr "取货人电话"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_sale_order__picker_selfie
+msgid "Picker Selfie"
+msgstr "取货人自拍照"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_sale_order__pickup_code
+msgid "Pickup Code"
+msgstr "取货码"
+
+#. module: lamp_order
+#: model:ir.model,name:lamp_order.model_product_template
+msgid "Product"
+msgstr "产品"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_product_product__product_size
+#: model:ir.model.fields,field_description:lamp_order.field_product_template__product_size
+msgid "Product Size"
+msgstr "产品尺寸"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_stock_warehouse__province
+msgid "Province"
+msgstr "省份"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_product_product__rental
+#: model:ir.model.fields,field_description:lamp_order.field_product_template__rental
+msgid "Rental"
+msgstr "首日价格"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_sale_order__reserve
+msgid "Reserve"
+msgstr "预留款使用"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_sale_order__return_time
+msgid "Return Time"
+msgstr "归还时间"
+
+#. module: lamp_order
+#: model:ir.model,name:lamp_order.model_sale_order
+msgid "Sales Order"
+msgstr "销售订单"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_sale_order__status
+msgid "Status"
+msgstr "订单状态"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_sale_order__stock_status
+msgid "Stock Status"
+msgstr "库存状态"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_sale_order__stock_preparation
+msgid "Stock preparation"
+msgstr "库存备货"
+
+#. module: lamp_order
+#: model:ir.model.fields.selection,name:lamp_order.selection__res_partner__user_type__supplier
+msgid "Supplier"
+msgstr "供应商"
+
+#. module: lamp_order
+#: model:ir.model.fields.selection,name:lamp_order.selection__res_partner__user_type__user
+msgid "User"
+msgstr "用户"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_res_partner__user_type
+#: model:ir.model.fields,field_description:lamp_order.field_res_users__user_type
+msgid "User Type"
+msgstr "用户类型"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_sale_order__vip_discount
+msgid "VIP Discount"
+msgstr "VIP 折扣"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_product_product__vip_monthly_price
+#: model:ir.model.fields,field_description:lamp_order.field_product_template__vip_monthly_price
+msgid "VIP Monthly Price"
+msgstr "会员包月价"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_product_product__vip_price
+#: model:ir.model.fields,field_description:lamp_order.field_product_template__vip_price
+msgid "VIP Price"
+msgstr "会员价"
+
+#. module: lamp_order
+#: model:ir.model,name:lamp_order.model_stock_warehouse
+msgid "Warehouse"
+msgstr "仓库"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_stock_warehouse__warehouse_image
+msgid "Warehouse Img"
+msgstr "仓库图片"

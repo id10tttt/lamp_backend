@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="product_template_only_form_view_inherit" model="ir.ui.view">
+            <field name="name">product.template inherit</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_only_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='lot_valuated']" position="after">
+                    <field name="rental"/>
+                    <field name="device_code"/>
+                    <field name="delay_price"/>
+                    <field name="coupon"/>
+                    <field name="package_type"/>
+                    <field name="net_weight"/>
+                    <field name="gross_weight"/>
+                    <field name="logo_size"/>
+                    <field name="product_size"/>
+                    <field name="packaging_size"/>
+                    <field name="monthly_subscription"/>
+                    <field name="vip_price"/>
+                    <field name="vip_monthly_price"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

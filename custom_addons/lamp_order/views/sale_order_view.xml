@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="view_order_form_inherit" model="ir.ui.view">
+            <field name="name">sale.order inherit</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='payment_term_id']" position="after">
+                    <field name="pickup_code"/>
+                </xpath>
+                <xpath expr="//notebook" position="before">
+                    <group>
+                        <group>
+                            <field name="coupon"/>
+                            <field name="reserve"/>
+                            <field name="order_amount"/>
+                        </group>
+                        <group>
+                            <field name="pay_state"/>
+                            <field name="return_time"/>
+                            <field name="actual_return_time"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="deposit"/>
+                            <field name="dock"/>
+                            <field name="labor_cost"/>
+                            <field name="stock_preparation"/>
+                        </group>
+                        <group>
+                            <field name="active_address"/>
+                            <field name="billing_days"/>
+                            <field name="balance_amount"/>
+                            <field name="changed"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="defer"/>
+                            <field name="picker"/>
+                            <field name="picker_phone"/>
+                            <field name="pick_time"/>
+                            <field name="actual_pick_time"/>
+                        </group>
+                        <group>
+                            <field name="full_reduction"/>
+                            <field name="arrival_time"/>
+                            <field name="stock_status"/>
+                            <field name="payment_status"/>
+                            <field name="payment_time"/>
+                            <field name="status"/>
+                        </group>
+                    </group>
+                </xpath>
+                <xpath expr="//notebook/page[@name='other_information']" position="inside">
+                    <group>
+                        <field name="picker_id_card"/>
+                        <field name="picker_selfie"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
