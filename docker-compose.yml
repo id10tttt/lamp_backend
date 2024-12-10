@@ -17,12 +17,12 @@ services:
     networks:
       - backend
 
-  odoo-backend-18:
+  odoo-backend-15:
     build:
       context: .
       dockerfile: ./Dockerfile.odoo
-    image: backend:18
-    container_name: "odoo-backend-18"
+    image: backend:15
+    container_name: "odoo-backend-15"
     depends_on:
       - postgres-db
       - redis-server
@@ -46,23 +46,23 @@ services:
     networks:
       - backend
 
-  # FastAPI 应用服务
-  fastapi:
-    build:
-      context: .
-      dockerfile: Dockerfile.fastapi  # 当前目录下的 Dockerfile
-    container_name: fastapi-app
-    ports:
-      - "8000:8000"  # 映射端口
-    environment:
-      - DATABASE_URL=postgresql://odoo:odoo@postgres-db:5432/lamp_db  # PostgreSQL 连接URL
-      - REDIS_URL=redis://:odoo@redis-server:6379  # Redis 连接URL
-    depends_on:
-      - postgres-db  # 依赖 PostgreSQL 服务
-      - redis-server  # 依赖 Redis 服务
-    restart: always
-    networks:
-      - backend
+#  # FastAPI 应用服务
+#  fastapi:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile.fastapi  # 当前目录下的 Dockerfile
+#    container_name: fastapi-app
+#    ports:
+#      - "8000:8000"  # 映射端口
+#    environment:
+#      - DATABASE_URL=postgresql://odoo:odoo@postgres-db:5432/odoo  # PostgreSQL 连接URL
+#      - REDIS_URL=redis://:odoo@redis-server:6379  # Redis 连接URL
+#    depends_on:
+#      - postgres-db  # 依赖 PostgreSQL 服务
+#      - redis-server  # 依赖 Redis 服务
+#    restart: always
+#    networks:
+#      - backend
 
   # Redis 服务
   redis-server:
