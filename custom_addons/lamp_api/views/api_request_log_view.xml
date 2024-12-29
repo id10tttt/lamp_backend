@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <record id="api_request_log_form" model="ir.ui.view">
+        <field name="name">api.request.log.view.form</field>
+        <field name="model">api.request.log</field>
+        <field name="arch" type="xml">
+            <form create="0" edit="0" delete="0">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="url"/>
+                        </group>
+                        <group>
+                            <field name="method"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="source_data"/>
+                    </group>
+                    <group>
+                        <field name="return_msg"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="api_request_log_tree" model="ir.ui.view">
+        <field name="name">api.request.log.view.tree</field>
+        <field name="model">api.request.log</field>
+        <field name="arch" type="xml">
+            <tree create="0" edit="0" delete="0" import="0">
+                <field name="url"/>
+                <field name="method"/>
+                <field name="source_data"/>
+                <field name="return_msg"/>
+                <field name="create_date"/>
+            </tree>
+        </field>
+    </record>
+    <record id="api_request_log_search" model="ir.ui.view">
+        <field name="name">api.request.log.view.search</field>
+        <field name="model">api.request.log</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="url"/>
+                <field name="method"/>
+                <field name="source_data"/>
+                <field name="return_msg"/>
+            </search>
+        </field>
+    </record>
+    <record id="api_request_log_action" model="ir.actions.act_window">
+        <field name="name">接口日志</field>
+        <field name="res_model">api.request.log</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="config_log_menu"
+              name="接口日志"
+              parent="lamp_menu_root"
+              sequence="1"
+              action="api_request_log_action"/>
+</odoo>

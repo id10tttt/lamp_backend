@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <menuitem id="lamp_menu_root" name="接口管理" sequence="6"
+                  web_icon="lamp_api,static/description/icon.png"/>
+    </data>
+</odoo>
