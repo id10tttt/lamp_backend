@@ -1,7 +1,6 @@
 redis
 reportlab
 pyjwt
-rlPyCairo
 python_slugify
 packaging
 fsspec==2024.5.0
