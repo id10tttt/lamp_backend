@@ -74,6 +74,13 @@ class BaseController(object):
             result['message'] = message
         return result
 
+    def get_ir_attachment_public_url(self, attachment_id):
+        if not attachment_id.access_token:
+            attachment_id.generate_access_token()
+        base_url = request.env['ir.config_parameter'].sudo().get_param('web.base.url')
+        return '{}/web/content/{}?access_token={}'.format(base_url, attachment_id.id,
+                                                                        attachment_id.access_token)
+
     def response_http_json_error(self, code, data=None, message=None):
         custom_code = 'CODE_{}'.format(code)
         if hasattr(ResponseCode, custom_code):

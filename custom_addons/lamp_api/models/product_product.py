@@ -11,6 +11,7 @@ class ProductProduct(models.Model):
             product_data.append({
                 'product_id': product_id.id,
                 'categ_id': product_id.categ_id.id,
+                'categ_name': product_id.categ_id.name,
                 'name': product_id.name,
                 'weight': product_id.weight,
                 'rental': product_id.rental,

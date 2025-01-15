@@ -79,12 +79,19 @@ class SaleOrder(http.Controller, BaseController):
         picker = payload_data.get('picker')
         picker_phone = payload_data.get('picker_phone')
         pick_time = payload_data.get('pick_time')
+        warehouse_id = payload_data.get('warehouse_id')
 
         order_line = payload_data.get('order_line')
 
         if (not all([start_date, end_date, order_line, picker, picker_phone, pick_time]) or
                 not isinstance(order_line, list)):
             return self.response_json_error(400, message='订单数据异常!')
+
+        warehouse_id = request.env['stock.warehouse'].sudo().search([
+            ('id', '=', warehouse_id)
+        ])
+        if not warehouse_id:
+            return self.response_json_error(400, message='仓库信息异常!')
 
         order_data = {
             'name': get_lamp_order_number(),
@@ -94,7 +101,8 @@ class SaleOrder(http.Controller, BaseController):
             'picker': picker,
             'picker_phone': picker_phone,
             'pick_time': pick_time,
-            'state': 'draft'
+            'state': 'draft',
+            'warehouse_id': warehouse_id.id
         }
 
         order_line_data = self.parse_sale_order_line(order_line, start_date, end_date)
