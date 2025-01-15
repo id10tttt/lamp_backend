@@ -17,7 +17,7 @@ class ShoppingCart(BaseController, http.Controller):
     @http.route('/api/v1/lamp/cart', auth='public', methods=['GET'], csrf=False, cors="*", type='http')
     @verify_auth_token_only()
     def get_shop_cart_list(self, **kwargs):
-        shopping_cart_data = get_shopping_cart_from_redis(request.user_id)
+        shopping_cart_data = get_shopping_cart_from_redis(request.partner_id)
         return response_json_success(data=shopping_cart_data)
 
     @http.route('/api/v1/lamp/cart/update', auth='public', methods=['POST'], csrf=False, cors="*", type='http')
@@ -60,7 +60,7 @@ class ShoppingCart(BaseController, http.Controller):
                 'warehouse_name': warehouse_id.name,
                 'qty': qty,
             }
-            save_shopping_cart_to_redis(request.user_id, uuid_value, json.dumps(card_data))
+            save_shopping_cart_to_redis(request.partner_id, uuid_value, json.dumps(card_data))
 
         return response_json_success()
 
@@ -100,7 +100,7 @@ class ShoppingCart(BaseController, http.Controller):
         else:
             uuid_value = str(uuid4())
 
-        save_shopping_cart_to_redis(request.user_id, uuid_value, json.dumps(cart_data))
+        save_shopping_cart_to_redis(request.partner_id, uuid_value, json.dumps(cart_data))
 
         return response_json_success(data={
             'uuid': uuid_value
@@ -113,10 +113,10 @@ class ShoppingCart(BaseController, http.Controller):
         payload_data = json.loads(request.httprequest.data)
         uuid = payload_data.get('uuid')
         if isinstance(uuid, list):
-            delete_shopping_cart_data(request.user_id, *uuid)
+            delete_shopping_cart_data(request.partner_id, *uuid)
 
         if isinstance(uuid, str):
-            delete_shopping_cart_data(request.user_id, uuid)
+            delete_shopping_cart_data(request.partner_id, uuid)
 
         return response_json_success()
 
@@ -124,6 +124,6 @@ class ShoppingCart(BaseController, http.Controller):
     @verify_auth_token_only()
     def delete_all_shop_cart(self, **kwargs):
 
-        empty_shopping_cart(request.user_id)
+        empty_shopping_cart(request.partner_id)
 
         return response_json_success()
