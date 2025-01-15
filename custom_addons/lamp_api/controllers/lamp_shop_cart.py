@@ -34,8 +34,7 @@ class ShoppingCart(BaseController, http.Controller):
         except Exception as e:
             return response_json_error(400, message='出现了错误: {}'.format(e))
 
-        product_ids = request.env['product.product'].sudo().search(domain=[
-            ('id', 'in', all_product_id)])
+        product_ids = request.env['product.product'].sudo().search([('id', 'in', all_product_id)])
 
         warehouse_ids = request.env['stock.warehouse'].sudo().search([
             ('id', 'in', all_warehouse_id)
