@@ -104,6 +104,7 @@ class SaleOrder(http.Controller, BaseController):
             'picker_phone': picker_phone,
             'pick_time': pick_time,
             'state': 'draft',
+            'note': payload_data.get('note'),
             'warehouse_id': warehouse_id.id
         }
 
@@ -119,5 +120,61 @@ class SaleOrder(http.Controller, BaseController):
         resp_data = {
             'id': order_id.id,
             'name': order_id.name
+        }
+        return self.response_json_success(data=resp_data, message='成功')
+
+    @http.route('/api/v1/lamp/sale/order/amount', auth='public', methods=['POST'], csrf=False, cors="*", type='http')
+    @verify_auth_token_only()
+    def get_sale_order_price_amount(self, **kwargs):
+        try:
+            payload_data = json.loads(request.httprequest.data)
+            _logger.info('payload_data: {}'.format(payload_data))
+        except Exception as e:
+            _logger.info('出现了错误: {}'.format(e))
+            return self.response_json_error(400, message='出现错误!{}'.format(e))
+
+        start_date = payload_data.get('state_date')
+        end_date = payload_data.get('state_date')
+        picker = payload_data.get('picker')
+        picker_phone = payload_data.get('picker_phone')
+        pick_time = payload_data.get('pick_time')
+        warehouse_id = payload_data.get('warehouse_id')
+
+        order_line = payload_data.get('order_line')
+
+        if (not all([start_date, end_date, order_line, picker, picker_phone, pick_time]) or
+                not isinstance(order_line, list)):
+            return self.response_json_error(400, message='订单数据异常!')
+
+        warehouse_id = request.env['stock.warehouse'].sudo().search([
+            ('id', '=', warehouse_id)
+        ])
+        if not warehouse_id:
+            return self.response_json_error(400, message='仓库信息异常!')
+
+        order_data = {
+            'name': get_lamp_order_number(),
+            'partner_id': request.partner_id,
+            'default_start_date': start_date,
+            'default_end_date': end_date,
+            'picker': picker,
+            'picker_phone': picker_phone,
+            'pick_time': pick_time,
+            'state': 'draft',
+            'note': payload_data.get('note'),
+            'warehouse_id': warehouse_id.id
+        }
+
+        order_line_data = self.parse_sale_order_line(order_line, start_date, end_date)
+        if not order_line_data or len(order_line_data) != len(order_line):
+            return self.response_json_error(400, message='解析订单出现了错误!')
+
+        order_data.update({
+            'order_line': order_line_data
+        })
+
+        # TODO: 计算费用
+        resp_data = {
+            'amount_total': 0
         }
         return self.response_json_success(data=resp_data, message='成功')

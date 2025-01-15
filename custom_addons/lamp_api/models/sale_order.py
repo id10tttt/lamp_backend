@@ -31,3 +31,6 @@ class SaleOrder(models.Model):
             }
 
         return order_data
+
+    def get_current_order_price_total(self):
+        pass
