@@ -34,7 +34,7 @@ class ProductProduct(http.Controller, BaseController):
             offset = (page - 1) * limit
         except Exception as e:
             return self.response_json_error(400, message='数据类型错误')
-        
+
         if not warehouse_id:
             return self.response_json_error(400, message='请先指定仓库!')
 
@@ -49,15 +49,9 @@ class ProductProduct(http.Controller, BaseController):
         # rental_out_location_id = warehouse_id.rental_out_location_id
 
         # 根据库存，查找物料
-        quant_ids = self.env['stock.quant'].sudo().search([
+        quant_ids = request.env['stock.quant'].sudo().search([
             ('location_id.warehouse_id', '=', warehouse_id.id)
         ])
-        try:
-            page = int(page)
-            page = page if page > 0 else 1
-            offset = (page - 1) * limit
-        except Exception as e:
-            return self.response_json_error(400, message='数据类型错误')
 
         product_ids = request.env['product.product'].sudo().search([
             ('id', 'in', quant_ids.product_id.ids)
