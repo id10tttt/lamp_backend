@@ -12,8 +12,8 @@ class SaleOrder(models.Model):
                 'name': order_id.name,
                 'partner_id': order_id.partner_id.id,
                 'partner_name': order_id.partner_id.name,
-                'start_date': order_id.default_start_date,
-                'end_date': order_id.default_end_date,
+                'start_date': str(order_id.default_start_date),
+                'end_date': str(order_id.default_end_date),
                 'picker': order_id.picker,
                 'picker_phone': order_id.picker_phone,
                 'pick_time': str(order_id.pick_time),
@@ -25,8 +25,8 @@ class SaleOrder(models.Model):
                     'name': sol.name,
                     'product_uom_qty': sol.product_uom_qty,
                     'price_unit': sol.price_unit,
-                    'start_date': sol.start_date,
-                    'end_date': sol.end_date,
+                    'start_date': str(sol.start_date),
+                    'end_date': str(sol.end_date),
                 } for sol in order_id.order_line]
             }
 
