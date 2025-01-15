@@ -16,18 +16,15 @@ MAX_MOBILE_SMS_LIMIT = 20
 
 
 class SaleOrder(http.Controller, BaseController):
-    @http.route('/api/v1/lamp/sale/order/my', auth='public', methods=['POST'], csrf=False, cors="*", type='http')
+    @http.route('/api/v1/lamp/sale/order/my', auth='public', methods=['GET'], csrf=False, cors="*", type='http')
     @verify_auth_token_only()
     def my_order_list(self, **kwargs):
         try:
-            payload_data = json.loads(request.httprequest.data)
-            _logger.info('payload_data: {}'.format(payload_data))
+            page = kwargs.get('page', 1)
+            limit = kwargs.get('limit', 80)
         except Exception as e:
             _logger.info('出现了错误: {}'.format(e))
             return self.response_json_error(400, message='出现错误!{}'.format(e))
-
-        page = payload_data.get('page', 1)
-        limit = payload_data.get('limit', 80)
 
         try:
             page = int(page)
