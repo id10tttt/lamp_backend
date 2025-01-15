@@ -34,11 +34,15 @@ class SaleOrder(http.Controller, BaseController):
         except Exception as e:
             return self.response_json_error(400, message='数据类型错误')
 
-        product_ids = request.env['product.product'].sudo().search([], offset=offset, limit=limit)
+        order_ids = request.env['sale.order'].sudo().search([
+            ('partner_id', '=', request.partner_id)
+        ])
+        if not order_ids:
+            return self.response_json_success(data=[], message='成功')
 
-        product_data = product_ids.parse_product_data(product_ids)
+        order_data = order_ids.parse_sale_order(order_ids)
 
-        return self.response_json_success(data=product_data, message='成功')
+        return self.response_json_success(data=order_data, message='成功')
 
     def parse_sale_order_line(self, order_line, start_date, end_date):
         all_product_ids = [x.get('product_id') for x in order_line]
