@@ -51,7 +51,9 @@ class ProductProduct(http.Controller, BaseController):
         except Exception as e:
             return self.response_json_error(400, message='数据类型错误')
 
-        product_ids = set(quant_ids.mapped('product_id'))
+        product_ids = request.env['product.product'].sudo().search([
+            ('id', 'in', quant_ids.product_id.ids)
+        ], limit=limit, offset=offset)
 
         product_data = request.env['product.product'].parse_product_data(product_ids)
 
