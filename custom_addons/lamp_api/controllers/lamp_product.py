@@ -27,6 +27,14 @@ class ProductProduct(http.Controller, BaseController):
             _logger.info('出现了错误: {}'.format(e))
             return self.response_json_error(400, message='出现错误!{}'.format(e))
 
+        try:
+            page = int(page)
+            limit = int(limit)
+            page = page if page > 0 else 1
+            offset = (page - 1) * limit
+        except Exception as e:
+            return self.response_json_error(400, message='数据类型错误')
+        
         if not warehouse_id:
             return self.response_json_error(400, message='请先指定仓库!')
 

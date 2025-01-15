@@ -28,6 +28,7 @@ class SaleOrder(http.Controller, BaseController):
 
         try:
             page = int(page)
+            limit = int(limit)
             page = page if page > 0 else 1
             offset = (page - 1) * limit
         except Exception as e:
