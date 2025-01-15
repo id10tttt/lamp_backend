@@ -39,7 +39,9 @@ LAMP_ISSUER = config.get('lamp_issuer', '4rued2owerc562roc!')
 LAMP_JWT_SECRET = config.get('lamp_wt_secret', 'muTtratnax6ewrewrt<olologcit|c7')
 
 STOCK_PICKING_CACHE_DB = 3
+SHOPPING_CART_DB = 2
 STOCK_PICKING_CACHE_PREFIX = 'USER:STOCK:PICKING:CACHE'
+SHOPPING_CART_PREFIX = 'USER:SHOPPING:CART:CACHE'
 
 
 def decimal_float_number(number, rounding='0.00'):
@@ -433,6 +435,45 @@ def empty_stock_picking_cache(user_id):
 def get_stock_picking_cache_from_redis(user_id):
     redis_client = get_redis_client(db=STOCK_PICKING_CACHE_DB)
     redis_prefix = '{}:{}'.format(STOCK_PICKING_CACHE_PREFIX, user_id)
+    cart_data = redis_client.hgetall(redis_prefix)
+
+    cart_data = {k.decode('utf-8'): json.loads(v.decode('utf-8')) for k, v in
+                 cart_data.items()}
+
+    redis_client.close()
+    return cart_data
+
+
+def empty_shopping_cart(user_id):
+    redis_client = get_redis_client(db=SHOPPING_CART_DB)
+    redis_prefix = '{}:{}'.format(SHOPPING_CART_PREFIX, user_id)
+    key_type = redis_client.type(redis_prefix)
+    if key_type in {b'string', b'hash', b'list', b'set', b'zset', b'stream'}:
+        redis_client.delete(redis_prefix)
+    else:
+        _logger.info('不支持该类型的删除: {}'.format(key_type))
+    redis_client.close()
+
+
+def save_shopping_cart_to_redis(user_id, uuid, card_data):
+    redis_client = get_redis_client(db=SHOPPING_CART_DB)
+    redis_prefix = '{}:{}'.format(SHOPPING_CART_PREFIX, user_id)
+    _logger.info('开始保存: {}, {}, {}'.format(user_id, uuid, card_data))
+    redis_client.hset(redis_prefix, uuid, card_data)
+    redis_client.close()
+
+
+def delete_shopping_cart_data(user_id, *args):
+    redis_client = get_redis_client(db=SHOPPING_CART_DB)
+    redis_prefix = '{}:{}'.format(SHOPPING_CART_PREFIX, user_id)
+    _logger.info('开始删除 uuid: {}'.format(*args))
+    redis_client.hdel(redis_prefix, *args)
+    redis_client.close()
+
+
+def get_shopping_cart_from_redis(user_id):
+    redis_client = get_redis_client(db=SHOPPING_CART_DB)
+    redis_prefix = '{}:{}'.format(SHOPPING_CART_PREFIX, user_id)
     cart_data = redis_client.hgetall(redis_prefix)
 
     cart_data = {k.decode('utf-8'): json.loads(v.decode('utf-8')) for k, v in
