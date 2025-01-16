@@ -9,6 +9,7 @@
         "views/res_partner_view.xml",
         "views/stock_warehouse_view.xml",
         "views/product_template_view.xml",
+        "views/stock_quant_view.xml",
     ],
     "installable": True,
     "auto_install": False,

@@ -12,6 +12,12 @@
                 <xpath expr="//field[@name='payment_term_id']" position="after">
                     <field name="pickup_code"/>
                 </xpath>
+                <xpath
+                        expr="//field[@name='order_line']/form//field[@name='customer_lead']"
+                        position="after"
+                >
+                    <button name="rental_product_available_qty" string="库存查询" type="object" class="oe_highlight"/>
+                </xpath>
                 <xpath expr="//notebook" position="before">
                     <group>
                         <group>
