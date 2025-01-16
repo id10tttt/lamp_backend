@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="product_category_search_view_inherit" model="ir.ui.view">
+            <field name="name">product.category search inherit</field>
+            <field name="model">product.category</field>
+            <field name="inherit_id" ref="product.product_category_search_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//search" position="inside">
+                    <searchpanel>
+                        <field name="parent_id" icon="fa-filter" limit="0"/>
+                    </searchpanel>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
