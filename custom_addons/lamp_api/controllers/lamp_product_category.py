@@ -21,15 +21,21 @@ class ProductCategory(http.Controller, BaseController):
     def get_product_category_list(self, lang='en_US', **kwargs):
         request.env.context = dict(request.env.context, lang=lang)
 
-        categ_ids = request.env['product.category'].sudo().search([])
+        categ_ids = request.env['product.category'].sudo().search([
+            ('parent_id', '=', False)
+        ])
 
         categ_data = []
         for categ_id in categ_ids:
             categ_data.append({
                 'categ_id': categ_id.id,
                 'categ_name': categ_id.name,
-                'parent_id': categ_id.parent_id.id,
-                'parent_name': categ_id.parent_id.name,
+                'child_ids': [{
+                    'categ_id': child_id.id,
+                    'categ_name': child_id.name,
+                    'parent_id': child_id.parent_id.id,
+                    'parent_name': child_id.parent_id.name,
+                } for child_id in categ_id.child_id]
             })
 
         return self.response_json_success(data=categ_data, message='成功')
