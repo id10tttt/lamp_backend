@@ -32,8 +32,9 @@ class StockWarehouse(http.Controller, BaseController):
         return attachment_url
 
     @http.route('/api/v1/lamp/warehouse', auth='public', methods=['GET'], csrf=False, cors="*", type='http')
-    def get_product_list(self, **kwargs):
+    def get_product_list(self, lang='en_US', **kwargs):
         try:
+            request.env.context = dict(request.env.context, lang=lang)
             page = kwargs.get('page', 1)
             limit = kwargs.get('limit', 80)
         except Exception as e:

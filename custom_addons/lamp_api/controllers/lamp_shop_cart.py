@@ -16,14 +16,14 @@ class ShoppingCart(BaseController, http.Controller):
 
     @http.route('/api/v1/lamp/cart', auth='public', methods=['GET'], csrf=False, cors="*", type='http')
     @verify_auth_token_only()
-    def get_shop_cart_list(self, **kwargs):
+    def get_shop_cart_list(self, lang='en_US', **kwargs):
         shopping_cart_data = get_shopping_cart_from_redis(request.partner_id)
         return response_json_success(data=shopping_cart_data)
 
     @http.route('/api/v1/lamp/cart/update', auth='public', methods=['POST'], csrf=False, cors="*", type='http')
     @verify_auth_token_only()
     @check_http_payload_valid()
-    def update_shop_cart_info(self, **kwargs):
+    def update_shop_cart_info(self, lang='en_US', **kwargs):
         payload_data = json.loads(request.httprequest.data)
 
         cart_data = payload_data.get('cart_data')
@@ -66,7 +66,7 @@ class ShoppingCart(BaseController, http.Controller):
     @http.route('/api/v1/lamp/cart/add', auth='public', methods=['POST'], csrf=False, cors="*", type='http')
     @verify_auth_token_only()
     @check_http_payload_valid()
-    def add_shop_cart_info(self, **kwargs):
+    def add_shop_cart_info(self, lang='en_US', **kwargs):
         payload_data = json.loads(request.httprequest.data)
 
         product_id = payload_data.get('product_id')
@@ -108,7 +108,7 @@ class ShoppingCart(BaseController, http.Controller):
     @http.route('/api/v1/lamp/cart/delete', auth='public', methods=['DELETE'], csrf=False, cors="*", type='http')
     @verify_auth_token_only()
     @check_http_payload_valid()
-    def delete_shop_cart(self, **kwargs):
+    def delete_shop_cart(self, lang='en_US', **kwargs):
         payload_data = json.loads(request.httprequest.data)
         uuid = payload_data.get('uuid')
         if isinstance(uuid, list):
@@ -121,7 +121,7 @@ class ShoppingCart(BaseController, http.Controller):
 
     @http.route('/api/v1/lamp/cart/delete/all', auth='public', methods=['DELETE'], csrf=False, cors="*", type='http')
     @verify_auth_token_only()
-    def delete_all_shop_cart(self, **kwargs):
+    def delete_all_shop_cart(self, lang='en_US', **kwargs):
 
         empty_shopping_cart(request.partner_id)
 

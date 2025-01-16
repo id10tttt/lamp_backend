@@ -18,7 +18,8 @@ MAX_MOBILE_SMS_LIMIT = 20
 
 class ProductCategory(http.Controller, BaseController):
     @http.route('/api/v1/lamp/product/category', auth='public', methods=['GET'], csrf=False, cors="*", type='http')
-    def get_product_category_list(self, **kwargs):
+    def get_product_category_list(self, lang='en_US', **kwargs):
+        request.env.context = dict(request.env.context, lang=lang)
 
         categ_ids = request.env['product.category'].sudo().search([])
 

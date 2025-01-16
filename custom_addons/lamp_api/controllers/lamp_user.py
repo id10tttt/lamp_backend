@@ -22,7 +22,7 @@ def send_sms_code(mobile, sms_code):
 
 class LAMPUser(http.Controller, BaseController):
     @http.route('/api/v1/lamp/static/info', auth='public', methods=['POST'], csrf=False, cors="*", type='json')
-    def lamp_info(self):
+    def lamp_info(self, lang='en_US'):
         try:
             with open(config.get('public_key_path'), 'rb') as pub_file:
                 public_key = pub_file.read()
@@ -37,9 +37,10 @@ class LAMPUser(http.Controller, BaseController):
         return self.response_http_json_success(data=resp_data, message='成功')
 
     @http.route('/api/v1/lamp/user/login/code', auth='public', methods=['POST'], csrf=False, cors="*", type='http')
-    def lamp_user_login_code(self, **kwargs):
+    def lamp_user_login_code(self, lang='en_US', **kwargs):
 
         try:
+            request.env.context = dict(request.env.context, lang=lang)
             payload_data = json.loads(request.httprequest.data)
             _logger.info('payload_data: {}'.format(payload_data))
         except Exception as e:
@@ -96,9 +97,10 @@ class LAMPUser(http.Controller, BaseController):
         return self.response_json_success(message='发送成功!', data={} if prod_env else resp_data)
 
     @http.route('/api/v1/lamp/user/login', auth='public', methods=['POST'], csrf=False, cors="*", type='http')
-    def lamp_user_login(self, **kwargs):
+    def lamp_user_login(self, lang='en_US', **kwargs):
 
         try:
+            request.env.context = dict(request.env.context, lang=lang)
             payload_data = json.loads(request.httprequest.data)
             _logger.info('payload_data: {}'.format(payload_data))
         except Exception as e:
@@ -140,14 +142,15 @@ class LAMPUser(http.Controller, BaseController):
 
     @http.route('/api/v1/lamp/token/check', auth='public', methods=['POST'], csrf=False, cors="*", type='http')
     @verify_auth_token_only()
-    def check_user_login_token(self):
+    def check_user_login_token(self, lang='en_US'):
         return self.response_json_success({
             'message': 'success'
         })
 
     @http.route('/api/v1/lamp/user/profile', auth='public', methods=['get'], csrf=False, cors="*", type='http')
     @verify_auth_token_only()
-    def user_profile(self):
+    def user_profile(self, lang='en_US'):
+        request.env.context = dict(request.env.context, lang=lang)
         partner_id = request.env['res.partner'].sudo().browse(request.partner_id)
 
         user_data = {

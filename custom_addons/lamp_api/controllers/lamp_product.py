@@ -13,8 +13,9 @@ MAX_MOBILE_SMS_LIMIT = 20
 
 class ProductProduct(http.Controller, BaseController):
     @http.route('/api/v1/lamp/product', auth='public', methods=['GET'], csrf=False, cors="*", type='http')
-    def get_product_list(self, **kwargs):
+    def get_product_list(self, lang='en_US', **kwargs):
         try:
+            request.env.context = dict(request.env.context, lang=lang)
             page = kwargs.get('page', 1)
             limit = kwargs.get('limit', 80)
             warehouse_id = kwargs.get('warehouse_id')
@@ -63,8 +64,9 @@ class ProductProduct(http.Controller, BaseController):
         return self.response_json_success(data=product_data, message='成功')
 
     @http.route('/api/v1/lamp/product/detail', auth='public', methods=['GET'], csrf=False, cors="*", type='http')
-    def get_product_detail(self, **kwargs):
+    def get_product_detail(self, lang='en_US', **kwargs):
         try:
+            request.env.context = dict(request.env.context, lang=lang)
             product_id = kwargs.get('product_id')
             _logger.info('payload_data: {}'.format(product_id))
         except Exception as e:

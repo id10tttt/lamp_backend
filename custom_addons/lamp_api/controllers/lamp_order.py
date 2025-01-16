@@ -18,8 +18,9 @@ MAX_MOBILE_SMS_LIMIT = 20
 class SaleOrder(http.Controller, BaseController):
     @http.route('/api/v1/lamp/sale/order/my', auth='public', methods=['GET'], csrf=False, cors="*", type='http')
     @verify_auth_token_only()
-    def my_order_list(self, **kwargs):
+    def my_order_list(self, lang='en_US', **kwargs):
         try:
+            request.env.context = dict(request.env.context, lang=lang)
             page = kwargs.get('page', 1)
             limit = kwargs.get('limit', 80)
         except Exception as e:
@@ -68,8 +69,9 @@ class SaleOrder(http.Controller, BaseController):
 
     @http.route('/api/v1/lamp/sale/order', auth='public', methods=['POST'], csrf=False, cors="*", type='http')
     @verify_auth_token_only()
-    def create_sale_order(self, **kwargs):
+    def create_sale_order(self, lang='en_US', **kwargs):
         try:
+            request.env.context = dict(request.env.context, lang=lang)
             payload_data = json.loads(request.httprequest.data)
             _logger.info('payload_data: {}'.format(payload_data))
         except Exception as e:
@@ -125,8 +127,10 @@ class SaleOrder(http.Controller, BaseController):
 
     @http.route('/api/v1/lamp/sale/order/amount', auth='public', methods=['POST'], csrf=False, cors="*", type='http')
     @verify_auth_token_only()
-    def get_sale_order_price_amount(self, **kwargs):
+    def get_sale_order_price_amount(self, lang='en_US', **kwargs):
         try:
+            request.env.context = dict(request.env.context, lang=lang)
+
             payload_data = json.loads(request.httprequest.data)
             _logger.info('payload_data: {}'.format(payload_data))
         except Exception as e:
