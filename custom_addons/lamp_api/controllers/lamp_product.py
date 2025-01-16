@@ -1,14 +1,9 @@
 # -*- coding: utf-8 -*-
 from odoo import http
 from odoo.http import request
-from odoo.tools import config
-import json
+from odoo.osv import expression
 from .base import BaseController
 import logging
-from ..tools.rsa_utils import RSAUtils
-from ..tools.tools_common import (
-    get_random_login_code, get_access_token_from_redis,
-    DEFAULT_TOKEN_EXPIRE, jwt_encode, LAMP_ISSUER, LAMP_AUDIENCE, verify_auth_token, save_access_token_to_redis)
 
 _logger = logging.getLogger(__name__)
 
@@ -23,6 +18,7 @@ class ProductProduct(http.Controller, BaseController):
             page = kwargs.get('page', 1)
             limit = kwargs.get('limit', 80)
             warehouse_id = kwargs.get('warehouse_id')
+            categ_id = kwargs.get('categ_id')
         except Exception as e:
             _logger.info('出现了错误: {}'.format(e))
             return self.response_json_error(400, message='出现错误!{}'.format(e))
@@ -48,14 +44,19 @@ class ProductProduct(http.Controller, BaseController):
         # rental_in_location_id = warehouse_id.rental_in_location_id
         # rental_out_location_id = warehouse_id.rental_out_location_id
 
-        # 根据库存，查找物料
-        quant_ids = request.env['stock.quant'].sudo().search([
-            ('location_id.warehouse_id', '=', warehouse_id.id)
-        ])
+        filter_domain = [('location_id.warehouse_id', '=', warehouse_id.id)]
+        if categ_id:
+            categ_domain = ['|',
+                            ('product_id.categ_id', '=', int(categ_id)),
+                            ('product_id.categ_id.parent_id', '=', int(categ_id))]
 
-        product_ids = request.env['product.product'].sudo().search([
-            ('id', 'in', quant_ids.product_id.ids)
-        ], limit=limit, offset=offset)
+            filter_domain = expression.AND([filter_domain, categ_domain])
+
+        # 根据库存，查找物料
+        quant_ids = request.env['stock.quant'].sudo().search(filter_domain)
+
+        filter_domain = [('id', 'in', quant_ids.product_id.ids)]
+        product_ids = request.env['product.product'].sudo().search(filter_domain, limit=limit, offset=offset)
 
         product_data = request.env['product.product'].parse_product_data(product_ids)
 
