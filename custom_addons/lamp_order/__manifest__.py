@@ -11,6 +11,7 @@
         "views/product_template_view.xml",
         "views/stock_quant_view.xml",
         "views/product_category_view.xml",
+        "views/stock_location_view.xml",
     ],
     "installable": True,
     "auto_install": False,
