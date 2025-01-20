@@ -4,3 +4,4 @@ from . import api_request_log
 from . import product_product
 from . import sale_order
 from . import stock_location
+# from . import ir_attachment

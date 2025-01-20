@@ -58,7 +58,7 @@ class ProductProduct(http.Controller, BaseController):
         quant_ids = request.env['stock.quant'].sudo().search(filter_domain)
 
         filter_domain = [('id', 'in', quant_ids.product_id.ids)]
-        
+
         if product_name:
             name_domain = [('name', 'ilike', product_name)]
             filter_domain = expression.AND([filter_domain, name_domain])
