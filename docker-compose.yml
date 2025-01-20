@@ -4,6 +4,7 @@ services:
   postgres-db:
     image: registry.cn-shanghai.aliyuncs.com/odoo-1di0t/postgres:16
     container_name: postgres-db
+    restart: always
     environment:
       - POSTGRES_DB=postgres
       - POSTGRES_PASSWORD=${DB_PASS:-odoo}
@@ -22,6 +23,7 @@ services:
       context: .
       dockerfile: ./Dockerfile.odoo
     image: backend:15
+    restart: always
     container_name: "odoo-backend-15"
     depends_on:
       - postgres-db
