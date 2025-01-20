@@ -5,6 +5,19 @@ from odoo import models
 class ProductProduct(models.Model):
     _inherit = 'product.product'
 
+    def get_product_image_attachment_url(self, product_id):
+        attachment_id = self.env['ir.attachment'].sudo().search([
+            ('res_model', '=', product_id._name),
+            ('res_id', '=', product_id.id),
+            ('res_field', '=', 'image_1920')
+        ])
+        if not attachment_id:
+            return ''
+
+        attachment_url = self.get_ir_attachment_public_url(attachment_id[0])
+
+        return attachment_url
+
     def parse_product_data(self, product_ids):
         product_data = []
         for product_id in product_ids:
@@ -27,5 +40,6 @@ class ProductProduct(models.Model):
                 'monthly_subscription': product_id.monthly_subscription,
                 'vip_price': product_id.vip_price,
                 'vip_monthly_price': product_id.vip_monthly_price,
+                'product_image': self.get_product_image_attachment_url(product_id)
             })
         return product_data
