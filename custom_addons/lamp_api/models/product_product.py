@@ -1,22 +1,29 @@
 # -*- coding: utf-8 -*-
 from odoo import models
+import odoo
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class ProductProduct(models.Model):
     _inherit = 'product.product'
 
-    def get_product_image_attachment_url(self, product_id):
-        attachment_id = self.env['ir.attachment'].sudo().search([
-            ('res_model', '=', product_id._name),
-            ('res_id', '=', product_id.id),
-            ('res_field', '=', 'image_1920')
-        ])
-        if not attachment_id:
+    def check_field_access_rights(self, operation, field_names):
+        if isinstance(field_names, list):
+            if field_names[0] == 'image_128' and len(field_names) == 1:
+                super_user = self.env['res.users'].sudo().browse([odoo.SUPERUSER_ID])
+                self.env = self.env(user=super_user)
+        return super(ProductProduct, self).check_field_access_rights(operation, field_names)
+
+    def get_product_image(self, image_size='image_128'):
+        if not self:
             return ''
-
-        attachment_url = self.get_ir_attachment_public_url(attachment_id[0])
-
-        return attachment_url
+        self.ensure_one()
+        base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
+        url = '{}/web/image?model={}&field={}&id={}'.format(
+            base_url, self._name, image_size, self.id)
+        return url
 
     def parse_product_data(self, product_ids):
         product_data = []
@@ -40,6 +47,6 @@ class ProductProduct(models.Model):
                 'monthly_subscription': product_id.monthly_subscription,
                 'vip_price': product_id.vip_price,
                 'vip_monthly_price': product_id.vip_monthly_price,
-                'product_image': self.get_product_image_attachment_url(product_id)
+                'product_image': product_id.get_product_image()
             })
         return product_data
