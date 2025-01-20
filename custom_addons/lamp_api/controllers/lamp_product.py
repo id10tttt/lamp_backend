@@ -54,14 +54,15 @@ class ProductProduct(http.Controller, BaseController):
 
             filter_domain = expression.AND([filter_domain, categ_domain])
 
-        if product_name:
-            name_domain = [('name', 'ilike', product_name)]
-            filter_domain = expression.AND([filter_domain, name_domain])
-
         # 根据库存，查找物料
         quant_ids = request.env['stock.quant'].sudo().search(filter_domain)
 
         filter_domain = [('id', 'in', quant_ids.product_id.ids)]
+        
+        if product_name:
+            name_domain = [('name', 'ilike', product_name)]
+            filter_domain = expression.AND([filter_domain, name_domain])
+
         product_ids = request.env['product.product'].sudo().search(filter_domain, limit=limit, offset=offset)
 
         product_data = request.env['product.product'].parse_product_data(product_ids)
