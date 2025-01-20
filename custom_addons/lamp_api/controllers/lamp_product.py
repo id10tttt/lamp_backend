@@ -20,6 +20,7 @@ class ProductProduct(http.Controller, BaseController):
             limit = kwargs.get('limit', 80)
             warehouse_id = kwargs.get('warehouse_id')
             categ_id = kwargs.get('categ_id')
+            product_name = kwargs.get('name')
         except Exception as e:
             _logger.info('出现了错误: {}'.format(e))
             return self.response_json_error(400, message='出现错误!{}'.format(e))
@@ -52,6 +53,10 @@ class ProductProduct(http.Controller, BaseController):
                             ('product_id.categ_id.parent_id', '=', int(categ_id))]
 
             filter_domain = expression.AND([filter_domain, categ_domain])
+
+        if product_name:
+            name_domain = [('name', 'ilike', product_name)]
+            filter_domain = expression.AND([filter_domain, name_domain])
 
         # 根据库存，查找物料
         quant_ids = request.env['stock.quant'].sudo().search(filter_domain)
