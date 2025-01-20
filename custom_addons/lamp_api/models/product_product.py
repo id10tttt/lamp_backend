@@ -6,20 +6,6 @@ import logging
 _logger = logging.getLogger(__name__)
 
 
-class ProductTemplate(models.Model):
-    _inherit = 'product.template'
-
-    def check_field_access_rights(self, operation, field_names):
-        _logger.info('xxxxxxx: {}, {}'.format(operation, field_names))
-        if isinstance(field_names, list):
-            if field_names[0] in ['image_128', 'write_date', 'name'] and len(field_names) == 1:
-                super_user = self.env['res.users'].sudo().browse([odoo.SUPERUSER_ID])
-                self.env = self.env(user=super_user)
-
-        # res = super().check_field_access_rights(operation, field_names)
-        return super(ProductTemplate, self).check_field_access_rights(operation, field_names)
-
-
 class ProductProduct(models.Model):
     _inherit = 'product.product'
 
