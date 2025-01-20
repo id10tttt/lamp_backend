@@ -3,4 +3,3 @@ from . import res_partner
 from . import api_request_log
 from . import product_product
 from . import sale_order
-from . import ir_binary
