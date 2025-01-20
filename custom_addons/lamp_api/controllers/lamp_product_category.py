@@ -27,7 +27,8 @@ class ProductCategory(http.Controller, BaseController):
         request.env.context = dict(request.env.context, lang=lang)
 
         categ_ids = request.env['product.category'].sudo().search([
-            ('parent_id', '=', False)
+            ('parent_id', '=', False),
+            ('id', '!=', 1)
         ])
 
         categ_data = []
