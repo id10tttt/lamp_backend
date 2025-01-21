@@ -18,7 +18,19 @@ class ShoppingCart(BaseController, http.Controller):
     @verify_auth_token_only()
     def get_shop_cart_list(self, lang='en_US', **kwargs):
         shopping_cart_data = get_shopping_cart_from_redis(request.partner_id)
-        return response_json_success(data=shopping_cart_data)
+
+        if not shopping_cart_data:
+            return response_json_success(data=[])
+
+        all_uuid = shopping_cart_data.keys()
+        resp_data = []
+        for current_uuid in all_uuid:
+            tmp_data = {
+                'uuid': current_uuid
+            }
+            tmp_data.update(**shopping_cart_data.get(current_uuid))
+            resp_data.append(tmp_data)
+        return response_json_success(data=resp_data)
 
     @http.route('/api/v1/lamp/cart/update', auth='public', methods=['POST'], csrf=False, cors="*", type='http')
     @verify_auth_token_only()
