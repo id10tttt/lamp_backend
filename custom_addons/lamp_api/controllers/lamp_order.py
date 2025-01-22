@@ -185,7 +185,7 @@ class SaleOrder(http.Controller, BaseController):
             amount_total = order_id.amount_total
             raise
         except Exception as e:
-            request.env.rollback()
+            request.env.cr.rollback()
 
         resp_data = {
             'amount_total': amount_total
