@@ -14,13 +14,13 @@ _logger = logging.getLogger(__name__)
 
 class ShoppingCart(BaseController, http.Controller):
 
-    @http.route('/api/v1/lamp/cart', auth='public', methods=['GET'], csrf=False, cors="*", type='json')
+    @http.route('/api/v1/lamp/cart', auth='public', methods=['GET'], csrf=False, cors="*", type='http')
     @verify_auth_token_only()
     def get_shop_cart_list(self, lang='en_US', **kwargs):
         shopping_cart_data = get_shopping_cart_from_redis(request.partner_id)
 
         if not shopping_cart_data:
-            return self.response_http_json_success()
+            return self.response_json_success()
 
         all_uuid = shopping_cart_data.keys()
         resp_data = []
@@ -31,7 +31,7 @@ class ShoppingCart(BaseController, http.Controller):
             tmp_data.update(**shopping_cart_data.get(current_uuid))
             resp_data.append(tmp_data)
         _logger.info('resp_data: {}'.format(resp_data))
-        return self.response_http_json_success(data=resp_data)
+        return self.response_json_success(data=resp_data)
 
     @http.route('/api/v1/lamp/cart/update', auth='public', methods=['POST'], csrf=False, cors="*", type='json')
     @verify_auth_token_only()

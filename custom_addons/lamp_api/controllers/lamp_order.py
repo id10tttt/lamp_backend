@@ -16,7 +16,7 @@ MAX_MOBILE_SMS_LIMIT = 20
 
 
 class SaleOrder(http.Controller, BaseController):
-    @http.route('/api/v1/lamp/sale/order/my', auth='public', methods=['GET'], csrf=False, cors="*", type='json')
+    @http.route('/api/v1/lamp/sale/order/my', auth='public', methods=['GET'], csrf=False, cors="*", type='http')
     @verify_auth_token_only()
     def my_order_list(self, lang='en_US', **kwargs):
         try:
@@ -25,7 +25,7 @@ class SaleOrder(http.Controller, BaseController):
             limit = kwargs.get('limit', 80)
         except Exception as e:
             _logger.info('出现了错误: {}'.format(e))
-            return self.response_http_json_error(400, message='出现错误!{}'.format(e))
+            return self.response_json_error(400, message='出现错误!{}'.format(e))
 
         try:
             page = int(page)
@@ -33,17 +33,17 @@ class SaleOrder(http.Controller, BaseController):
             page = page if page > 0 else 1
             offset = (page - 1) * limit
         except Exception as e:
-            return self.response_http_json_error(400, message='数据类型错误')
+            return self.response_json_error(400, message='数据类型错误')
 
         order_ids = request.env['sale.order'].sudo().search([
             ('partner_id', '=', request.partner_id)
         ])
         if not order_ids:
-            return self.response_http_json_success(data=[], message='成功')
+            return self.response_json_success(data=[], message='成功')
 
         order_data = order_ids.parse_sale_order(order_ids)
 
-        return self.response_http_json_success(data=order_data, message='成功')
+        return self.response_json_success(data=order_data, message='成功')
 
     def parse_sale_order_line(self, order_line, start_date, end_date):
         all_product_ids = [x.get('product_id') for x in order_line]

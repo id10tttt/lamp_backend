@@ -31,7 +31,7 @@ class StockWarehouse(http.Controller, BaseController):
 
         return attachment_url
 
-    @http.route('/api/v1/lamp/warehouse', auth='public', methods=['GET'], csrf=False, cors="*", type='json')
+    @http.route('/api/v1/lamp/warehouse', auth='public', methods=['GET'], csrf=False, cors="*", type='http')
     def get_product_list(self, lang='en_US', **kwargs):
         try:
             request.env.context = dict(request.env.context, lang=lang)
@@ -39,7 +39,7 @@ class StockWarehouse(http.Controller, BaseController):
             limit = kwargs.get('limit', 80)
         except Exception as e:
             _logger.info('出现了错误: {}'.format(e), exc_info=True)
-            return self.response_http_json_error(400, message='出现错误!{}'.format(e))
+            return self.response_json_error(400, message='出现错误!{}'.format(e))
 
         try:
             page = int(page)
@@ -47,7 +47,7 @@ class StockWarehouse(http.Controller, BaseController):
             page = page if page > 0 else 1
             offset = (page - 1) * limit
         except Exception as e:
-            return self.response_http_json_error(400, message='数据类型错误')
+            return self.response_json_error(400, message='数据类型错误')
 
         warehouse_ids = request.env['stock.warehouse'].sudo().search([], limit=limit, offset=offset)
 
@@ -60,4 +60,4 @@ class StockWarehouse(http.Controller, BaseController):
             'warehouse_image': self.get_stock_warehouse_attachment_url(warehouse_id),
         } for warehouse_id in warehouse_ids]
 
-        return self.response_http_json_success(data=warehouse_data, message='成功')
+        return self.response_json_success(data=warehouse_data, message='成功')

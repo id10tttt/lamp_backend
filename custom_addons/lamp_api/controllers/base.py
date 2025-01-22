@@ -131,6 +131,11 @@ class BaseController(object):
 
         if message:
             result['message'] = message
+
+        result = {
+            'jsonrpc': '2.0',
+            'result': result
+        }
         # return result
         return request.make_response(
             headers={'Content-Type': 'json'},
@@ -149,6 +154,11 @@ class BaseController(object):
             result['data'] = data
         else:
             result['data'] = []
+
+        result = {
+            'jsonrpc': '2.0',
+            'result': result
+        }
         return request.make_response(
             headers={'Content-Type': 'json'},
             data=json.dumps(result)

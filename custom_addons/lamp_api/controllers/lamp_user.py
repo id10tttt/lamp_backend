@@ -21,7 +21,7 @@ def send_sms_code(mobile, sms_code):
 
 
 class LAMPUser(http.Controller, BaseController):
-    @http.route('/api/v1/lamp/static/info', auth='public', methods=['POST'], csrf=False, cors="*", type='json')
+    @http.route('/api/v1/lamp/static/info', auth='public', methods=['POST'], csrf=False, cors="*", type='http')
     def lamp_info(self, lang='en_US'):
         try:
             with open(config.get('public_key_path'), 'rb') as pub_file:
@@ -32,9 +32,9 @@ class LAMPUser(http.Controller, BaseController):
             }
         except Exception as e:
             _logger.error('获取公钥出错: {}'.format(e))
-            return self.response_http_json_error(400, message='出现了错误!')
+            return self.response_json_error(400, message='出现了错误!')
 
-        return self.response_http_json_success(data=resp_data, message='成功')
+        return self.response_json_success(data=resp_data, message='成功')
 
     @http.route('/api/v1/lamp/user/login/code', auth='public', methods=['POST'], csrf=False, cors="*", type='json')
     def lamp_user_login_code(self, lang='en_US', **kwargs):
@@ -155,7 +155,7 @@ class LAMPUser(http.Controller, BaseController):
             'message': 'success'
         })
 
-    @http.route('/api/v1/lamp/user/profile', auth='public', methods=['get'], csrf=False, cors="*", type='json')
+    @http.route('/api/v1/lamp/user/profile', auth='public', methods=['get'], csrf=False, cors="*", type='http')
     @verify_auth_token_only()
     def user_profile(self, lang='en_US'):
         request.env.context = dict(request.env.context, lang=lang)
@@ -165,4 +165,4 @@ class LAMPUser(http.Controller, BaseController):
             'name': partner_id.name,
             'mobile': partner_id.mobile
         }
-        return self.response_http_json_success(user_data)
+        return self.response_json_success(user_data)
