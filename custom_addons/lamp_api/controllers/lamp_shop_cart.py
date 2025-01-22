@@ -58,8 +58,8 @@ class ShoppingCart(BaseController, http.Controller):
             return self.response_http_json_error(code=400, message='存在无效数据!')
 
         for cart_line in cart_data:
-            product_id = cart_line.get('product_id')
-            warehouse_id = cart_line.get('warehouse_id')
+            product_id = int(cart_line.get('product_id'))
+            warehouse_id = int(cart_line.get('warehouse_id'))
 
             product_id = product_ids.filtered(lambda pt: pt.id == product_id)
             warehouse_id = warehouse_ids.filtered(lambda w: w.id == warehouse_id)
