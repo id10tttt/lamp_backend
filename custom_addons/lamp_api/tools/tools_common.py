@@ -288,10 +288,11 @@ def verify_auth_token_only():
         def decorated_function(request, *args, **kwargs):
             access_token = http.request.httprequest.headers.get('Authorization')
             request_method = http.request.httprequest.method
+            _logger.info('request_method: {}'.format(request_method))
             if not access_token:
                 err_msg = 'access token 异常，无效数据'
                 _logger.error(err_msg)
-                if request_method == 'get':
+                if request_method in ['get', 'GET']:
                     return response_json_error(403, message=err_msg)
                 return response_http_json_error(403, message=err_msg)
 
@@ -301,7 +302,7 @@ def verify_auth_token_only():
             if not access_token:
                 err_msg = 'access token 异常，无效数据'
                 _logger.error(err_msg)
-                if request_method == 'get':
+                if request_method in ['get', 'GET']:
                     return response_json_error(403, message=err_msg)
                 return response_http_json_error(403, message=err_msg)
 
@@ -309,7 +310,7 @@ def verify_auth_token_only():
             if not verify_token:
                 err_msg = 'access token 异常<{}>，认证失败'.format(verify_msg)
                 _logger.error(err_msg)
-                if request_method == 'get':
+                if request_method in ['get', 'GET']:
                     return response_json_error(403, message=err_msg)
                 return response_http_json_error(403, message=err_msg)
             return func(request, *args, **kwargs)
