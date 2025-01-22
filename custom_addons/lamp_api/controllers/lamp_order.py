@@ -16,7 +16,7 @@ MAX_MOBILE_SMS_LIMIT = 20
 
 
 class SaleOrder(http.Controller, BaseController):
-    @http.route('/api/v1/lamp/sale/order/my', auth='public', methods=['GET'], csrf=False, cors="*", type='http')
+    @http.route('/api/v1/lamp/sale/order/my', auth='public', methods=['GET'], csrf=False, cors="*", type='json')
     @verify_auth_token_only()
     def my_order_list(self, lang='en_US', **kwargs):
         try:
@@ -25,7 +25,7 @@ class SaleOrder(http.Controller, BaseController):
             limit = kwargs.get('limit', 80)
         except Exception as e:
             _logger.info('出现了错误: {}'.format(e))
-            return self.response_json_error(400, message='出现错误!{}'.format(e))
+            return self.response_http_json_error(400, message='出现错误!{}'.format(e))
 
         try:
             page = int(page)
@@ -33,17 +33,17 @@ class SaleOrder(http.Controller, BaseController):
             page = page if page > 0 else 1
             offset = (page - 1) * limit
         except Exception as e:
-            return self.response_json_error(400, message='数据类型错误')
+            return self.response_http_json_error(400, message='数据类型错误')
 
         order_ids = request.env['sale.order'].sudo().search([
             ('partner_id', '=', request.partner_id)
         ])
         if not order_ids:
-            return self.response_json_success(data=[], message='成功')
+            return self.response_http_json_success(data=[], message='成功')
 
         order_data = order_ids.parse_sale_order(order_ids)
 
-        return self.response_json_success(data=order_data, message='成功')
+        return self.response_http_json_success(data=order_data, message='成功')
 
     def parse_sale_order_line(self, order_line, start_date, end_date):
         all_product_ids = [x.get('product_id') for x in order_line]
@@ -67,7 +67,7 @@ class SaleOrder(http.Controller, BaseController):
 
         return order_line_data
 
-    @http.route('/api/v1/lamp/sale/order', auth='public', methods=['POST'], csrf=False, cors="*", type='http')
+    @http.route('/api/v1/lamp/sale/order', auth='public', methods=['POST'], csrf=False, cors="*", type='json')
     @verify_auth_token_only()
     def create_sale_order(self, lang='en_US', **kwargs):
         try:
@@ -76,7 +76,7 @@ class SaleOrder(http.Controller, BaseController):
             _logger.info('payload_data: {}'.format(payload_data))
         except Exception as e:
             _logger.info('出现了错误: {}'.format(e))
-            return self.response_json_error(400, message='出现错误!{}'.format(e))
+            return self.response_http_json_error(400, message='出现错误!{}'.format(e))
 
         start_date = payload_data.get('state_date')
         end_date = payload_data.get('state_date')
@@ -89,13 +89,13 @@ class SaleOrder(http.Controller, BaseController):
 
         if (not all([start_date, end_date, order_line, picker, picker_phone, pick_time]) or
                 not isinstance(order_line, list)):
-            return self.response_json_error(400, message='订单数据异常!')
+            return self.response_http_json_error(400, message='订单数据异常!')
 
         warehouse_id = request.env['stock.warehouse'].sudo().search([
             ('id', '=', warehouse_id)
         ])
         if not warehouse_id:
-            return self.response_json_error(400, message='仓库信息异常!')
+            return self.response_http_json_error(400, message='仓库信息异常!')
 
         order_data = {
             'name': get_lamp_order_number(),
@@ -112,7 +112,7 @@ class SaleOrder(http.Controller, BaseController):
 
         order_line_data = self.parse_sale_order_line(order_line, start_date, end_date)
         if not order_line_data or len(order_line_data) != len(order_line):
-            return self.response_json_error(400, message='解析订单出现了错误!')
+            return self.response_http_json_error(400, message='解析订单出现了错误!')
 
         order_data.update({
             'order_line': order_line_data
@@ -123,9 +123,9 @@ class SaleOrder(http.Controller, BaseController):
             'id': order_id.id,
             'name': order_id.name
         }
-        return self.response_json_success(data=resp_data, message='成功')
+        return self.response_http_json_success(data=resp_data, message='成功')
 
-    @http.route('/api/v1/lamp/sale/order/amount', auth='public', methods=['POST'], csrf=False, cors="*", type='http')
+    @http.route('/api/v1/lamp/sale/order/amount', auth='public', methods=['POST'], csrf=False, cors="*", type='json')
     @verify_auth_token_only()
     def get_sale_order_price_amount(self, lang='en_US', **kwargs):
         try:
@@ -135,7 +135,7 @@ class SaleOrder(http.Controller, BaseController):
             _logger.info('payload_data: {}'.format(payload_data))
         except Exception as e:
             _logger.info('出现了错误: {}'.format(e))
-            return self.response_json_error(400, message='出现错误!{}'.format(e))
+            return self.response_http_json_error(400, message='出现错误!{}'.format(e))
 
         start_date = payload_data.get('state_date')
         end_date = payload_data.get('state_date')
@@ -148,13 +148,13 @@ class SaleOrder(http.Controller, BaseController):
 
         if (not all([start_date, end_date, order_line, picker, picker_phone, pick_time]) or
                 not isinstance(order_line, list)):
-            return self.response_json_error(400, message='订单数据异常!')
+            return self.response_http_json_error(400, message='订单数据异常!')
 
         warehouse_id = request.env['stock.warehouse'].sudo().search([
             ('id', '=', warehouse_id)
         ])
         if not warehouse_id:
-            return self.response_json_error(400, message='仓库信息异常!')
+            return self.response_http_json_error(400, message='仓库信息异常!')
 
         order_data = {
             'name': get_lamp_order_number(),
@@ -171,7 +171,7 @@ class SaleOrder(http.Controller, BaseController):
 
         order_line_data = self.parse_sale_order_line(order_line, start_date, end_date)
         if not order_line_data or len(order_line_data) != len(order_line):
-            return self.response_json_error(400, message='解析订单出现了错误!')
+            return self.response_http_json_error(400, message='解析订单出现了错误!')
 
         order_data.update({
             'order_line': order_line_data
@@ -181,4 +181,4 @@ class SaleOrder(http.Controller, BaseController):
         resp_data = {
             'amount_total': 0
         }
-        return self.response_json_success(data=resp_data, message='成功')
+        return self.response_http_json_success(data=resp_data, message='成功')

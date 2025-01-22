@@ -36,7 +36,7 @@ class LAMPUser(http.Controller, BaseController):
 
         return self.response_http_json_success(data=resp_data, message='成功')
 
-    @http.route('/api/v1/lamp/user/login/code', auth='public', methods=['POST'], csrf=False, cors="*", type='http')
+    @http.route('/api/v1/lamp/user/login/code', auth='public', methods=['POST'], csrf=False, cors="*", type='json')
     def lamp_user_login_code(self, lang='en_US', **kwargs):
 
         try:
@@ -45,7 +45,7 @@ class LAMPUser(http.Controller, BaseController):
             _logger.info('payload_data: {}'.format(payload_data))
         except Exception as e:
             _logger.info('出现了错误: {}'.format(e))
-            return self.response_json_error(400, message='出现错误!{}'.format(e))
+            return self.response_http_json_error(400, message='出现错误!{}'.format(e))
 
         mobile = payload_data.get('mobile')
         auth_type = payload_data.get('auth_type')
@@ -53,7 +53,7 @@ class LAMPUser(http.Controller, BaseController):
 
         if auth_type == 'mobile':
             if not mobile:
-                return self.response_json_error(400, message='请输入手机号!')
+                return self.response_http_json_error(400, message='请输入手机号!')
 
             try:
                 send_count = self.get_mobile_sms_log_from_redis(mobile)
@@ -70,10 +70,10 @@ class LAMPUser(http.Controller, BaseController):
                 send_count = 0
 
             if cache_code:
-                return self.response_json_error(400, message='请不要重复点击发送短信!')
+                return self.response_http_json_error(400, message='请不要重复点击发送短信!')
 
             if send_count > MAX_MOBILE_SMS_LIMIT:
-                return self.response_json_error(400, message='超出每日发送限制，请稍后重试!')
+                return self.response_http_json_error(400, message='超出每日发送限制，请稍后重试!')
 
             sms_code = get_random_login_code()
 
@@ -82,7 +82,7 @@ class LAMPUser(http.Controller, BaseController):
 
             # force_back = False
             if not send_state:
-                return self.response_json_error(400, message='发送短信失败!')
+                return self.response_http_json_error(400, message='发送短信失败!')
 
             # 保存SMS CODE
             self.save_sms_code_to_redis(mobile, sms_code)
@@ -97,14 +97,14 @@ class LAMPUser(http.Controller, BaseController):
                 'code': sms_code
             }
 
-            return self.response_json_success(message='发送成功!', data={} if prod_env else resp_data)
+            return self.response_http_json_success(message='发送成功!', data={} if prod_env else resp_data)
 
         elif auth_type == 'email':
             pass
         else:
-            return self.response_json_error(400, message='暂不支持该类型的认证!')
+            return self.response_http_json_error(400, message='暂不支持该类型的认证!')
 
-    @http.route('/api/v1/lamp/user/login', auth='public', methods=['POST'], csrf=False, cors="*", type='http')
+    @http.route('/api/v1/lamp/user/login', auth='public', methods=['POST'], csrf=False, cors="*", type='json')
     def lamp_user_login(self, lang='en_US', **kwargs):
 
         try:
@@ -113,23 +113,23 @@ class LAMPUser(http.Controller, BaseController):
             _logger.info('payload_data: {}'.format(payload_data))
         except Exception as e:
             _logger.info('出现了错误: {}'.format(e))
-            return self.response_json_error(400, message='出现错误!{}'.format(e))
+            return self.response_http_json_error(400, message='出现错误!{}'.format(e))
 
         mobile = payload_data.get('mobile')
         code = payload_data.get('code')
 
         if not all([mobile, code]):
-            return self.response_json_error(400, message='验证码错误!')
+            return self.response_http_json_error(400, message='验证码错误!')
 
         redis_code = self.get_sms_code_from_redis(mobile)
 
         if not redis_code:
-            return self.response_json_error(400, message='请先获取验证码!')
+            return self.response_http_json_error(400, message='请先获取验证码!')
 
         partner_id = self.get_or_create_res_partner(mobile)
 
         if not partner_id:
-            return self.response_json_error(400, message='数据异常，请检查数据!!')
+            return self.response_http_json_error(400, message='数据异常，请检查数据!!')
 
         payload_data = {
             'mobile': mobile,
@@ -146,16 +146,16 @@ class LAMPUser(http.Controller, BaseController):
             'expire': DEFAULT_TOKEN_EXPIRE
         }
 
-        return self.response_json_success(token_data, message='登陆成功')
+        return self.response_http_json_success(token_data, message='登陆成功')
 
-    @http.route('/api/v1/lamp/token/check', auth='public', methods=['POST'], csrf=False, cors="*", type='http')
+    @http.route('/api/v1/lamp/token/check', auth='public', methods=['POST'], csrf=False, cors="*", type='json')
     @verify_auth_token_only()
     def check_user_login_token(self, lang='en_US'):
-        return self.response_json_success({
+        return self.response_http_json_success({
             'message': 'success'
         })
 
-    @http.route('/api/v1/lamp/user/profile', auth='public', methods=['get'], csrf=False, cors="*", type='http')
+    @http.route('/api/v1/lamp/user/profile', auth='public', methods=['get'], csrf=False, cors="*", type='json')
     @verify_auth_token_only()
     def user_profile(self, lang='en_US'):
         request.env.context = dict(request.env.context, lang=lang)
@@ -165,4 +165,4 @@ class LAMPUser(http.Controller, BaseController):
             'name': partner_id.name,
             'mobile': partner_id.mobile
         }
-        return self.response_json_success(user_data)
+        return self.response_http_json_success(user_data)

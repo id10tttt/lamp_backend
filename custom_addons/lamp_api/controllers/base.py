@@ -4,7 +4,7 @@ from odoo.tools import date_utils
 import json
 import datetime
 from odoo import http
-from odoo.http import Response, request
+from odoo.http import Response, request, JsonRequest
 from .response_code import ResponseCode
 import dateutil.parser as parser
 from ..tools.tools_common import get_redis_client

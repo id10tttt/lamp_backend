@@ -17,7 +17,7 @@ MAX_MOBILE_SMS_LIMIT = 20
 
 
 class ResCurrency(http.Controller, BaseController):
-    @http.route('/api/v1/lamp/res/currency', auth='public', methods=['GET'], csrf=False, cors="*", type='http')
+    @http.route('/api/v1/lamp/res/currency', auth='public', methods=['GET'], csrf=False, cors="*", type='json')
     def get_res_currency_list(self, lang='en_US', **kwargs):
         currency_ids = request.env['res.currency'].sudo().search([
             ('active', '=', True)
@@ -33,4 +33,4 @@ class ResCurrency(http.Controller, BaseController):
             'decimal_places': currency_id.decimal_places,
         } for currency_id in currency_ids]
 
-        return self.response_json_success(data=currency_data, message='成功')
+        return self.response_http_json_success(data=currency_data, message='成功')

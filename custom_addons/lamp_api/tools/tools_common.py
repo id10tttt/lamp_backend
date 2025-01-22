@@ -240,6 +240,21 @@ def response_json_error(code, data=None, message=None):
     )
 
 
+def response_http_json_error(code, data=None, message=None):
+    custom_code = 'CODE_{}'.format(code)
+    if hasattr(ResponseCode, custom_code):
+        result = getattr(ResponseCode, custom_code)
+    else:
+        result = ResponseCode.CODE_403
+    if message:
+        result['message'] = message
+    if data:
+        result['data'] = data
+    else:
+        result['data'] = []
+    return result
+
+
 def decrypt_payload_data(http_request):
     payload_data = json.loads(http_request.httprequest.data)
     try:
@@ -275,7 +290,7 @@ def verify_auth_token_only():
             if not access_token:
                 err_msg = 'access token 异常，无效数据'
                 _logger.error(err_msg)
-                return response_json_error(403, message=err_msg)
+                return response_http_json_error(403, message=err_msg)
 
             if access_token.startswith('Bearer '):
                 access_token = access_token[7:]
@@ -283,13 +298,13 @@ def verify_auth_token_only():
             if not access_token:
                 err_msg = 'access token 异常，无效数据'
                 _logger.error(err_msg)
-                return response_json_error(403, message=err_msg)
+                return response_http_json_error(403, message=err_msg)
 
             verify_token, verify_msg = check_access_token(access_token)
             if not verify_token:
                 err_msg = 'access token 异常<{}>，认证失败'.format(verify_msg)
                 _logger.error(err_msg)
-                return response_json_error(403, message=err_msg)
+                return response_http_json_error(403, message=err_msg)
             return func(request, *args, **kwargs)
 
         return decorated_function
@@ -305,7 +320,7 @@ def verify_auth_token():
             if not access_token:
                 err_msg = 'access token 异常，无效数据'
                 _logger.error(err_msg)
-                return response_json_error(403, message=err_msg)
+                return response_http_json_error(403, message=err_msg)
 
             if access_token.startswith('Bearer '):
                 access_token = access_token[7:]
@@ -313,18 +328,18 @@ def verify_auth_token():
             if not access_token:
                 err_msg = 'access token 异常，无效数据'
                 _logger.error(err_msg)
-                return response_json_error(403, message=err_msg)
+                return response_http_json_error(403, message=err_msg)
 
             verify_token, verify_msg = check_access_token(access_token)
             if not verify_token:
                 err_msg = 'access token 异常<{}>，认证失败'.format(verify_msg)
                 _logger.error(err_msg)
-                return response_json_error(403, message=err_msg)
+                return response_http_json_error(403, message=err_msg)
             decrypt_msg = decrypt_payload_data(http.request)
             if not decrypt_msg:
                 err_msg = '密文解析失败，请检查数据'
                 _logger.error(err_msg)
-                return response_json_error(400, message=err_msg)
+                return response_http_json_error(400, message=err_msg)
             return func(request, *args, **kwargs)
 
         return decorated_function
@@ -341,7 +356,7 @@ def check_http_payload_valid():
             except Exception as e:
                 err_msg = '数据异常!'
                 _logger.error(err_msg)
-                return response_json_error(403, message=err_msg)
+                return response_http_json_error(403, message=err_msg)
             return func(request, *args, **kwargs)
 
         return decorated_function
@@ -398,7 +413,7 @@ def catch_exceptions(func):
             result = func(*args, **kwargs)
             return result
         except Exception as e:
-            return response_json_error(400, message='{}'.format(e))
+            return response_http_json_error(400, message='{}'.format(e))
 
     return wrapper
 

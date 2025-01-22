@@ -67,7 +67,7 @@ class AuthJWTAuth(http.Controller, BaseController):
         jwt_token = jwt_encode(payload_data, DEFAULT_TOKEN_EXPIRE)
 
         if not partner_id:
-            return self.response_json_error(400, message='数据异常，请检查数据!!')
+            return self.response_http_json_error(400, message='数据异常，请检查数据!!')
 
         token_data = {
             'access_token': jwt_token,
@@ -76,7 +76,7 @@ class AuthJWTAuth(http.Controller, BaseController):
 
         _logger.info('google jwt token: {}'.format(token_data))
 
-        return self.response_json_success(token_data, message='登陆成功')
+        return self.response_http_json_success(token_data, message='登陆成功')
 
     def _get_google_user_info(self, token):
         # 使用 Google API 获取用户信息（你可以使用 google-auth 库或直接调用 Google API）

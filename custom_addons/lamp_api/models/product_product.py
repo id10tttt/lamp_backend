@@ -46,10 +46,8 @@ class ProductProduct(models.Model):
 
         return [self.get_ir_attachment_public_url(attachment_id) for attachment_id in attachment_ids]
 
-    def parse_product_data(self, product_ids):
-        product_data = []
-        for product_id in product_ids:
-            product_data.append({
+    def _parse_product_data(self, product_id):
+        product_data = {
                 'product_id': product_id.id,
                 'categ_id': product_id.categ_id.id,
                 'categ_name': product_id.categ_id.name,
@@ -73,5 +71,11 @@ class ProductProduct(models.Model):
                 'vip_monthly_price': product_id.vip_monthly_price,
                 'product_image': product_id.get_product_product_attachment_url(product_id),
                 'product_image_list': product_id.get_product_template_image_ids(product_id)
-            })
+            }
+        return product_data
+
+    def parse_product_data(self, product_ids):
+        product_data = []
+        for product_id in product_ids:
+            product_data.append(self._parse_product_data(product_id))
         return product_data

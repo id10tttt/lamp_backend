@@ -17,7 +17,7 @@ MAX_MOBILE_SMS_LIMIT = 20
 
 
 class ProductCategory(http.Controller, BaseController):
-    @http.route('/api/v1/lamp/product/category', auth='public', methods=['GET'], csrf=False, cors="*", type='http')
+    @http.route('/api/v1/lamp/product/category', auth='public', methods=['GET'], csrf=False, cors="*", type='json')
     def get_product_category_list(self, lang='en_US', **kwargs):
         try:
             warehouse_id = kwargs.get('warehouse_id')
@@ -44,4 +44,4 @@ class ProductCategory(http.Controller, BaseController):
                 } for child_id in categ_id.child_id]
             })
 
-        return self.response_json_success(data=categ_data, message='成功')
+        return self.response_http_json_success(data=categ_data, message='成功')
