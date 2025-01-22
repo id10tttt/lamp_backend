@@ -48,8 +48,6 @@ class ShoppingCart(BaseController, http.Controller):
 
         product_ids = request.env['product.product'].sudo().search([('id', 'in', all_product_id)])
 
-        _logger.info('所有的物料: product_ids: {}'.format(product_ids))
-
         warehouse_ids = request.env['stock.warehouse'].sudo().search([
             ('id', 'in', all_warehouse_id)
         ])
@@ -63,9 +61,9 @@ class ShoppingCart(BaseController, http.Controller):
 
             product_id = product_ids.filtered(lambda pt: pt.id == product_id)
             warehouse_id = warehouse_ids.filtered(lambda w: w.id == warehouse_id)
-            qty = cart_line.get('qty')
+            qty = float(cart_line.get('qty'))
 
-            uuid_value = str(uuid4())
+            redis_key = '{}:{}'.format(product_id.id, warehouse_id.id)
             card_data = {
                 'product_id': product_id.id,
                 'product_image': product_id.get_product_product_attachment_url(product_id),
@@ -74,9 +72,15 @@ class ShoppingCart(BaseController, http.Controller):
                 'warehouse_name': warehouse_id.name,
                 'qty': qty,
             }
+            cache_data = get_shopping_cart_from_redis(request.partner_id)
+            if cache_data and cache_data.get(redis_key):
+                exist_record = cache_data.get(redis_key)
+                card_data.update({
+                    'qty': exist_record.get('qty') + card_data.get('qty')
+                })
             product_data = product_id._parse_product_data(product_id)
             card_data.update(**product_data)
-            save_shopping_cart_to_redis(request.partner_id, uuid_value, json.dumps(card_data))
+            save_shopping_cart_to_redis(request.partner_id, redis_key, json.dumps(card_data))
 
         return self.response_http_json_success()
 
@@ -112,15 +116,13 @@ class ShoppingCart(BaseController, http.Controller):
         }
         product_data = product_id._parse_product_data(product_id)
         cart_data.update(**product_data)
-        if uuid:
-            uuid_value = uuid
-        else:
-            uuid_value = str(uuid4())
 
-        save_shopping_cart_to_redis(request.partner_id, uuid_value, json.dumps(cart_data))
+        redis_key = '{}:{}'.format(product_id.id, warehouse_id.id)
+
+        save_shopping_cart_to_redis(request.partner_id, redis_key, json.dumps(cart_data))
 
         return self.response_http_json_success(data={
-            'uuid': uuid_value
+            'uuid': redis_key
         })
 
     @http.route('/api/v1/lamp/cart/delete', auth='public', methods=['DELETE'], csrf=False, cors="*", type='json')
