@@ -48,6 +48,8 @@ class ShoppingCart(BaseController, http.Controller):
 
         product_ids = request.env['product.product'].sudo().search([('id', 'in', all_product_id)])
 
+        _logger.info('所有的物料: product_ids: {}'.format(product_ids))
+
         warehouse_ids = request.env['stock.warehouse'].sudo().search([
             ('id', 'in', all_warehouse_id)
         ])

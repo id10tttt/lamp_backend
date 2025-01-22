@@ -47,6 +47,8 @@ class ProductProduct(models.Model):
         return [self.get_ir_attachment_public_url(attachment_id) for attachment_id in attachment_ids]
 
     def _parse_product_data(self, product_id):
+        if not product_id:
+            return {}
         product_data = {
                 'product_id': product_id.id,
                 'categ_id': product_id.categ_id.id,
