@@ -48,53 +48,61 @@ class LAMPUser(http.Controller, BaseController):
             return self.response_json_error(400, message='出现错误!{}'.format(e))
 
         mobile = payload_data.get('mobile')
+        auth_type = payload_data.get('auth_type')
+        email = payload_data.get('email')
 
-        if not mobile:
-            return self.response_json_error(400, message='请输入手机号!')
+        if auth_type == 'mobile':
+            if not mobile:
+                return self.response_json_error(400, message='请输入手机号!')
 
-        try:
-            send_count = self.get_mobile_sms_log_from_redis(mobile)
-            if not send_count:
+            try:
+                send_count = self.get_mobile_sms_log_from_redis(mobile)
+                if not send_count:
+                    send_count = 0
+                else:
+                    send_count = send_count.decode()
+                    send_count = int(send_count)
+                    _logger.info('{} 发送短信次数: {}'.format(mobile, send_count))
+                cache_code = self.get_sms_code_from_redis(mobile)
+            except Exception as e:
+                _logger.error('出现错误: {}'.format(e))
+                cache_code = None
                 send_count = 0
-            else:
-                send_count = send_count.decode()
-                send_count = int(send_count)
-                _logger.info('{} 发送短信次数: {}'.format(mobile, send_count))
-            cache_code = self.get_sms_code_from_redis(mobile)
-        except Exception as e:
-            _logger.error('出现错误: {}'.format(e))
-            cache_code = None
-            send_count = 0
 
-        if cache_code:
-            return self.response_json_error(400, message='请不要重复点击发送短信!')
+            if cache_code:
+                return self.response_json_error(400, message='请不要重复点击发送短信!')
 
-        if send_count > MAX_MOBILE_SMS_LIMIT:
-            return self.response_json_error(400, message='超出每日发送限制，请稍后重试!')
+            if send_count > MAX_MOBILE_SMS_LIMIT:
+                return self.response_json_error(400, message='超出每日发送限制，请稍后重试!')
 
-        sms_code = get_random_login_code()
+            sms_code = get_random_login_code()
 
-        # send_state = AliCloudSMS().send_sms_code(phone_number=mobile, code=sms_code)
-        send_state = send_sms_code(mobile, sms_code)
+            # send_state = AliCloudSMS().send_sms_code(phone_number=mobile, code=sms_code)
+            send_state = send_sms_code(mobile, sms_code)
 
-        # force_back = False
-        if not send_state:
-            return self.response_json_error(400, message='发送短信失败!')
+            # force_back = False
+            if not send_state:
+                return self.response_json_error(400, message='发送短信失败!')
 
-        # 保存SMS CODE
-        self.save_sms_code_to_redis(mobile, sms_code)
-        self.save_mobile_sms_log_to_redis(mobile)
+            # 保存SMS CODE
+            self.save_sms_code_to_redis(mobile, sms_code)
+            self.save_mobile_sms_log_to_redis(mobile)
 
-        # 测试环境，接口返回code
-        prod_env = config.get('prod_env', False)
-        # prod_env = True
+            # 测试环境，接口返回code
+            prod_env = config.get('prod_env', False)
+            # prod_env = True
 
-        _logger.info('发送验证码: {}, {}'.format(mobile, sms_code))
-        resp_data = {
-            'code': sms_code
-        }
+            _logger.info('发送验证码: {}, {}'.format(mobile, sms_code))
+            resp_data = {
+                'code': sms_code
+            }
 
-        return self.response_json_success(message='发送成功!', data={} if prod_env else resp_data)
+            return self.response_json_success(message='发送成功!', data={} if prod_env else resp_data)
+
+        elif auth_type == 'email':
+            pass
+        else:
+            return self.response_json_error(400, message='暂不支持该类型的认证!')
 
     @http.route('/api/v1/lamp/user/login', auth='public', methods=['POST'], csrf=False, cors="*", type='http')
     def lamp_user_login(self, lang='en_US', **kwargs):

@@ -225,3 +225,27 @@ class BaseController(object):
             return partner_id
 
         return False
+
+    def get_or_create_res_partner_by_email(self, email):
+        partner_id = request.env['res.partner'].sudo().search([
+            ('email', '=', email)
+        ])
+
+        if partner_id and len(partner_id) == 1:
+            return partner_id
+
+        if not partner_id:
+            partner_data = {
+                'user_type': 'user',
+                'odoo_create': False,
+                'name': 'E-Mail: {}'.format(email),
+                'email': email
+            }
+
+            partner_id = request.env['res.partner'].sudo().create(partner_data)
+
+            _logger.info('保存新用户: {}'.format(partner_id))
+
+            return partner_id
+
+        return False

@@ -21,6 +21,13 @@
                     <field name="vip_price"/>
                     <field name="vip_monthly_price"/>
                 </xpath>
+                <xpath expr="//field[@name='barcode']" position="after">
+                    <group name="product_template_images" string="Extra Product Media"
+                           attrs="{'invisible': [('sale_ok','=',False)]}">
+                        <field name="product_template_image_ids" class="o_website_sale_image_list"
+                               context="{'default_name': name}" mode="kanban" add-label="Add a Media" nolabel="1"/>
+                    </group>
+                </xpath>
             </field>
         </record>
     </data>

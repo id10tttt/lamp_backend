@@ -5,6 +5,7 @@
     "license": "AGPL-3",
     'depends': ['base', 'web', 'product', 'stock', 'sale', 'sale_management'],
     "data": [
+        "security/ir.model.access.csv",
         "views/sale_order_view.xml",
         "views/res_partner_view.xml",
         "views/stock_warehouse_view.xml",
@@ -12,6 +13,7 @@
         "views/stock_quant_view.xml",
         "views/product_category_view.xml",
         "views/stock_location_view.xml",
+        "views/product_image_view.xml",
     ],
     "installable": True,
     "auto_install": False,

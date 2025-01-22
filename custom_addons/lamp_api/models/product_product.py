@@ -23,13 +23,28 @@ class ProductProduct(models.Model):
             ('res_id', '=', product_tmpl_id.id),
             ('res_field', '=', 'image_128')
         ])
-        _logger.info('attachment_id: {}'.format(attachment_id))
+
         if not attachment_id:
             return ''
 
         attachment_url = self.get_ir_attachment_public_url(attachment_id[0])
 
         return attachment_url
+
+    def get_product_template_image_ids(self, product_id):
+        product_tmpl_id = product_id.product_tmpl_id
+        product_template_image_ids = product_tmpl_id.product_template_image_ids
+
+        attachment_ids = self.env['ir.attachment'].sudo().search([
+            ('res_model', '=', product_template_image_ids._name),
+            ('res_id', 'in', product_template_image_ids.ids),
+            ('res_field', '=', 'image_256')
+        ])
+
+        if not attachment_ids:
+            return ''
+
+        return [self.get_ir_attachment_public_url(attachment_id) for attachment_id in attachment_ids]
 
     def parse_product_data(self, product_ids):
         product_data = []
@@ -53,6 +68,7 @@ class ProductProduct(models.Model):
                 'monthly_subscription': product_id.monthly_subscription,
                 'vip_price': product_id.vip_price,
                 'vip_monthly_price': product_id.vip_monthly_price,
-                'product_image': product_id.get_product_product_attachment_url(product_id)
+                'product_image': product_id.get_product_product_attachment_url(product_id),
+                'product_image_list': product_id.get_product_template_image_ids(product_id)
             })
         return product_data

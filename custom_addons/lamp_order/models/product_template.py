@@ -21,3 +21,6 @@ class ProductTemplate(models.Model):
 
     vip_price = fields.Float('VIP Price', digits=(16, 2))
     vip_monthly_price = fields.Float('VIP Monthly Price', digits=(16, 2))
+
+    product_template_image_ids = fields.One2many('product.image', 'product_tmpl_id', string="Extra Product Media",
+                                                 copy=True)
