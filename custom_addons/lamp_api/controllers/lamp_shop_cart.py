@@ -65,6 +65,7 @@ class ShoppingCart(BaseController, http.Controller):
             uuid_value = str(uuid4())
             card_data = {
                 'product_id': product_id.id,
+                'product_image': product_id.get_product_product_attachment_url(product_id),
                 'product_name': product_id.name,
                 'warehouse_id': warehouse_id.id,
                 'warehouse_name': warehouse_id.name,

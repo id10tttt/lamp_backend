@@ -20,6 +20,7 @@ class SaleOrder(models.Model):
                 'warehouse_id': order_id.warehouse_id.id,
                 'warehouse_name': order_id.warehouse_id.name,
                 'order_line': [{
+                    'product_image': sol.product_id.get_product_product_attachment_url(sol.product_id),
                     'product_id': sol.product_id.id,
                     'product_name': sol.product_id.name,
                     'name': sol.name,
