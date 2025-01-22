@@ -108,6 +108,8 @@ class ShoppingCart(BaseController, http.Controller):
             'warehouse_name': warehouse_id.name,
             'qty': qty,
         }
+        product_data = product_id._parse_product_data(product_id)
+        cart_data.update(**product_data)
         if uuid:
             uuid_value = uuid
         else:
