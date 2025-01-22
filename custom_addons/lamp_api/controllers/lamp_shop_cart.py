@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from ..tools.tools_common import response_json_success, verify_auth_token_only, save_shopping_cart_to_redis, \
-    get_shopping_cart_from_redis, response_json_error, empty_shopping_cart, \
+from ..tools.tools_common import verify_auth_token_only, save_shopping_cart_to_redis, \
+    get_shopping_cart_from_redis, empty_shopping_cart, \
     delete_shopping_cart_data
 from odoo import http, fields
 from odoo.http import request
@@ -20,7 +20,7 @@ class ShoppingCart(BaseController, http.Controller):
         shopping_cart_data = get_shopping_cart_from_redis(request.partner_id)
 
         if not shopping_cart_data:
-            return response_json_success(data=[])
+            return self.response_json_success(data=[])
 
         all_uuid = shopping_cart_data.keys()
         resp_data = []
@@ -30,7 +30,7 @@ class ShoppingCart(BaseController, http.Controller):
             }
             tmp_data.update(**shopping_cart_data.get(current_uuid))
             resp_data.append(tmp_data)
-        return response_json_success(data=resp_data)
+        return self.response_json_success(data=resp_data)
 
     @http.route('/api/v1/lamp/cart/update', auth='public', methods=['POST'], csrf=False, cors="*", type='http')
     @verify_auth_token_only()
@@ -43,7 +43,7 @@ class ShoppingCart(BaseController, http.Controller):
             all_product_id = [int(x.get('product_id')) for x in cart_data]
             all_warehouse_id = [int(x.get('warehouse_id')) for x in cart_data]
         except Exception as e:
-            return response_json_error(400, message='出现了错误: {}'.format(e))
+            return self.response_json_error(400, message='出现了错误: {}'.format(e))
 
         product_ids = request.env['product.product'].sudo().search([('id', 'in', all_product_id)])
 
@@ -52,7 +52,7 @@ class ShoppingCart(BaseController, http.Controller):
         ])
 
         if not all([warehouse_ids, product_ids]):
-            return response_json_error(code=400, message='存在无效数据!')
+            return self.response_json_error(code=400, message='存在无效数据!')
 
         for cart_line in cart_data:
             product_id = cart_line.get('product_id')
@@ -72,7 +72,7 @@ class ShoppingCart(BaseController, http.Controller):
             }
             save_shopping_cart_to_redis(request.partner_id, uuid_value, json.dumps(card_data))
 
-        return response_json_success()
+        return self.response_json_success()
 
     @http.route('/api/v1/lamp/cart/add', auth='public', methods=['POST'], csrf=False, cors="*", type='http')
     @verify_auth_token_only()
@@ -87,7 +87,7 @@ class ShoppingCart(BaseController, http.Controller):
         try:
             product_id = int(product_id)
         except Exception as e:
-            return response_json_error(400, message='出现了错误: {}'.format(e))
+            return self.response_json_error(400, message='出现了错误: {}'.format(e))
 
         product_id = request.env['product.product'].sudo().search([('id', '=', product_id)])
 
@@ -95,7 +95,7 @@ class ShoppingCart(BaseController, http.Controller):
             ('id', '=', warehouse_id)
         ])
         if not all([product_id, warehouse_id]):
-            return response_json_error(code=400, message='存在无效数据!')
+            return self.response_json_error(code=400, message='存在无效数据!')
 
         cart_data = {
             'product_id': product_id.id,
@@ -111,7 +111,7 @@ class ShoppingCart(BaseController, http.Controller):
 
         save_shopping_cart_to_redis(request.partner_id, uuid_value, json.dumps(cart_data))
 
-        return response_json_success(data={
+        return self.response_json_success(data={
             'uuid': uuid_value
         })
 
@@ -126,7 +126,7 @@ class ShoppingCart(BaseController, http.Controller):
         if isinstance(uuid, str):
             delete_shopping_cart_data(request.partner_id, uuid)
 
-        return response_json_success()
+        return self.response_json_success()
 
     @http.route('/api/v1/lamp/cart/delete/all', auth='public', methods=['DELETE'], csrf=False, cors="*", type='http')
     @verify_auth_token_only()
@@ -134,4 +134,4 @@ class ShoppingCart(BaseController, http.Controller):
 
         empty_shopping_cart(request.partner_id)
 
-        return response_json_success()
+        return self.response_json_success()
