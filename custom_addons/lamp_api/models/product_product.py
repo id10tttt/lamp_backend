@@ -54,6 +54,7 @@ class ProductProduct(models.Model):
                 'categ_id': product_id.categ_id.id,
                 'categ_name': product_id.categ_id.name,
                 'name': product_id.name,
+                'list_price': product_id.list_price,
                 'currency_id': product_id.currency_id.id,
                 'currency': product_id.currency_id.name,
                 'weight': product_id.weight,
