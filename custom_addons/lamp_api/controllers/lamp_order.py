@@ -177,8 +177,17 @@ class SaleOrder(http.Controller, BaseController):
             'order_line': order_line_data
         })
 
+        amount_total = 0
+
         # TODO: 计算费用
+        try:
+            order_id = request.env['sale.order'].sudo().create(order_data)
+            amount_total = order_id.amount_total
+            raise
+        except Exception as e:
+            request.env.rollback()
+
         resp_data = {
-            'amount_total': 0
+            'amount_total': amount_total
         }
         return self.response_http_json_success(data=resp_data, message='成功')
