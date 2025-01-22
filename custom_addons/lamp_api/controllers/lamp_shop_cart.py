@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from ..tools.tools_common import response_json_success, verify_auth_token_only, save_shopping_cart_to_redis, \
-    get_shopping_cart_from_redis, check_http_payload_valid, response_json_error, empty_shopping_cart, \
+    get_shopping_cart_from_redis, response_json_error, empty_shopping_cart, \
     delete_shopping_cart_data
 from odoo import http, fields
 from odoo.http import request
@@ -34,7 +34,6 @@ class ShoppingCart(BaseController, http.Controller):
 
     @http.route('/api/v1/lamp/cart/update', auth='public', methods=['POST'], csrf=False, cors="*", type='http')
     @verify_auth_token_only()
-    @check_http_payload_valid()
     def update_shop_cart_info(self, lang='en_US', **kwargs):
         payload_data = json.loads(request.httprequest.data)
 
@@ -77,7 +76,6 @@ class ShoppingCart(BaseController, http.Controller):
 
     @http.route('/api/v1/lamp/cart/add', auth='public', methods=['POST'], csrf=False, cors="*", type='http')
     @verify_auth_token_only()
-    @check_http_payload_valid()
     def add_shop_cart_info(self, lang='en_US', **kwargs):
         payload_data = json.loads(request.httprequest.data)
 
@@ -119,7 +117,6 @@ class ShoppingCart(BaseController, http.Controller):
 
     @http.route('/api/v1/lamp/cart/delete', auth='public', methods=['DELETE'], csrf=False, cors="*", type='http')
     @verify_auth_token_only()
-    @check_http_payload_valid()
     def delete_shop_cart(self, lang='en_US', **kwargs):
         payload_data = json.loads(request.httprequest.data)
         uuid = payload_data.get('uuid')
