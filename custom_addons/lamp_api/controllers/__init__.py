@@ -6,3 +6,4 @@ from . import lamp_order
 from . import lamp_warehouse
 from . import lamp_shop_cart
 from . import lamp_product_category
+from . import lamp_res_currency

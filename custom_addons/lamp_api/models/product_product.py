@@ -67,6 +67,7 @@ class ProductProduct(models.Model):
                 'gross_weight': product_id.net_weight,
                 'logo_size': product_id.logo_size,
                 'product_size': product_id.product_size,
+                'packaging_size': product_id.packaging_size,
                 'monthly_subscription': product_id.monthly_subscription,
                 'vip_price': product_id.vip_price,
                 'vip_monthly_price': product_id.vip_monthly_price,
