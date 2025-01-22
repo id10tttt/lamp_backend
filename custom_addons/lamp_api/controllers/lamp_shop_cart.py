@@ -20,7 +20,7 @@ class ShoppingCart(BaseController, http.Controller):
         shopping_cart_data = get_shopping_cart_from_redis(request.partner_id)
 
         if not shopping_cart_data:
-            return self.response_json_success()
+            return self.response_json_success(data=[])
 
         all_uuid = shopping_cart_data.keys()
         resp_data = []
