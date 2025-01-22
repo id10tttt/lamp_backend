@@ -136,10 +136,10 @@ class ShoppingCart(BaseController, http.Controller):
 
         return self.response_http_json_success()
 
-    @http.route('/api/v1/lamp/cart/delete/all', auth='public', methods=['DELETE'], csrf=False, cors="*", type='json')
+    @http.route('/api/v1/lamp/cart/delete/all', auth='public', methods=['DELETE'], csrf=False, cors="*", type='http')
     @verify_auth_token_only()
     def delete_all_shop_cart(self, lang='en_US', **kwargs):
 
         empty_shopping_cart(request.partner_id)
 
-        return self.response_http_json_success()
+        return self.response_json_success()
