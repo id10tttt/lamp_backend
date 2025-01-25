@@ -133,18 +133,20 @@ class SaleOrder(http.Controller, BaseController):
 
             payload_data = json.loads(request.httprequest.data)
             _logger.info('payload_data: {}'.format(payload_data))
+
+            start_date = payload_data.get('state_date')
+            end_date = payload_data.get('state_date')
+            picker = payload_data.get('picker')
+            picker_phone = payload_data.get('picker_phone')
+            pick_time = payload_data.get('pick_time')
+            warehouse_id = payload_data.get('warehouse_id')
+
+            order_line = payload_data.get('order_line')
+            note = payload_data.get('note')
+
         except Exception as e:
             _logger.info('出现了错误: {}'.format(e))
             return self.response_http_json_error(400, message='出现错误!{}'.format(e))
-
-        start_date = payload_data.get('state_date')
-        end_date = payload_data.get('state_date')
-        picker = payload_data.get('picker')
-        picker_phone = payload_data.get('picker_phone')
-        pick_time = payload_data.get('pick_time')
-        warehouse_id = payload_data.get('warehouse_id')
-
-        order_line = payload_data.get('order_line')
 
         if (not all([start_date, end_date, order_line, picker, picker_phone, pick_time]) or
                 not isinstance(order_line, list)):
@@ -165,7 +167,7 @@ class SaleOrder(http.Controller, BaseController):
             'picker_phone': picker_phone,
             'pick_time': pick_time,
             'state': 'draft',
-            'note': payload_data.get('note'),
+            'note': note,
             'warehouse_id': warehouse_id.id
         }
 
