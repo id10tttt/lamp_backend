@@ -69,6 +69,16 @@
                         <field name="picker_selfie"/>
                     </group>
                 </xpath>
+                <xpath expr="//notebook/page[@name='other_information']" position="before">
+                    <page string="优惠券">
+                        <group>
+                            <field name="promo_code"/>
+                            <field name="reward_amount"/>
+                            <field name="code_promo_program_id"/>
+                            <field name="applied_coupon_ids"/>
+                        </group>
+                    </page>
+                </xpath>
             </field>
         </record>
     </data>

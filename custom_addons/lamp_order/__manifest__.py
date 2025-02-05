@@ -3,7 +3,7 @@
     "summary": "Lamp Order",
     "author": "1di0t",
     "license": "AGPL-3",
-    'depends': ['base', 'web', 'product', 'stock', 'sale', 'sale_management'],
+    'depends': ['base', 'web', 'product', 'stock', 'sale', 'sale_management', 'sale_coupon', 'coupon'],
     "data": [
         "security/ir.model.access.csv",
         "views/sale_order_view.xml",
