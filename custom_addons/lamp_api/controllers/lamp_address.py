@@ -46,7 +46,7 @@ class ResPartnerAddress(http.Controller, BaseController):
             'child_ids': self.get_country_state(country_id)
         } for country_id in country_ids]
 
-        return self.response_json_success(data=country_data, message='成功')
+        return self.response_http_json_success(data=country_data, message='成功')
 
     @http.route('/api/v1/lamp/res/address', auth='public', methods=['GET'], csrf=False, cors="*", type='http')
     def get_my_address_list(self, lang='en_US', **kwargs):
@@ -58,7 +58,7 @@ class ResPartnerAddress(http.Controller, BaseController):
             return self.response_http_json_error(code=400, message='没有数据')
 
         if not partner_id.child_ids:
-            return self.response_json_success(data=[], message='成功')
+            return self.response_http_json_success(data=[], message='成功')
 
         partner_data = [{
             'id': child_id.id,
@@ -74,7 +74,7 @@ class ResPartnerAddress(http.Controller, BaseController):
             'email': child_id.email,
         } for child_id in partner_id.child_ids]
 
-        return self.response_json_success(data=partner_data, message='成功')
+        return self.response_http_json_success(data=partner_data, message='成功')
 
     @http.route('/api/v1/lamp/res/partner/address', auth='public', methods=['POST'], csrf=False, cors="*", type='json')
     @verify_auth_token_only()
