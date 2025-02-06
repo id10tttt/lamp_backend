@@ -100,7 +100,9 @@ class SaleOrder(http.Controller, BaseController):
 
         if coupon_ids:
             coupon_ids = request.env['coupon.coupon'].sudo().search([
-                ('id', 'in', coupon_ids)
+                ('id', 'in', coupon_ids),
+                ('partner_id', '=', False),
+                ('order_id', '=', False)
             ])
             if len(coupon_ids) != len(set(coupon_ids)):
                 return self.response_http_json_error(400, message='优惠券信息异常!')
@@ -123,8 +125,12 @@ class SaleOrder(http.Controller, BaseController):
             return self.response_http_json_error(400, message='解析订单出现了错误!')
 
         order_data.update({
-            'order_line': order_line_data
+            'order_line': order_line_data,
         })
+        if coupon_ids:
+            order_data.update({
+                'applied_coupon_ids': [(6, 0, coupon_ids.ids)]
+            })
         order_id = request.env['sale.order'].sudo().create(order_data)
 
         resp_data = {
