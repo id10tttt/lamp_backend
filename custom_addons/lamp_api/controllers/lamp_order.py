@@ -86,6 +86,7 @@ class SaleOrder(http.Controller, BaseController):
         warehouse_id = payload_data.get('warehouse_id')
 
         order_line = payload_data.get('order_line')
+        coupon_ids = payload_data.get('coupon_ids')
 
         if (not all([start_date, end_date, order_line, picker, picker_phone, pick_time]) or
                 not isinstance(order_line, list)):
@@ -96,6 +97,13 @@ class SaleOrder(http.Controller, BaseController):
         ])
         if not warehouse_id:
             return self.response_http_json_error(400, message='仓库信息异常!')
+
+        if coupon_ids:
+            coupon_ids = request.env['coupon.coupon'].sudo().search([
+                ('id', 'in', coupon_ids)
+            ])
+            if len(coupon_ids) != len(set(coupon_ids)):
+                return self.response_http_json_error(400, message='优惠券信息异常!')
 
         order_data = {
             'name': get_lamp_order_number(),
