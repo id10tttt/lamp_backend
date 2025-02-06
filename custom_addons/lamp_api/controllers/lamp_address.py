@@ -182,7 +182,7 @@ class ResPartnerAddress(http.Controller, BaseController):
         if not update_value:
             return self.response_http_json_error(400, message='更新数据异常!')
 
-        address_id.write(**update_value)
+        address_id.write(update_value)
 
         return self.response_http_json_success(data={
             'id': address_id
