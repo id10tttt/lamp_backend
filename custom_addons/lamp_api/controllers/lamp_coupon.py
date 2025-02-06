@@ -28,7 +28,7 @@ class CouponCoupon(http.Controller, BaseController):
             ('active', '=', True)
         ])
         if not program_ids:
-            return self.response_json_error(data=[], message='没有优惠券可以用')
+            return self.response_json_success(data=[], message='没有优惠券可以用')
 
         coupon_ids = request.env['coupon.coupon'].sudo().search([
             ('partner_id', '=', False),
@@ -36,7 +36,7 @@ class CouponCoupon(http.Controller, BaseController):
         ])
 
         if not coupon_ids:
-            return self.response_json_error(data=[], message='没有优惠券可以用')
+            return self.response_json_success(data=[], message='没有优惠券可以用')
 
         coupon_data = [{
             'id': program_id.id,
