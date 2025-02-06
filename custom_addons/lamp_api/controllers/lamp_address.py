@@ -141,12 +141,6 @@ class ResPartnerAddress(http.Controller, BaseController):
             address_id = int(payload_data.get('address_id'))
             country_id = int(payload_data.get('country_id'))
             state_id = int(payload_data.get('state_id'))
-            name = payload_data.get('name')
-            city = payload_data.get('city')
-            street = payload_data.get('street')
-            street2 = payload_data.get('street2')
-            mobile = payload_data.get('mobile')
-            email = payload_data.get('email')
 
         except Exception as e:
             _logger.info('出现了错误: {}'.format(e))
@@ -186,7 +180,7 @@ class ResPartnerAddress(http.Controller, BaseController):
 
         if not update_value:
             return self.response_http_json_error(400, message='更新数据异常!')
-    
+
         address_id.write(**update_value)
 
         return self.response_http_json_success(data={
