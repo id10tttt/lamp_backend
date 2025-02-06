@@ -185,7 +185,7 @@ class ResPartnerAddress(http.Controller, BaseController):
         address_id.write(update_value)
 
         return self.response_http_json_success(data={
-            'id': address_id
+            'id': address_id.id
         }, message='修改成功')
 
     @http.route('/api/v1/lamp/res/partner/address', auth='public', methods=['DELETE'], csrf=False, cors="*",
