@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 from odoo import http
 from odoo.http import request
-from odoo.tools import config
 import json
 from .base import BaseController
 import logging
-from ..tools.rsa_utils import RSAUtils
+from odoo.osv import expression
 from ..tools.tools_common import (
     get_random_login_code, get_access_token_from_redis, verify_auth_token_only, get_lamp_order_number,
     DEFAULT_TOKEN_EXPIRE, jwt_encode, LAMP_ISSUER, LAMP_AUDIENCE, verify_auth_token, save_access_token_to_redis)
@@ -99,11 +98,12 @@ class SaleOrder(http.Controller, BaseController):
             return self.response_http_json_error(400, message='仓库信息异常!')
 
         if coupon_ids:
-            coupon_ids = request.env['coupon.coupon'].sudo().search([
-                ('id', 'in', coupon_ids),
-                ('partner_id', '=', False),
-                ('order_id', '=', False)
-            ])
+            filter_domain = [('id', 'in', coupon_ids),
+                             ('partner_id', '=', False), ]
+            order_domain = ['|', ('order_id', '=', False), ('order_id.state', '!=', 'cancel')]
+
+            filter_domain = expression.AND([filter_domain, order_domain])
+            coupon_ids = request.env['coupon.coupon'].sudo().search(filter_domain)
             if len(coupon_ids) != len(set(coupon_ids)):
                 return self.response_http_json_error(400, message='优惠券信息异常!')
 
