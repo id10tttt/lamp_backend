@@ -56,7 +56,7 @@ class CouponCoupon(http.Controller, BaseController):
 
         return self.response_http_json_success(data=coupon_data, message='成功')
 
-    @http.route('/api/v1/lamp/coupon/my', auth='public', methods=['POST'], csrf=False, cors="*", type='http')
+    @http.route('/api/v1/lamp/coupon/collect', auth='public', methods=['POST'], csrf=False, cors="*", type='http')
     @verify_auth_token_only()
     def collect_coupon(self, lang='en_US', **kwargs):
         try:
