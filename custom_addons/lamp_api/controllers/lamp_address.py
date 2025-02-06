@@ -192,15 +192,18 @@ class ResPartnerAddress(http.Controller, BaseController):
                 type='json')
     @verify_auth_token_only()
     def delete_my_address(self, lang='en_US', **kwargs):
-        payload_data = json.loads(request.httprequest.data)
-        address_id = payload_data.get('address_id')
+        try:
+            payload_data = json.loads(request.httprequest.data)
+            address_id = int(payload_data.get('address_id'))
+        except Exception as e:
+            return self.response_http_json_error(400, message='出现错误!{}'.format(e))
 
         address_id = request.env['res.partner'].sudo().search([('id', '=', address_id)])
 
         if not address_id:
             return self.response_http_json_error(400, message='没有找到该数据!')
 
-        if address_id.partner_id.id != request.partner_id:
+        if address_id.parent_id.id != request.partner_id:
             return self.response_http_json_error(400, message='权限错误，不能删除!')
 
         try:
