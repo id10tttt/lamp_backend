@@ -99,7 +99,7 @@ class SaleOrder(http.Controller, BaseController):
 
         if coupon_ids:
             filter_domain = [('id', 'in', coupon_ids),
-                             ('partner_id', '=', False), ]
+                             ('partner_id', '=', request.partner_id)]
             order_domain = ['|', ('order_id', '=', False), ('order_id.state', '!=', 'cancel')]
 
             filter_domain = expression.AND([filter_domain, order_domain])
