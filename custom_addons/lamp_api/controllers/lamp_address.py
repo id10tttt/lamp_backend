@@ -49,6 +49,7 @@ class ResPartnerAddress(http.Controller, BaseController):
         return self.response_json_success(data=country_data, message='成功')
 
     @http.route('/api/v1/lamp/res/address', auth='public', methods=['GET'], csrf=False, cors="*", type='http')
+    @verify_auth_token_only()
     def get_my_address_list(self, lang='en_US', **kwargs):
         partner_id = request.env['res.partner'].sudo().search([
             ('id', '=', request.partner_id)
