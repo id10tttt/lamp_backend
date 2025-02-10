@@ -31,13 +31,13 @@ class CouponCoupon(http.Controller, BaseController):
             return self.response_json_success(data=[], message='没有优惠券可以用')
 
         coupon_ids = request.env['coupon.coupon'].sudo().search([
-            ('partner_id', '=', False),
-            ('expiration_date', '>=', datetime.date.today())
+            ('partner_id', '=', False)
         ])
 
         if not coupon_ids:
             return self.response_json_success(data=[], message='没有优惠券可以用')
 
+        coupon_ids = coupon_ids.filtered(lambda c: c.expiration_date >= datetime.date.today())
         coupon_data = [{
             'id': program_id.id,
             'name': program_id.name,
@@ -66,6 +66,7 @@ class CouponCoupon(http.Controller, BaseController):
 
         coupon_data = [{
             'id': coupon_id.id,
+            'state': coupon_id.state,
             'program_id': coupon_id.program_id.id,
             'program_name': coupon_id.program_id.name,
             'expiration_date': str(coupon_id.expiration_date),
@@ -82,14 +83,18 @@ class CouponCoupon(http.Controller, BaseController):
         except Exception as e:
             return self.response_http_json_success(data=[], message='优惠券数据异常! {}'.format(e))
 
-        coupon_id = request.env['coupon.coupon'].sudo().search([
+        coupon_ids = request.env['coupon.coupon'].sudo().search([
             ('program_id', '=', program_id),
-            ('partner_id', '=', False),
-            ('expiration_date', '>=', datetime.date.today())
-        ], limit=1)
+            ('partner_id', '=', False)
+        ])
 
-        if not coupon_id:
+        if coupon_ids:
+            coupon_ids = coupon_ids.filtered(lambda x: x.expiration_date >= datetime.date.today())
+
+        if not coupon_ids:
             return self.response_http_json_success(data=[], message='没有优惠券可以用')
+
+        coupon_id = coupon_ids[0]
 
         coupon_id.write({
             'partner_id': request.partner_id
