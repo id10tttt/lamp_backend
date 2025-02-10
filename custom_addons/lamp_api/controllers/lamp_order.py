@@ -172,7 +172,7 @@ class SaleOrder(http.Controller, BaseController):
             'picker_partner_id': picker_partner_id.id,
             'picker': picker_partner_id.name,
             'picker_phone': picker_partner_id.mobile,
-            'pick_time': pick_time,
+            # 'pick_time': pick_time,
             'state': 'draft',
             'note': payload_data.get('note'),
             'warehouse_id': warehouse_id.id
