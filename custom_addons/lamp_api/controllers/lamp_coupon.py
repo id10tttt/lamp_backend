@@ -70,6 +70,15 @@ class CouponCoupon(http.Controller, BaseController):
             'program_id': coupon_id.program_id.id,
             'program_name': coupon_id.program_id.name,
             'expiration_date': str(coupon_id.expiration_date),
+            'rule_date_from': str(coupon_id.program_id.rule_date_from),
+            'rule_date_to': str(coupon_id.program_id.rule_date_to),
+            'total_order_count': coupon_id.program_id.total_order_count,
+            'order_count': coupon_id.program_id.order_count,
+            'coupon_count': coupon_id.program_id.coupon_count,
+            'discount_type': coupon_id.program_id.discount_type,
+            'discount_fixed_amount': coupon_id.program_id.discount_fixed_amount,
+            'discount_percentage': coupon_id.program_id.discount_percentage,
+            'discount_max_amount': coupon_id.program_id.discount_max_amount,
         } for coupon_id in coupon_ids]
 
         return self.response_json_success(data=coupon_data, message='成功')
