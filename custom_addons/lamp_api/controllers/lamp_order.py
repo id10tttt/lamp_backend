@@ -67,6 +67,8 @@ class SaleOrder(http.Controller, BaseController):
         return order_line_data
 
     def create_loyalty_record(self, sale_order_rec):
+        if sale_order_rec.amount_total <= 0:
+            return
         vals = {'order_no': sale_order_rec.name,
                 'points': sale_order_rec.amount_total,
                 'order_date': sale_order_rec.date_order,
@@ -77,6 +79,9 @@ class SaleOrder(http.Controller, BaseController):
         _logger.info('创建积分记录! {}'.format(earned_reward_rec))
 
     def create_redeem_loyalty_record(self, sale_order_rec, points_amount):
+        if points_amount <= 0:
+            return
+
         values = {'order_no': sale_order_rec.name,
                   'points': points_amount,
                   'order_date': sale_order_rec.date_order,
