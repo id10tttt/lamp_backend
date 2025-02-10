@@ -138,7 +138,7 @@ class ResPartnerAddress(http.Controller, BaseController):
 
     def change_partner_address_default_state(self, address_id):
         if address_id.default_delivery:
-            partner_id_address = address_id.partner_id.child_ids
+            partner_id_address = address_id.parent_id.child_ids
             partner_id_address = partner_id_address.filtered(lambda p: p.id != address_id.id)
             partner_id_address.write({
                 'default_delivery': False
