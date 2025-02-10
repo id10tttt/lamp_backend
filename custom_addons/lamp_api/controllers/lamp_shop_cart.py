@@ -70,6 +70,7 @@ class ShoppingCart(BaseController, http.Controller):
                 'product_name': product_id.name,
                 'warehouse_id': warehouse_id.id,
                 'warehouse_name': warehouse_id.name,
+                'warehouse_address': warehouse_id.address,
                 'qty': qty,
             }
             cache_data = get_shopping_cart_from_redis(request.partner_id)
@@ -112,6 +113,7 @@ class ShoppingCart(BaseController, http.Controller):
             'product_name': product_id.name,
             'warehouse_id': warehouse_id.id,
             'warehouse_name': warehouse_id.name,
+            'warehouse_address': warehouse_id.address,
             'qty': qty,
         }
         product_data = product_id._parse_product_data(product_id)
