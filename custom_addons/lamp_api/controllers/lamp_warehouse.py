@@ -37,6 +37,8 @@ class StockWarehouse(http.Controller, BaseController):
             request.env.context = dict(request.env.context, lang=lang)
             page = kwargs.get('page', 1)
             limit = kwargs.get('limit', 80)
+            byid = kwargs.get('byid')
+            byid = int(byid) if byid else False
         except Exception as e:
             _logger.info('出现了错误: {}'.format(e), exc_info=True)
             return self.response_json_error(400, message='出现错误!{}'.format(e))
@@ -49,7 +51,10 @@ class StockWarehouse(http.Controller, BaseController):
         except Exception as e:
             return self.response_json_error(400, message='数据类型错误')
 
-        warehouse_ids = request.env['stock.warehouse'].sudo().search([], limit=limit, offset=offset)
+        filter_domain = []
+        if byid:
+            filter_domain = [('id', '=', byid)]
+        warehouse_ids = request.env['stock.warehouse'].sudo().search(filter_domain, limit=limit, offset=offset)
 
         warehouse_data = [{
             'id': warehouse_id.id,
