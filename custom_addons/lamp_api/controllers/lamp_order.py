@@ -60,7 +60,7 @@ class SaleOrder(http.Controller, BaseController):
                 'product_id': product_id.id,
                 'name': '租赁: {}'.format(product_id.name),
                 'product_uom_qty': line_data.get('product_uom_qty'),
-                'price_unit': line_data.get('price_unit'),
+                'price_unit': product_id.list_price,
                 'start_date': start_date,
                 'end_date': end_date
             }))
