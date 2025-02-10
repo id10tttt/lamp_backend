@@ -282,6 +282,7 @@ class SaleOrder(http.Controller, BaseController):
             _logger.info('订单信息! {}, {}, {}'.format(sale_order_rec, amount_total, coupon_amount))
             raise
         except Exception as e:
+            _logger.error('出现了错误! {}'.format(e), exc_info=True)
             request.env.cr.rollback()
 
         resp_data = {
