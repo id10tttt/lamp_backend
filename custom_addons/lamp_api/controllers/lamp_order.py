@@ -167,8 +167,8 @@ class SaleOrder(http.Controller, BaseController):
         order_data = {
             'name': get_lamp_order_number(),
             'partner_id': request.partner_id,
-            'default_start_date': start_date,
-            'default_end_date': end_date,
+            'default_start_date': start_date if start_date else False,
+            'default_end_date': end_date if end_date else False,
             'picker_partner_id': picker_partner_id.id,
             'picker': picker_partner_id.name,
             'picker_phone': picker_partner_id.mobile,
