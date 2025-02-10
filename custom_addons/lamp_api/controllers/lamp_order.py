@@ -46,10 +46,18 @@ class SaleOrder(http.Controller, BaseController):
         return self.response_json_success(data=order_data, message='成功')
 
     def get_end_and_start_days(self, start_date, end_date):
+        date_formats = ["%Y-%m-%d %H:%M:%S", "%Y-%m-%d"]
+        def parse_date(date_str):
+            for fmt in date_formats:
+                try:
+                    return datetime.strptime(date_str, fmt)
+                except ValueError:
+                    continue
+            return None
         if isinstance(start_date, str):
-            start_date = datetime.strptime(start_date, "%Y-%m-%d")
+            start_date = parse_date(start_date)
         if isinstance(end_date, str):
-            end_date = datetime.strptime(end_date, "%Y-%m-%d")
+            end_date = parse_date(end_date)
 
         if start_date and end_date:
             return (end_date - start_date).days + 1
