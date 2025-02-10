@@ -50,6 +50,7 @@ class CouponCoupon(http.Controller, BaseController):
             'discount_fixed_amount': program_id.discount_fixed_amount,
             'discount_percentage': program_id.discount_percentage,
             'discount_max_amount': program_id.discount_max_amount,
+            'rule_minimum_amount': program_id.rule_minimum_amount,
         } for program_id in program_ids]
 
         return self.response_json_success(data=coupon_data, message='成功')
@@ -79,6 +80,7 @@ class CouponCoupon(http.Controller, BaseController):
             'discount_fixed_amount': coupon_id.program_id.discount_fixed_amount,
             'discount_percentage': coupon_id.program_id.discount_percentage,
             'discount_max_amount': coupon_id.program_id.discount_max_amount,
+            'rule_minimum_amount': coupon_id.program_id.rule_minimum_amount,
         } for coupon_id in coupon_ids]
 
         return self.response_json_success(data=coupon_data, message='成功')
