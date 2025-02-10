@@ -197,7 +197,7 @@ class SaleOrder(http.Controller, BaseController):
 
             redeem_points = payload_data.get('redeem_points', 0)
             redeem_points = int(redeem_points) if redeem_points else 0
-            order_data, coupon_ids = self.prepare_sale_order(payload_data, raise_exceptions=False)
+            order_data, coupon_ids = self.prepare_sale_order(payload_data)
 
         except Exception as e:
             _logger.info('出现了错误: {}'.format(e))
@@ -237,7 +237,7 @@ class SaleOrder(http.Controller, BaseController):
             request.env.context = dict(request.env.context, lang=lang)
             payload_data = json.loads(request.httprequest.data)
 
-            order_data, coupon_ids = self.prepare_sale_order(payload_data)
+            order_data, coupon_ids = self.prepare_sale_order(payload_data, raise_exceptions=False)
 
         except Exception as e:
             _logger.info('出现了错误: {}'.format(e))
