@@ -112,12 +112,13 @@ class SaleOrder(http.Controller, BaseController):
         redeem_id = request.env['website.redeem.loyalty'].sudo().create(values)
         _logger.info('使用积分! {}'.format(redeem_id))
 
-    def prepare_sale_order(self, payload_data):
+    def prepare_sale_order(self, payload_data, raise_exceptions=True):
         try:
             _logger.info('payload_data: {}'.format(payload_data))
-            start_date = payload_data.get('state_date')
-            end_date = payload_data.get('state_date')
-            picker_partner_id = int(payload_data.get('picker_partner_id'))
+            start_date = payload_data.get('start_date')
+            end_date = payload_data.get('end_date')
+            picker_partner_id = payload_data.get('picker_partner_id')
+            picker_partner_id = int(picker_partner_id) if picker_partner_id else False
             # picker = payload_data.get('picker')
             # picker_phone = payload_data.get('picker_phone')
             pick_time = payload_data.get('pick_time')
@@ -138,7 +139,8 @@ class SaleOrder(http.Controller, BaseController):
 
         if (not all([start_date, end_date, order_line, picker_partner_id, pick_time]) or
                 not isinstance(order_line, list)):
-            raise ValidationError('订单数据异常')
+            if raise_exceptions:
+                raise ValidationError('订单数据异常')
 
         partner_id = request.env['res.partner'].sudo().search([
             ('id', '=', request.partner_id)
@@ -195,7 +197,7 @@ class SaleOrder(http.Controller, BaseController):
 
             redeem_points = payload_data.get('redeem_points', 0)
             redeem_points = int(redeem_points) if redeem_points else 0
-            order_data, coupon_ids = self.prepare_sale_order(payload_data)
+            order_data, coupon_ids = self.prepare_sale_order(payload_data, raise_exceptions=False)
 
         except Exception as e:
             _logger.info('出现了错误: {}'.format(e))
@@ -235,8 +237,6 @@ class SaleOrder(http.Controller, BaseController):
             request.env.context = dict(request.env.context, lang=lang)
             payload_data = json.loads(request.httprequest.data)
 
-            redeem_points = payload_data.get('redeem_points', 0)
-            redeem_points = int(redeem_points) if redeem_points else 0
             order_data, coupon_ids = self.prepare_sale_order(payload_data)
 
         except Exception as e:
