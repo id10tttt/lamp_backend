@@ -50,6 +50,9 @@ class SaleOrder(models.Model):
 
     insurance_state = fields.Boolean('Insurance State')
 
+    reward_amount = fields.Float("Reward Amount")
+    redeem_amount = fields.Float('Redeem Amount')
+
 
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'

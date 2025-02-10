@@ -73,6 +73,7 @@
                     <page string="优惠券">
                         <group>
                             <field name="promo_code"/>
+                            <field name="redeem_amount"/>
                             <field name="reward_amount"/>
                             <field name="code_promo_program_id"/>
                             <field name="applied_coupon_ids"/>

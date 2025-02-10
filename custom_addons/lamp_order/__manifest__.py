@@ -14,6 +14,7 @@
         "views/product_category_view.xml",
         "views/stock_location_view.xml",
         "views/product_image_view.xml",
+        "views/loyalty_view.xml",
     ],
     "installable": True,
     "auto_install": False,

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="website_earned_loyalty1" model="ir.ui.view">
+            <field name="name">website.order.reward</field>
+            <field name="model">website.earn.loyalty</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="order_id"/>
+                    <field name="order_no"/>
+                    <field name="points"/>
+                    <field name="order_date"/>
+                    <field name="partner_id"/>
+                    <field name="referral_partner_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="website_earned_loyalty1_form" model="ir.ui.view">
+            <field name="name">website.order.reward.form</field>
+            <field name="model">website.earn.loyalty</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group col="4">
+                            <field name="order_id"/>
+                            <field name="order_no"/>
+                            <field name="points"/>
+                            <field name="order_date"/>
+                            <field name="partner_id"/>
+                            <field name="referral_partner_id"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_view_website_earned_loyalty">
+            <field name="name">Earned Points</field>
+            <field name="res_model">website.earn.loyalty</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="main_menu" name="Loyalty Points"
+                  parent="sale.sale_menu_root"/>
+
+        <menuitem id="sub_menu_earned" name="Earned Points"
+                  parent="main_menu"
+                  action="action_view_website_earned_loyalty"/>
+
+        <record id="website_redeem_loyalty" model="ir.ui.view">
+            <field name="name">website.order.redeem</field>
+            <field name="model">website.redeem.loyalty</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="order_id"/>
+                    <field name="order_no"/>
+                    <field name="order_date"/>
+                    <field name="points"/>
+                    <field name="points_amount"/>
+                    <field name="partner_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="website_redeemed_loyalty1_form" model="ir.ui.view">
+            <field name="name">website.redeem.loyalty.form</field>
+            <field name="model">website.redeem.loyalty</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group col="4">
+                            <field name="order_id"/>
+                            <field name="order_no"/>
+                            <field name="order_date"/>
+                            <field name="points"/>
+                            <field name="points_amount"/>
+                            <field name="partner_id"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_view_website_redeem_loyalty">
+            <field name="name">Redeem Points</field>
+            <field name="res_model">website.redeem.loyalty</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="sub_menu_redeem" name="Redeem Points"
+                  parent="main_menu"
+                  action="action_view_website_redeem_loyalty"/>
+    </data>
+</odoo>

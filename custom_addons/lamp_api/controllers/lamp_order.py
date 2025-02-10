@@ -66,6 +66,26 @@ class SaleOrder(http.Controller, BaseController):
 
         return order_line_data
 
+    def create_loyalty_record(self, sale_order_rec):
+        vals = {'order_no': sale_order_rec.name,
+                'points': sale_order_rec.amount_total,
+                'order_date': sale_order_rec.date_order,
+                'partner_id': sale_order_rec.partner_id_no.id,
+                'referral_partner_id': sale_order_rec.partner_id_no.id
+                }
+        earned_reward_rec = request.env['website.earn.loyalty'].sudo().create(vals)
+        _logger.info('创建积分记录! {}'.format(earned_reward_rec))
+
+    def create_redeem_loyalty_record(self, sale_order_rec, points_amount):
+        values = {'order_no': sale_order_rec.name,
+                  'points': points_amount,
+                  'order_date': sale_order_rec.date_order,
+                  'partner_id': sale_order_rec.partner_id.id,
+                  'points_amount': points_amount,
+                  }
+        redeem_id = request.env['website.redeem.loyalty'].sudo().create(values)
+        _logger.info('使用积分! {}'.format(redeem_id))
+
     @http.route('/api/v1/lamp/sale/order', auth='public', methods=['POST'], csrf=False, cors="*", type='json')
     @verify_auth_token_only()
     def create_sale_order(self, lang='en_US', **kwargs):
@@ -83,6 +103,7 @@ class SaleOrder(http.Controller, BaseController):
         picker_phone = payload_data.get('picker_phone')
         pick_time = payload_data.get('pick_time')
         warehouse_id = payload_data.get('warehouse_id')
+        redeem_points = payload_data.get('redeem_points', 0)
 
         order_line = payload_data.get('order_line')
         coupon_ids = payload_data.get('coupon_ids')
@@ -127,15 +148,28 @@ class SaleOrder(http.Controller, BaseController):
         order_data.update({
             'order_line': order_line_data,
         })
-        if coupon_ids:
-            order_data.update({
-                'applied_coupon_ids': [(6, 0, coupon_ids.ids)]
-            })
-        order_id = request.env['sale.order'].sudo().create(order_data)
+
+        try:
+            sale_order_rec = request.env['sale.order'].sudo().create(order_data)
+            for coupon_id in coupon_ids:
+                request.env['sale.coupon.apply.code'].with_context(active_id=sale_order_rec.id).create({
+                    'coupon_code': coupon_id.name
+                }).process_coupon()
+
+            # 保存积分
+            self.create_loyalty_record(sale_order_rec)
+            if redeem_points:
+                # 使用积分
+                self.create_redeem_loyalty_record(sale_order_rec, redeem_points)
+        except Exception as e:
+            request.env.cr.rollback()
+            _logger.info('创建记录出现了错误! {}'.format(e))
+
+            return self.response_http_json_error(400, message='出现了错误: {}'.format(e))
 
         resp_data = {
-            'id': order_id.id,
-            'name': order_id.name
+            'id': sale_order_rec.id,
+            'name': sale_order_rec.name
         }
         return self.response_http_json_success(data=resp_data, message='成功')
 
@@ -154,6 +188,7 @@ class SaleOrder(http.Controller, BaseController):
             picker_phone = payload_data.get('picker_phone')
             pick_time = payload_data.get('pick_time')
             warehouse_id = payload_data.get('warehouse_id')
+            redeem_points = payload_data.get('redeem_points', 0)
 
             order_line = payload_data.get('order_line')
             note = payload_data.get('note')
@@ -204,6 +239,7 @@ class SaleOrder(http.Controller, BaseController):
             request.env.cr.rollback()
 
         resp_data = {
-            'amount_total': amount_total
+            'amount_total': amount_total,
+            'redeem_amount': redeem_points / 100,
         }
         return self.response_http_json_success(data=resp_data, message='成功')

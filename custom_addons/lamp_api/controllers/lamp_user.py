@@ -196,5 +196,6 @@ class LAMPUser(http.Controller, BaseController):
             'name': partner_id.name,
             'mobile': partner_id.mobile,
             'email': partner_id.email,
+            'remaining_points': partner_id.remaining_points
         }
         return self.response_json_success(user_data)

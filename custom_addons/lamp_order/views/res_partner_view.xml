@@ -11,6 +11,31 @@
                     <field name="money"/>
                     <field name="legal_entity_front"/>
                     <field name="legal_entity_back"/>
+                    <field name="default_delivery"/>
+                </xpath>
+                <xpath expr="//page[@name='internal_notes']" position="after">
+                    <page name="Customer Reward" string="Earned Loyalty">
+                        <field name="earned_loyalty_ids">
+                            <tree>
+                                <field name="order_no"/>
+                                <field name="order_date"/>
+                                <field name="points" sum="Earned Points"/>
+                            </tree>
+                        </field>
+                    </page>
+                    <page name="Customer Redeem" string="Redeem Loyalty">
+                        <field name="redeem_loyalty_ids">
+                            <tree>
+                                <field name="order_no"/>
+                                <field name="order_date"/>
+                                <field name="points" sum="Redeem Point"/>
+                                <field name="points_amount" sum="Redeem Amount"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+                <xpath expr="//field[@name='category_id']" position="after">
+                    <field name="remaining_points"/>
                 </xpath>
             </field>
         </record>
