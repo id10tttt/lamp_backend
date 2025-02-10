@@ -70,8 +70,8 @@ class SaleOrder(http.Controller, BaseController):
         vals = {'order_no': sale_order_rec.name,
                 'points': sale_order_rec.amount_total,
                 'order_date': sale_order_rec.date_order,
-                'partner_id': sale_order_rec.partner_id_no.id,
-                'referral_partner_id': sale_order_rec.partner_id_no.id
+                'partner_id': sale_order_rec.partner_id.id,
+                'referral_partner_id': sale_order_rec.partner_id.id
                 }
         earned_reward_rec = request.env['website.earn.loyalty'].sudo().create(vals)
         _logger.info('创建积分记录! {}'.format(earned_reward_rec))
