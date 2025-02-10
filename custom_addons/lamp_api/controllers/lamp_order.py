@@ -279,6 +279,7 @@ class SaleOrder(http.Controller, BaseController):
 
             amount_total = sale_order_rec.amount_total
             coupon_amount = sale_order_rec.reward_amount
+            _logger.info('订单信息! {}, {}, {}'.format(sale_order_rec, amount_total, coupon_amount))
             raise
         except Exception as e:
             request.env.cr.rollback()
