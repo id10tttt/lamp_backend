@@ -144,13 +144,14 @@ class ResPartnerAddress(http.Controller, BaseController):
             _logger.info('payload_data: {}'.format(payload_data))
 
             address_id = int(payload_data.get('address_id'))
-            country_id = int(payload_data.get('country_id'))
-            state_id = payload_data.get('state_id')
-            state_id = int(state_id) if state_id else False
+            country_id = None
+            state_id = None
+            if 'country_id' in payload_data.keys():
+                country_id = int(payload_data.get('country_id'))
 
-            default_delivery = None
-            if 'default_delivery' in payload_data.keys():
-                default_delivery = payload_data.get('default_delivery', False)
+            if 'state_id' in payload_data.keys():
+                state_id = int(payload_data.get('state_id'))
+                state_id = int(state_id) if state_id else False
         except Exception as e:
             _logger.info('出现了错误: {}'.format(e))
             return self.response_http_json_error(400, message='出现错误!{}'.format(e))
@@ -184,11 +185,8 @@ class ResPartnerAddress(http.Controller, BaseController):
             })
 
         for up_key in update_key:
-            if payload_data.get(up_key):
+            if up_key in payload_data.keys():
                 update_value[up_key] = payload_data.get(up_key)
-
-        if default_delivery is not None:
-            update_value['default_delivery'] = default_delivery
 
         if not update_value:
             return self.response_http_json_error(400, message='更新数据异常!')

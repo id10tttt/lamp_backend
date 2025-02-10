@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="loyalty_points" model="product.product">
+            <field name="name">Loyalty Points</field>
+            <field name="list_price">1</field>
+            <field name="detailed_type">service</field>
+            <field name="purchase_ok" eval="False"/>
+            <field name="sale_ok" eval="True"/>
+        </record>
+    </data>
+</odoo>

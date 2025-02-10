@@ -69,25 +69,41 @@ class SaleOrder(http.Controller, BaseController):
     def create_loyalty_record(self, sale_order_rec):
         if sale_order_rec.amount_total <= 0:
             return
-        vals = {'order_no': sale_order_rec.name,
-                'points': sale_order_rec.amount_total,
-                'order_date': sale_order_rec.date_order,
-                'partner_id': sale_order_rec.partner_id.id,
-                'referral_partner_id': sale_order_rec.partner_id.id
-                }
+        vals = {
+            'order_no': sale_order_rec.name,
+            'order_id': sale_order_rec.id,
+            'points': sale_order_rec.amount_total,
+            'order_date': sale_order_rec.date_order,
+            'partner_id': sale_order_rec.partner_id.id,
+            'referral_partner_id': sale_order_rec.partner_id.id
+        }
         earned_reward_rec = request.env['website.earn.loyalty'].sudo().create(vals)
         _logger.info('创建积分记录! {}'.format(earned_reward_rec))
+
+    def apply_redeem_points(self, sale_order_rec, points_amount):
+        redeem_amount = -abs(points_amount / 100)
+        sale_order_rec.write({
+            'redeem_amount': redeem_amount,
+            'order_line': [(0, 0, {
+                'product_id': request.env.ref('lamp_order.loyalty_points').id,
+                'product_uom_qty': 1,
+                'name': '折扣：积分兑换',
+                'price_unit': redeem_amount
+            })]
+        })
 
     def create_redeem_loyalty_record(self, sale_order_rec, points_amount):
         if points_amount <= 0:
             return
 
-        values = {'order_no': sale_order_rec.name,
-                  'points': points_amount,
-                  'order_date': sale_order_rec.date_order,
-                  'partner_id': sale_order_rec.partner_id.id,
-                  'points_amount': points_amount,
-                  }
+        values = {
+            'order_no': sale_order_rec.name,
+            'order_id': sale_order_rec.id,
+            'points': points_amount,
+            'order_date': sale_order_rec.date_order,
+            'partner_id': sale_order_rec.partner_id.id,
+            'points_amount': points_amount,
+        }
         redeem_id = request.env['website.redeem.loyalty'].sudo().create(values)
         _logger.info('使用积分! {}'.format(redeem_id))
 
@@ -166,6 +182,9 @@ class SaleOrder(http.Controller, BaseController):
                 request.env['sale.coupon.apply.code'].with_context(active_id=sale_order_rec.id).sudo().create({
                     'coupon_code': coupon_id.code
                 }).process_coupon()
+
+            if redeem_points:
+                self.apply_redeem_points(sale_order_rec, redeem_points)
 
             # 保存积分
             self.create_loyalty_record(sale_order_rec)
@@ -267,6 +286,8 @@ class SaleOrder(http.Controller, BaseController):
                 request.env['sale.coupon.apply.code'].with_context(active_id=sale_order_rec.id).sudo().create({
                     'coupon_code': coupon_id.code
                 }).process_coupon()
+            if redeem_points:
+                self.apply_redeem_points(sale_order_rec, redeem_points)
 
             amount_total = sale_order_rec.amount_total
             coupon_amount = sale_order_rec.reward_amount
