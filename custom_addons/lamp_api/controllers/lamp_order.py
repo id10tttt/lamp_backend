@@ -148,10 +148,10 @@ class SaleOrder(http.Controller, BaseController):
             ('parent_id', '=', request.partner_id)
         ])
 
-        if (not all([start_date, end_date, order_line, picker_partner_id, pick_time]) or
+        if (not all([start_date, end_date, order_line, picker_partner_id]) or
                 not isinstance(order_line, list)):
             if raise_exceptions:
-                raise ValidationError('订单数据异常')
+                raise ValidationError('订单数据异常! 缺少必要的字段')
 
         partner_id = request.env['res.partner'].sudo().search([
             ('id', '=', request.partner_id)
