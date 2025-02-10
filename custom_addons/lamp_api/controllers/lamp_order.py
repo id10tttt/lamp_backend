@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import math
 from datetime import datetime
-from odoo import http
+from odoo import http, fields
 from odoo.http import request
 import json
 from .base import BaseController
@@ -140,7 +140,11 @@ class SaleOrder(http.Controller, BaseController):
         try:
             _logger.info('payload_data: {}'.format(payload_data))
             start_date = payload_data.get('start_date')
+            if not start_date:
+                start_date = fields.Date.today()
             end_date = payload_data.get('end_date')
+            if not end_date:
+                end_date = fields.Date.today()
             picker_partner_id = payload_data.get('picker_partner_id')
             picker_partner_id = int(picker_partner_id) if picker_partner_id else False
             # picker = payload_data.get('picker')
