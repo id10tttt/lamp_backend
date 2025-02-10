@@ -87,7 +87,8 @@ class ResPartnerAddress(http.Controller, BaseController):
             _logger.info('payload_data: {}'.format(payload_data))
 
             country_id = int(payload_data.get('country_id'))
-            state_id = int(payload_data.get('state_id'))
+            state_id = payload_data.get('state_id')
+            state_id = int(state_id) if state_id else False
             name = payload_data.get('name')
             city = payload_data.get('city')
             street = payload_data.get('street')
@@ -141,7 +142,8 @@ class ResPartnerAddress(http.Controller, BaseController):
 
             address_id = int(payload_data.get('address_id'))
             country_id = int(payload_data.get('country_id'))
-            state_id = int(payload_data.get('state_id'))
+            state_id = payload_data.get('state_id')
+            state_id = int(state_id) if state_id else False
 
         except Exception as e:
             _logger.info('出现了错误: {}'.format(e))
