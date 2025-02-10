@@ -129,9 +129,20 @@ class ResPartnerAddress(http.Controller, BaseController):
 
         partner_address_id = request.env['res.partner'].sudo().create(partner_data)
 
+        # 更新状态
+        self.change_partner_address_default_state(partner_address_id)
+
         return self.response_http_json_success(data={
             'id': partner_address_id.id
         }, message='创建成功')
+
+    def change_partner_address_default_state(self, address_id):
+        if address_id.default_delivery:
+            partner_id_address = address_id.partner_id.child_ids
+            partner_id_address = partner_id_address.filtered(lambda p: p.id != address_id.id)
+            partner_id_address.write({
+                'default_delivery': False
+            })
 
     @http.route('/api/v1/lamp/res/partner/address', auth='public', methods=['PATCH'], csrf=False, cors="*", type='json')
     @verify_auth_token_only()
@@ -194,6 +205,8 @@ class ResPartnerAddress(http.Controller, BaseController):
 
         address_id.write(update_value)
 
+        # 更新状态
+        self.change_partner_address_default_state(address_id)
         return self.response_http_json_success(data={
             'id': address_id.id
         }, message='修改成功')
