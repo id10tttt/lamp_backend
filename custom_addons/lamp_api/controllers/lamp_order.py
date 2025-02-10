@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import math
-
+from datetime import datetime
 from odoo import http
 from odoo.http import request
 import json
@@ -46,6 +46,11 @@ class SaleOrder(http.Controller, BaseController):
         return self.response_json_success(data=order_data, message='成功')
 
     def get_end_and_start_days(self, start_date, end_date):
+        if isinstance(start_date, str):
+            start_date = datetime.strptime(start_date, "%Y-%m-%d")
+        if isinstance(end_date, str):
+            end_date = datetime.strptime(end_date, "%Y-%m-%d")
+
         if start_date and end_date:
             return (end_date - start_date).days + 1
 
