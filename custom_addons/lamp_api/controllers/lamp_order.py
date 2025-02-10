@@ -153,7 +153,7 @@ class SaleOrder(http.Controller, BaseController):
             sale_order_rec = request.env['sale.order'].sudo().create(order_data)
             for coupon_id in coupon_ids:
                 request.env['sale.coupon.apply.code'].with_context(active_id=sale_order_rec.id).create({
-                    'coupon_code': coupon_id.name
+                    'coupon_code': coupon_id.code
                 }).process_coupon()
 
             # 保存积分
@@ -247,7 +247,7 @@ class SaleOrder(http.Controller, BaseController):
             sale_order_rec = request.env['sale.order'].sudo().create(order_data)
             for coupon_id in coupon_ids:
                 request.env['sale.coupon.apply.code'].with_context(active_id=sale_order_rec.id).create({
-                    'coupon_code': coupon_id.name
+                    'coupon_code': coupon_id.code
                 }).process_coupon()
 
             amount_total = sale_order_rec.amount_total
