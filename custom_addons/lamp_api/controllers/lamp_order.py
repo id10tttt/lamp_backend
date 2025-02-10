@@ -187,6 +187,7 @@ class SaleOrder(http.Controller, BaseController):
             picker = payload_data.get('picker')
             picker_phone = payload_data.get('picker_phone')
             pick_time = payload_data.get('pick_time')
+            coupon_ids = payload_data.get('coupon_ids')
             warehouse_id = payload_data.get('warehouse_id')
             redeem_points = payload_data.get('redeem_points', 0)
 
@@ -230,10 +231,27 @@ class SaleOrder(http.Controller, BaseController):
 
         amount_total = 0
 
+        if coupon_ids:
+            filter_domain = [('id', 'in', coupon_ids),
+                             ('partner_id', '=', request.partner_id)]
+            order_domain = ['|', ('order_id', '=', False), ('order_id.state', '!=', 'cancel')]
+
+            filter_domain = expression.AND([filter_domain, order_domain])
+            coupon_ids = request.env['coupon.coupon'].sudo().search(filter_domain)
+            if len(coupon_ids) != len(set(coupon_ids)):
+                return self.response_http_json_error(400, message='优惠券信息异常!')
+
+        coupon_amount = 0
         # TODO: 计算费用
         try:
-            order_id = request.env['sale.order'].sudo().create(order_data)
-            amount_total = order_id.amount_total
+            sale_order_rec = request.env['sale.order'].sudo().create(order_data)
+            for coupon_id in coupon_ids:
+                request.env['sale.coupon.apply.code'].with_context(active_id=sale_order_rec.id).create({
+                    'coupon_code': coupon_id.name
+                }).process_coupon()
+
+            amount_total = sale_order_rec.amount_total
+            coupon_amount = sale_order_rec.reward_amount
             raise
         except Exception as e:
             request.env.cr.rollback()
@@ -241,5 +259,6 @@ class SaleOrder(http.Controller, BaseController):
         resp_data = {
             'amount_total': amount_total,
             'redeem_amount': redeem_points / 100,
+            'coupon_amount': coupon_amount,
         }
         return self.response_http_json_success(data=resp_data, message='成功')
