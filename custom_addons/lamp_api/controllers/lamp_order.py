@@ -158,7 +158,7 @@ class SaleOrder(http.Controller, BaseController):
         try:
             sale_order_rec = request.env['sale.order'].sudo().create(order_data)
             for coupon_id in coupon_ids:
-                request.env['sale.coupon.apply.code'].with_context(active_id=sale_order_rec.id).create({
+                request.env['sale.coupon.apply.code'].with_context(active_id=sale_order_rec.id).sudo().create({
                     'coupon_code': coupon_id.code
                 }).process_coupon()
 
@@ -259,7 +259,7 @@ class SaleOrder(http.Controller, BaseController):
         try:
             sale_order_rec = request.env['sale.order'].sudo().create(order_data)
             for coupon_id in coupon_ids:
-                request.env['sale.coupon.apply.code'].with_context(active_id=sale_order_rec.id).create({
+                request.env['sale.coupon.apply.code'].with_context(active_id=sale_order_rec.id).sudo().create({
                     'coupon_code': coupon_id.code
                 }).process_coupon()
 
