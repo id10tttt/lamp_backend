@@ -136,7 +136,7 @@ class ResPartnerAddress(http.Controller, BaseController):
     @http.route('/api/v1/lamp/res/partner/address', auth='public', methods=['PATCH'], csrf=False, cors="*", type='json')
     @verify_auth_token_only()
     def patch_my_address(self, lang='en_US', **kwargs):
-        update_key = ['name', 'city', 'street', 'street2', 'mobile', 'email']
+        update_key = ['name', 'city', 'street', 'street2', 'mobile', 'email', 'default_delivery']
         try:
             request.env.context = dict(request.env.context, lang=lang)
 
@@ -152,6 +152,7 @@ class ResPartnerAddress(http.Controller, BaseController):
             if 'state_id' in payload_data.keys():
                 state_id = int(payload_data.get('state_id'))
                 state_id = int(state_id) if state_id else False
+
         except Exception as e:
             _logger.info('出现了错误: {}'.format(e))
             return self.response_http_json_error(400, message='出现错误!{}'.format(e))
