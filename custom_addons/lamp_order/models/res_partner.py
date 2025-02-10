@@ -27,7 +27,7 @@ class ResPartner(models.Model):
 
     earned_loyalty_ids = fields.One2many('website.earn.loyalty', 'partner_id', string="Earned Loyalty")
     redeem_loyalty_ids = fields.One2many('website.redeem.loyalty', 'partner_id', string="Redeem Loyalty")
-    remaining_points = fields.Integer(string="Available Points", compute='compute_total_earned', store=True)
+    remaining_points = fields.Integer(string="Available Points", compute='compute_total_earned', store=True, default=0)
 
     @api.depends('earned_loyalty_ids', 'redeem_loyalty_ids')
     def compute_total_earned(self):
