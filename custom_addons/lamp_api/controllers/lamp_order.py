@@ -45,6 +45,12 @@ class SaleOrder(http.Controller, BaseController):
 
         return self.response_json_success(data=order_data, message='成功')
 
+    def get_end_and_start_days(self, start_date, end_date):
+        if start_date and end_date:
+            return (end_date - start_date).days + 1
+
+        return 1
+
     def parse_sale_order_line(self, order_line, start_date, end_date):
         all_product_ids = [x.get('product_id') for x in order_line]
         product_ids = request.env['product.product'].sudo().search([
@@ -56,13 +62,18 @@ class SaleOrder(http.Controller, BaseController):
             if not product_id:
                 continue
 
+            # 对应租赁服务
+            rental_service_ids = product_id.rental_service_ids
+            product_id = rental_service_ids[0] if rental_service_ids else product_id
+
             order_line_data.append((0, 0, {
                 'product_id': product_id.id,
                 'name': '租赁: {}'.format(product_id.name),
-                'product_uom_qty': line_data.get('product_uom_qty'),
+                'product_uom_qty': line_data.get('product_uom_qty') * self.get_end_and_start_days(start_date, end_date),
                 'price_unit': product_id.list_price,
-                'start_date': start_date,
-                'end_date': end_date
+                'start_date': start_date if start_date else False,
+                'end_date': end_date if end_date else False,
+                'rental_qty': line_data.get('product_uom_qty')
             }))
 
         return order_line_data
