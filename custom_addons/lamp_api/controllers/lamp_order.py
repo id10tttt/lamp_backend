@@ -93,24 +93,30 @@ class SaleOrder(http.Controller, BaseController):
             request.env.context = dict(request.env.context, lang=lang)
             payload_data = json.loads(request.httprequest.data)
             _logger.info('payload_data: {}'.format(payload_data))
+            start_date = payload_data.get('state_date')
+            end_date = payload_data.get('state_date')
+            picker = payload_data.get('picker')
+            picker_phone = payload_data.get('picker_phone')
+            pick_time = payload_data.get('pick_time')
+            warehouse_id = payload_data.get('warehouse_id')
+            redeem_points = payload_data.get('redeem_points', 0)
+            redeem_points = int(redeem_points) if redeem_points else 0
+
+            order_line = payload_data.get('order_line')
+            coupon_ids = payload_data.get('coupon_ids')
         except Exception as e:
             _logger.info('出现了错误: {}'.format(e))
             return self.response_http_json_error(400, message='出现错误!{}'.format(e))
 
-        start_date = payload_data.get('state_date')
-        end_date = payload_data.get('state_date')
-        picker = payload_data.get('picker')
-        picker_phone = payload_data.get('picker_phone')
-        pick_time = payload_data.get('pick_time')
-        warehouse_id = payload_data.get('warehouse_id')
-        redeem_points = payload_data.get('redeem_points', 0)
-
-        order_line = payload_data.get('order_line')
-        coupon_ids = payload_data.get('coupon_ids')
-
         if (not all([start_date, end_date, order_line, picker, picker_phone, pick_time]) or
                 not isinstance(order_line, list)):
             return self.response_http_json_error(400, message='订单数据异常!')
+
+        partner_id = request.env['res.partner'].sudo().search([
+            ('id', '=', request.partner_id)
+        ])
+        if redeem_points > 0 and redeem_points > partner_id.remaining_points:
+            return self.response_http_json_error(400, message='积分不足!')
 
         warehouse_id = request.env['stock.warehouse'].sudo().search([
             ('id', '=', warehouse_id)
@@ -190,6 +196,7 @@ class SaleOrder(http.Controller, BaseController):
             coupon_ids = payload_data.get('coupon_ids')
             warehouse_id = payload_data.get('warehouse_id')
             redeem_points = payload_data.get('redeem_points', 0)
+            redeem_points = int(redeem_points) if redeem_points else 0
 
             order_line = payload_data.get('order_line')
             note = payload_data.get('note')
@@ -201,6 +208,12 @@ class SaleOrder(http.Controller, BaseController):
         if (not all([start_date, end_date, order_line, picker, picker_phone, pick_time]) or
                 not isinstance(order_line, list)):
             return self.response_http_json_error(400, message='订单数据异常!')
+
+        partner_id = request.env['res.partner'].sudo().search([
+            ('id', '=', request.partner_id)
+        ])
+        if redeem_points > 0 and redeem_points > partner_id.remaining_points:
+            return self.response_http_json_error(400, message='积分不足!')
 
         warehouse_id = request.env['stock.warehouse'].sudo().search([
             ('id', '=', warehouse_id)
