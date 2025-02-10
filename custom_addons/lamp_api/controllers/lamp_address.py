@@ -73,6 +73,7 @@ class ResPartnerAddress(http.Controller, BaseController):
             'street2': child_id.street2,
             'mobile': child_id.mobile,
             'email': child_id.email,
+            'default_delivery': child_id.default_delivery,
         } for child_id in partner_id.child_ids]
 
         return self.response_json_success(data=partner_data, message='成功')
@@ -95,6 +96,7 @@ class ResPartnerAddress(http.Controller, BaseController):
             street2 = payload_data.get('street2')
             mobile = payload_data.get('mobile')
             email = payload_data.get('email')
+            default_delivery = payload_data.get('default_delivery', False)
 
         except Exception as e:
             _logger.info('出现了错误: {}'.format(e))
@@ -121,7 +123,8 @@ class ResPartnerAddress(http.Controller, BaseController):
             'mobile': mobile,
             'email': email,
             'type': 'delivery',
-            'parent_id': request.partner_id
+            'parent_id': request.partner_id,
+            'default_delivery': default_delivery
         }
 
         partner_address_id = request.env['res.partner'].sudo().create(partner_data)
@@ -145,6 +148,9 @@ class ResPartnerAddress(http.Controller, BaseController):
             state_id = payload_data.get('state_id')
             state_id = int(state_id) if state_id else False
 
+            default_delivery = None
+            if 'default_delivery' in payload_data.keys():
+                default_delivery = payload_data.get('default_delivery', False)
         except Exception as e:
             _logger.info('出现了错误: {}'.format(e))
             return self.response_http_json_error(400, message='出现错误!{}'.format(e))
@@ -180,6 +186,9 @@ class ResPartnerAddress(http.Controller, BaseController):
         for up_key in update_key:
             if payload_data.get(up_key):
                 update_value[up_key] = payload_data.get(up_key)
+
+        if default_delivery is not None:
+            update_value['default_delivery'] = default_delivery
 
         if not update_value:
             return self.response_http_json_error(400, message='更新数据异常!')
