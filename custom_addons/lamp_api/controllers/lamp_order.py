@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import math
+
 from odoo import http
 from odoo.http import request
 import json
@@ -71,7 +73,7 @@ class SaleOrder(http.Controller, BaseController):
         vals = {
             'order_no': sale_order_rec.name,
             'order_id': sale_order_rec.id,
-            'points': sale_order_rec.amount_total,
+            'points': math.floor(sale_order_rec.amount_total),
             'order_date': sale_order_rec.date_order,
             'partner_id': sale_order_rec.partner_id.id,
             'referral_partner_id': sale_order_rec.partner_id.id
@@ -250,8 +252,6 @@ class SaleOrder(http.Controller, BaseController):
                 request.env['sale.coupon.apply.code'].with_context(active_id=sale_order_rec.id).sudo().create({
                     'coupon_code': coupon_id.code
                 }).process_coupon()
-            if redeem_points:
-                self.apply_redeem_points(sale_order_rec, redeem_points)
 
             amount_total = sale_order_rec.amount_total
             coupon_amount = sale_order_rec.reward_amount
@@ -261,7 +261,7 @@ class SaleOrder(http.Controller, BaseController):
 
         resp_data = {
             'amount_total': amount_total,
-            'redeem_amount': redeem_points / 100,
+            'loyalty_points': math.floor(amount_total),
             'coupon_amount': coupon_amount,
         }
         return self.response_http_json_success(data=resp_data, message='成功')
