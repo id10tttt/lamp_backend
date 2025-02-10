@@ -81,14 +81,18 @@ class SaleOrder(http.Controller, BaseController):
         _logger.info('创建积分记录! {}'.format(earned_reward_rec))
 
     def apply_redeem_points(self, sale_order_rec, points_amount):
-        redeem_amount = -abs(points_amount / 100)
+        redeem_amount = abs(points_amount / 100)
+        # 免费的订单
+        if sale_order_rec.amount_total - redeem_amount < 0:
+            redeem_amount = sale_order_rec.amount_total
+
         sale_order_rec.write({
-            'redeem_amount': redeem_amount,
+            'redeem_amount': -redeem_amount,
             'order_line': [(0, 0, {
                 'product_id': request.env.ref('lamp_order.loyalty_points').id,
                 'product_uom_qty': 1,
                 'name': '折扣：积分兑换',
-                'price_unit': redeem_amount
+                'price_unit': -redeem_amount
             })]
         })
 
