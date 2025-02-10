@@ -48,6 +48,7 @@
                     <group>
                         <group>
                             <field name="defer"/>
+                            <field name="picker_partner_id"/>
                             <field name="picker"/>
                             <field name="picker_phone"/>
                             <field name="pick_time"/>

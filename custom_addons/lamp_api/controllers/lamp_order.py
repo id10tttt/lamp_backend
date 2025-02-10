@@ -5,9 +5,8 @@ import json
 from .base import BaseController
 import logging
 from odoo.osv import expression
-from ..tools.tools_common import (
-    get_random_login_code, get_access_token_from_redis, verify_auth_token_only, get_lamp_order_number,
-    DEFAULT_TOKEN_EXPIRE, jwt_encode, LAMP_ISSUER, LAMP_AUDIENCE, verify_auth_token, save_access_token_to_redis)
+from odoo.exceptions import ValidationError
+from ..tools.tools_common import verify_auth_token_only, get_lamp_order_number
 
 _logger = logging.getLogger(__name__)
 
@@ -111,17 +110,14 @@ class SaleOrder(http.Controller, BaseController):
         redeem_id = request.env['website.redeem.loyalty'].sudo().create(values)
         _logger.info('使用积分! {}'.format(redeem_id))
 
-    @http.route('/api/v1/lamp/sale/order', auth='public', methods=['POST'], csrf=False, cors="*", type='json')
-    @verify_auth_token_only()
-    def create_sale_order(self, lang='en_US', **kwargs):
+    def prepare_sale_order(self, payload_data):
         try:
-            request.env.context = dict(request.env.context, lang=lang)
-            payload_data = json.loads(request.httprequest.data)
             _logger.info('payload_data: {}'.format(payload_data))
             start_date = payload_data.get('state_date')
             end_date = payload_data.get('state_date')
-            picker = payload_data.get('picker')
-            picker_phone = payload_data.get('picker_phone')
+            picker_partner_id = int(payload_data.get('picker_partner_id'))
+            # picker = payload_data.get('picker')
+            # picker_phone = payload_data.get('picker_phone')
             pick_time = payload_data.get('pick_time')
             warehouse_id = payload_data.get('warehouse_id')
             redeem_points = payload_data.get('redeem_points', 0)
@@ -131,23 +127,28 @@ class SaleOrder(http.Controller, BaseController):
             coupon_ids = payload_data.get('coupon_ids')
         except Exception as e:
             _logger.info('出现了错误: {}'.format(e))
-            return self.response_http_json_error(400, message='出现错误!{}'.format(e))
+            raise ValidationError('出现错误!{}'.format(e))
 
-        if (not all([start_date, end_date, order_line, picker, picker_phone, pick_time]) or
+        picker_partner_id = request.env['res.partner'].sudo().search([
+            ('id', '=', picker_partner_id),
+            ('parent_id', '=', request.partner_id)
+        ])
+
+        if (not all([start_date, end_date, order_line, picker_partner_id, pick_time]) or
                 not isinstance(order_line, list)):
-            return self.response_http_json_error(400, message='订单数据异常!')
+            raise ValidationError('订单数据异常')
 
         partner_id = request.env['res.partner'].sudo().search([
             ('id', '=', request.partner_id)
         ])
         if redeem_points > 0 and redeem_points > partner_id.remaining_points:
-            return self.response_http_json_error(400, message='积分不足!')
+            raise ValidationError('积分不足')
 
         warehouse_id = request.env['stock.warehouse'].sudo().search([
             ('id', '=', warehouse_id)
         ])
         if not warehouse_id:
-            return self.response_http_json_error(400, message='仓库信息异常!')
+            raise ValidationError('仓库信息异常')
 
         if coupon_ids:
             filter_domain = [('id', 'in', coupon_ids),
@@ -157,15 +158,16 @@ class SaleOrder(http.Controller, BaseController):
             filter_domain = expression.AND([filter_domain, order_domain])
             coupon_ids = request.env['coupon.coupon'].sudo().search(filter_domain)
             if len(coupon_ids) != len(set(coupon_ids)):
-                return self.response_http_json_error(400, message='优惠券信息异常!')
+                raise ValidationError('优惠券信息异常!')
 
         order_data = {
             'name': get_lamp_order_number(),
             'partner_id': request.partner_id,
             'default_start_date': start_date,
             'default_end_date': end_date,
-            'picker': picker,
-            'picker_phone': picker_phone,
+            'picker_partner_id': picker_partner_id.id,
+            'picker': picker_partner_id.name,
+            'picker_phone': picker_partner_id.mobile,
             'pick_time': pick_time,
             'state': 'draft',
             'note': payload_data.get('note'),
@@ -174,11 +176,28 @@ class SaleOrder(http.Controller, BaseController):
 
         order_line_data = self.parse_sale_order_line(order_line, start_date, end_date)
         if not order_line_data or len(order_line_data) != len(order_line):
-            return self.response_http_json_error(400, message='解析订单出现了错误!')
+            raise ValidationError('解析订单出现了错误')
 
         order_data.update({
             'order_line': order_line_data,
         })
+
+        return order_data, coupon_ids
+
+    @http.route('/api/v1/lamp/sale/order', auth='public', methods=['POST'], csrf=False, cors="*", type='json')
+    @verify_auth_token_only()
+    def create_sale_order(self, lang='en_US', **kwargs):
+        try:
+            request.env.context = dict(request.env.context, lang=lang)
+            payload_data = json.loads(request.httprequest.data)
+
+            redeem_points = payload_data.get('redeem_points', 0)
+            redeem_points = int(redeem_points) if redeem_points else 0
+            order_data, coupon_ids = self.prepare_sale_order(payload_data)
+
+        except Exception as e:
+            _logger.info('出现了错误: {}'.format(e))
+            return self.response_http_json_error(400, message='出现错误!{}'.format(e))
 
         try:
             sale_order_rec = request.env['sale.order'].sudo().create(order_data)
@@ -212,76 +231,17 @@ class SaleOrder(http.Controller, BaseController):
     def get_sale_order_price_amount(self, lang='en_US', **kwargs):
         try:
             request.env.context = dict(request.env.context, lang=lang)
-
             payload_data = json.loads(request.httprequest.data)
-            _logger.info('payload_data: {}'.format(payload_data))
 
-            start_date = payload_data.get('state_date')
-            end_date = payload_data.get('state_date')
-            picker = payload_data.get('picker')
-            picker_phone = payload_data.get('picker_phone')
-            pick_time = payload_data.get('pick_time')
-            coupon_ids = payload_data.get('coupon_ids')
-            warehouse_id = payload_data.get('warehouse_id')
             redeem_points = payload_data.get('redeem_points', 0)
             redeem_points = int(redeem_points) if redeem_points else 0
-
-            order_line = payload_data.get('order_line')
-            note = payload_data.get('note')
+            order_data, coupon_ids = self.prepare_sale_order(payload_data)
 
         except Exception as e:
             _logger.info('出现了错误: {}'.format(e))
             return self.response_http_json_error(400, message='出现错误!{}'.format(e))
 
-        if (not all([start_date, end_date, order_line, picker, picker_phone, pick_time]) or
-                not isinstance(order_line, list)):
-            return self.response_http_json_error(400, message='订单数据异常!')
-
-        partner_id = request.env['res.partner'].sudo().search([
-            ('id', '=', request.partner_id)
-        ])
-        if redeem_points > 0 and redeem_points > partner_id.remaining_points:
-            return self.response_http_json_error(400, message='积分不足!')
-
-        warehouse_id = request.env['stock.warehouse'].sudo().search([
-            ('id', '=', warehouse_id)
-        ])
-        if not warehouse_id:
-            return self.response_http_json_error(400, message='仓库信息异常!')
-
-        order_data = {
-            'name': get_lamp_order_number(),
-            'partner_id': request.partner_id,
-            'default_start_date': start_date,
-            'default_end_date': end_date,
-            'picker': picker,
-            'picker_phone': picker_phone,
-            'pick_time': pick_time,
-            'state': 'draft',
-            'note': note,
-            'warehouse_id': warehouse_id.id
-        }
-
-        order_line_data = self.parse_sale_order_line(order_line, start_date, end_date)
-        if not order_line_data or len(order_line_data) != len(order_line):
-            return self.response_http_json_error(400, message='解析订单出现了错误!')
-
-        order_data.update({
-            'order_line': order_line_data
-        })
-
         amount_total = 0
-
-        if coupon_ids:
-            filter_domain = [('id', 'in', coupon_ids),
-                             ('partner_id', '=', request.partner_id)]
-            order_domain = ['|', ('order_id', '=', False), ('order_id.state', '!=', 'cancel')]
-
-            filter_domain = expression.AND([filter_domain, order_domain])
-            coupon_ids = request.env['coupon.coupon'].sudo().search(filter_domain)
-            if len(coupon_ids) != len(set(coupon_ids)):
-                return self.response_http_json_error(400, message='优惠券信息异常!')
-
         coupon_amount = 0
         # TODO: 计算费用
         try:

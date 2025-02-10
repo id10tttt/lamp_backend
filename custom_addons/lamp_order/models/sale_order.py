@@ -8,6 +8,7 @@ class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
     defer = fields.Boolean('Defer', default=False, copy=False, tracking=True)
+    picker_partner_id = fields.Many2one('res.partner', string='Picker')
     picker = fields.Char('Picker')
     picker_phone = fields.Char('Picker Phone')
     pick_time = fields.Datetime('Pick Time')
