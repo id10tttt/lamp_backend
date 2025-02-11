@@ -244,7 +244,7 @@ class SaleOrder(http.Controller, BaseController):
                 request.env['sale.coupon.apply.code'].with_context(active_id=sale_order_rec.id).sudo().create({
                     'coupon_code': coupon_id.code
                 }).process_coupon()
-            
+
             # 删除购物车
             for task_id in empty_cart_task:
                 self.delete_shop_cart_after_order_created(task_id, warehouse_id)
@@ -276,7 +276,7 @@ class SaleOrder(http.Controller, BaseController):
             request.env.context = dict(request.env.context, lang=lang)
             payload_data = json.loads(request.httprequest.data)
 
-            order_data, coupon_ids = self.prepare_sale_order(payload_data, raise_exceptions=False)
+            order_data, coupon_ids, empty_cart_task = self.prepare_sale_order(payload_data, raise_exceptions=False)
 
         except Exception as e:
             _logger.info('出现了错误: {}'.format(e))
