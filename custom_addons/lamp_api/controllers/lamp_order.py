@@ -50,8 +50,7 @@ class SaleOrder(http.Controller, BaseController):
         def parse_date(date_str):
             for fmt in date_formats:
                 try:
-                    res = datetime.strptime(date_str, fmt)
-                    return res.strftime('%Y%m%d')
+                    return datetime.strptime(date_str, fmt)
                 except ValueError:
                     continue
             return None
@@ -59,6 +58,12 @@ class SaleOrder(http.Controller, BaseController):
             start_date = parse_date(start_date)
         if isinstance(end_date, str):
             end_date = parse_date(end_date)
+
+        if isinstance(start_date, datetime):
+            start_date = start_date.date()
+
+        if isinstance(end_date, datetime):
+            end_date = end_date.date()
 
         if start_date and end_date:
             return (end_date - start_date).days + 1
