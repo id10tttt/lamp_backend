@@ -50,7 +50,8 @@ class SaleOrder(http.Controller, BaseController):
         def parse_date(date_str):
             for fmt in date_formats:
                 try:
-                    return datetime.strptime(date_str, fmt)
+                    res = datetime.strptime(date_str, fmt)
+                    return res.strftime('%Y%m%d')
                 except ValueError:
                     continue
             return None
