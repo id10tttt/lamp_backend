@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="stock_report_view_graph" model="ir.ui.view">
+        <field name="name">stock_report_view_graph</field>
+        <field name="model">stock.quant.forecast.report</field>
+        <field name="arch" type="xml">
+            <graph string="report_stock_quantity_graph" type="line" sample="1" disable_linking="1">
+                <field name="date" interval="day"/>
+                <field name="product_id"/>
+                <field name="product_qty" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="stock_report_view_pivot" model="ir.ui.view">
+        <field name="name">stock_report_view_pivot</field>
+        <field name="model">stock.quant.forecast.report</field>
+        <field name="arch" type="xml">
+            <pivot>
+                <field name="date" interval="day" type="col"/>
+                <field name="product_id" type="row"/>
+                <field name="product_qty" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="stock_report_view_tree" model="ir.ui.view">
+        <field name="name">stock_report_view_tree</field>
+        <field name="model">stock.quant.forecast.report</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="date" interval="day"/>
+                <field name="product_id"/>
+                <field name="product_qty" sum="1"/>
+                <field name="warehouse_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="stock_report_view_search" model="ir.ui.view">
+        <field name="name">report.stock.quantity.search</field>
+        <field name="model">stock.quant.forecast.report</field>
+        <field name="arch" type="xml">
+            <search string="Report Quantity">
+                <field name="product_id"/>
+                <field name="product_tmpl_id"/>
+                <field name="warehouse_id"/>
+                <group expand="0" string="Group By">
+                    <filter string="Date" name="groupby_date" domain="[]" context="{'group_by':'date:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="report_stock_quantity_forecast_action" model="ir.actions.act_window">
+        <field name="name">租赁库存预测</field>
+        <field name="res_model">stock.quant.forecast.report</field>
+        <field name="view_mode">pivot,tree,graph</field>
+        <field name="context">{
+            'graph_groupbys': ['date:day', 'product_id'],
+            }
+        </field>
+    </record>
+
+    <menuitem id="menu_rental_quant_forecast_inventory" name="租赁库存预测" parent="stock.menu_warehouse_report" sequence="901"
+              action="report_stock_quantity_forecast_action"/>
+</odoo>
+

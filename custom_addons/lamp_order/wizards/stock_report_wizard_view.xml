@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="view_stock_quant_forecast_form_view" model="ir.ui.view">
+            <field name="name">stock.quant.forecast.wizard form</field>
+            <field name="model">stock.quant.forecast.wizard</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="start_date"/>
+                            </group>
+                            <group>
+                                <field name="end_date"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="warehouse_id"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button string="开始计算" type="object" name="start_quant_forecast" class="btn-primary"/>
+                        <button string="取消" special="cancel" class="btn-secondary"/>
+                    </footer>
+                    <script type="text/javascript">
+                        $('.modal-dialog').draggable();
+                        $('.modal-content').resizable();
+                    </script>
+                </form>
+            </field>
+        </record>
+        <record id="action_recompute_stock_inv_fee_wizard" model="ir.actions.act_window">
+            <field name="name">重新计算某日仓储费</field>
+            <field name="res_model">stock.quant.forecast.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem id="menu_compute_quant_forecast" name="计算库存预测"
+                  parent="stock.menu_warehouse_report"
+                  action="action_recompute_stock_inv_fee_wizard" sequence="900"/>
+    </data>
+</odoo>
