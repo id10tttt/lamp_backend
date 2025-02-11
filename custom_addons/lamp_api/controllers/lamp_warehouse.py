@@ -66,6 +66,32 @@ class StockWarehouse(http.Controller, BaseController):
 
         return self.response_json_success(data=warehouse_data, message='成功')
 
+    @http.route('/api/v1/lamp/warehouse/detail', auth='public', methods=['POST'], csrf=False, cors="*",
+                type='json')
+    def get_warehouse_detail(self, lang='en_US', **kwargs):
+        try:
+            request.env.context = dict(request.env.context, lang=lang)
+            payload_data = json.loads(request.httprequest.data)
+            request.env.context = dict(request.env.context, lang=lang)
+            warehouse_id = payload_data.get('warehouse_id')
+            warehouse_id = int(warehouse_id) if warehouse_id else False
+        except Exception as e:
+            _logger.info('出现了错误: {}'.format(e), exc_info=True)
+            return self.response_http_json_error(400, message='出现错误!{}'.format(e))
+
+        warehouse_id = request.env['stock.warehouse'].sudo().search([('id', '=', warehouse_id)])
+
+        warehouse_data = {
+            'id': warehouse_id.id,
+            'name': warehouse_id.name,
+            'code': warehouse_id.code,
+            'address': warehouse_id.address,
+            'province': warehouse_id.province,
+            'warehouse_image': self.get_stock_warehouse_attachment_url(warehouse_id),
+        }
+
+        return self.response_http_json_success(data=warehouse_data, message='成功')
+
     @http.route('/api/v1/lamp/warehouse/<int:warehouse_id>', auth='public', methods=['GET'], csrf=False, cors="*",
                 type='http')
     def get_warehouse_detail(self, warehouse_id, lang='en_US', **kwargs):
