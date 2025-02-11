@@ -3,11 +3,10 @@ import datetime
 
 from odoo import http
 from odoo.http import request
-from odoo.tools import config
+from odoo.osv import expression
 import json
 from .base import BaseController
 import logging
-from ..tools.rsa_utils import RSAUtils
 from ..tools.tools_common import (
     verify_auth_token_only, get_access_token_from_redis,
     DEFAULT_TOKEN_EXPIRE, jwt_encode, LAMP_ISSUER, LAMP_AUDIENCE, verify_auth_token, save_access_token_to_redis)
@@ -58,9 +57,13 @@ class CouponCoupon(http.Controller, BaseController):
     @http.route('/api/v1/lamp/coupon/my', auth='public', methods=['GET'], csrf=False, cors="*", type='http')
     @verify_auth_token_only()
     def get_my_coupon_list(self, lang='en_US', **kwargs):
-        coupon_ids = request.env['coupon.coupon'].sudo().search([
-            ('partner_id', '=', request.partner_id)
-        ])
+        filter_domain = [('partner_id', '=', request.partner_id)]
+        state = kwargs.get('state')
+        if state:
+            state_domain = [('state', '=', state)]
+            filter_domain = expression.AND([filter_domain, state_domain])
+
+        coupon_ids = request.env['coupon.coupon'].sudo().search(filter_domain)
 
         if not coupon_ids:
             return self.response_json_error(400, message='没有优惠券可以用')
