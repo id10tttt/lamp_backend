@@ -53,7 +53,7 @@ class ResPartnerAddress(http.Controller, BaseController):
     def get_my_address_list(self, lang='en_US', **kwargs):
         partner_id = request.env['res.partner'].sudo().search([
             ('id', '=', request.partner_id)
-        ])
+        ], order='id desc')
 
         if not partner_id:
             return self.response_json_error(code=400, message='没有数据')
