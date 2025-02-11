@@ -8,7 +8,7 @@ from .base import BaseController
 import logging
 from odoo.osv import expression
 from odoo.exceptions import ValidationError
-from ..tools.tools_common import verify_auth_token_only, get_lamp_order_number
+from ..tools.tools_common import verify_auth_token_only, get_lamp_order_number, delete_shopping_cart_data
 
 _logger = logging.getLogger(__name__)
 
@@ -65,12 +65,14 @@ class SaleOrder(http.Controller, BaseController):
         return 1
 
     def parse_sale_order_line(self, order_line, start_date, end_date):
+        empty_cart_task = []
         all_product_ids = [x.get('product_id') for x in order_line]
         product_ids = request.env['product.product'].sudo().search([
             ('id', 'in', all_product_ids)
         ])
         order_line_data = []
         for line_data in order_line:
+            empty_cart_task.append(line_data.get('product_id'))
             product_id = product_ids.filtered(lambda p: p.id == line_data.get('product_id'))
             if not product_id:
                 continue
@@ -89,7 +91,7 @@ class SaleOrder(http.Controller, BaseController):
                 'rental_qty': line_data.get('product_uom_qty')
             }))
 
-        return order_line_data
+        return order_line_data, empty_cart_task
 
     def create_loyalty_record(self, sale_order_rec):
         if sale_order_rec.amount_total <= 0:
@@ -206,7 +208,7 @@ class SaleOrder(http.Controller, BaseController):
             'warehouse_id': warehouse_id.id
         }
 
-        order_line_data = self.parse_sale_order_line(order_line, start_date, end_date)
+        order_line_data, empty_cart_task = self.parse_sale_order_line(order_line, start_date, end_date)
         if not order_line_data or len(order_line_data) != len(order_line):
             raise ValidationError('解析订单出现了错误')
 
@@ -214,7 +216,11 @@ class SaleOrder(http.Controller, BaseController):
             'order_line': order_line_data,
         })
 
-        return order_data, coupon_ids
+        return order_data, coupon_ids, empty_cart_task
+
+    def delete_shop_cart_after_order_created(self, product_id, warehouse_id):
+        redis_key = '{}:{}'.format(product_id, warehouse_id)
+        delete_shopping_cart_data(request.partner_id, redis_key)
 
     @http.route('/api/v1/lamp/sale/order', auth='public', methods=['POST'], csrf=False, cors="*", type='json')
     @verify_auth_token_only()
@@ -224,8 +230,9 @@ class SaleOrder(http.Controller, BaseController):
             payload_data = json.loads(request.httprequest.data)
 
             redeem_points = payload_data.get('redeem_points', 0)
+            warehouse_id = int(payload_data.get('warehouse_id'))
             redeem_points = int(redeem_points) if redeem_points else 0
-            order_data, coupon_ids = self.prepare_sale_order(payload_data)
+            order_data, coupon_ids, empty_cart_task = self.prepare_sale_order(payload_data)
 
         except Exception as e:
             _logger.info('出现了错误: {}'.format(e))
@@ -237,6 +244,10 @@ class SaleOrder(http.Controller, BaseController):
                 request.env['sale.coupon.apply.code'].with_context(active_id=sale_order_rec.id).sudo().create({
                     'coupon_code': coupon_id.code
                 }).process_coupon()
+            
+            # 删除购物车
+            for task_id in empty_cart_task:
+                self.delete_shop_cart_after_order_created(task_id, warehouse_id)
 
             if redeem_points:
                 self.apply_redeem_points(sale_order_rec, redeem_points)
