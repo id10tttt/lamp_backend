@@ -63,7 +63,7 @@ class CouponCoupon(http.Controller, BaseController):
         ])
 
         if not coupon_ids:
-            return self.response_json_error(data=[], message='没有优惠券可以用')
+            return self.response_json_error(400, message='没有优惠券可以用')
 
         coupon_data = [{
             'id': coupon_id.id,
