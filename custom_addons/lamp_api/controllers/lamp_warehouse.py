@@ -68,7 +68,7 @@ class StockWarehouse(http.Controller, BaseController):
 
     @http.route('/api/v1/lamp/warehouse/detail', auth='public', methods=['POST'], csrf=False, cors="*",
                 type='json')
-    def get_warehouse_detail(self, lang='en_US', **kwargs):
+    def fetch_warehouse_detail(self, lang='en_US', **kwargs):
         try:
             request.env.context = dict(request.env.context, lang=lang)
             payload_data = json.loads(request.httprequest.data)
