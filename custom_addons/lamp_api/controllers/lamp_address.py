@@ -161,7 +161,7 @@ class ResPartnerAddress(http.Controller, BaseController):
                 country_id = int(payload_data.get('country_id'))
 
             if 'state_id' in payload_data.keys():
-                state_id = int(payload_data.get('state_id'))
+                state_id = payload_data.get('state_id')
                 state_id = int(state_id) if state_id else False
 
         except Exception as e:
@@ -181,9 +181,10 @@ class ResPartnerAddress(http.Controller, BaseController):
             ])
             if not country_id:
                 return self.response_http_json_error(400, message='地址信息异常')
-            update_value.update({
-                'country_id': country_id
-            })
+
+        update_value.update({
+            'country_id': country_id
+        })
 
         if state_id:
             state_id = request.env['res.country.state'].sudo().search([
@@ -192,9 +193,9 @@ class ResPartnerAddress(http.Controller, BaseController):
             if not state_id:
                 return self.response_http_json_error(400, message='地址信息异常')
             state_id = state_id.id
-            update_value.update({
-                'state_id': state_id
-            })
+        update_value.update({
+            'state_id': state_id
+        })
 
         for up_key in update_key:
             if up_key in payload_data.keys():
