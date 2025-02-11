@@ -88,6 +88,7 @@ class SaleOrder(http.Controller, BaseController):
             product_id = rental_service_ids[0] if rental_service_ids else product_id
 
             order_line_data.append((0, 0, {
+                'rental_type': 'new_rental',
                 'product_id': product_id.id,
                 'name': '租赁: {}'.format(product_id.name),
                 'product_uom_qty': line_data.get('product_uom_qty') * self.get_end_and_start_days(start_date, end_date),
