@@ -110,13 +110,13 @@ class ResPartnerAddress(http.Controller, BaseController):
             ('id', '=', state_id)
         ])
 
-        if not all([country_id, state_id]):
+        if not country_id:
             return self.response_http_json_error(400, message='地址信息异常')
 
         partner_data = {
             'name': name,
             'country_id': country_id.id,
-            'state_id': state_id.id,
+            'state_id': state_id.id if state_id else False,
             'city': city,
             'street': street,
             'street2': street2,
