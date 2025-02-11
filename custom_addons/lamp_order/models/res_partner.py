@@ -4,6 +4,7 @@ from odoo import models, fields, api
 
 class ResPartner(models.Model):
     _inherit = 'res.partner'
+    _order = 'id desc'
 
     _sql_constraints = [
         ('remaining_points_check',
