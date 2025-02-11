@@ -32,9 +32,10 @@ class StockQuantForcastReport(models.Model):
     warehouse_id = fields.Many2one('stock.warehouse', readonly=True)
 
     def action_stock_quant_report(self, warehouse_id, start_date, end_date):
-        all_location_ids = [warehouse_id.rental_in_location_id.id, warehouse_id.rental_out_location_id.id]
-        all_days = generate_all_day_between_start_and_end(start_date, end_date)
         today = fields.Date.today()
+        all_location_ids = [warehouse_id.rental_in_location_id.id, warehouse_id.rental_out_location_id.id]
+        end_date = end_date if end_date > today else today
+        all_days = generate_all_day_between_start_and_end(start_date, end_date)
 
         before_today = [x for x in all_days if x < today]
         after_today = [x for x in all_days if x > today]
