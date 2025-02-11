@@ -7,7 +7,7 @@ import json
 from .base import BaseController
 import logging
 from odoo.osv import expression
-from odoo.exceptions import ValidationError
+from odoo.exceptions import ValidationError, UserError
 from ..tools.tools_common import verify_auth_token_only, get_lamp_order_number, delete_shopping_cart_data
 
 _logger = logging.getLogger(__name__)
@@ -302,6 +302,10 @@ class SaleOrder(http.Controller, BaseController):
             coupon_amount = sale_order_rec.reward_amount
             _logger.info('订单信息! {}, {}, {}'.format(sale_order_rec, amount_total, coupon_amount))
             raise
+        except UserError as e:
+            request.env.cr.rollback()
+            return self.response_http_json_error(400, message='出现了错误: {}'.format(e))
+
         except Exception as e:
             _logger.error('出现了错误! {}'.format(e), exc_info=True)
             request.env.cr.rollback()
