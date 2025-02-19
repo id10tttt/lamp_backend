@@ -23,6 +23,7 @@ class SaleOrder(models.Model):
                 'pick_time': str(order_id.pick_time),
                 'warehouse_id': order_id.warehouse_id.id,
                 'warehouse_name': order_id.warehouse_id.name,
+                'amount_total': order_id.amount_total,
                 'order_line': [{
                     'product_image': sol.product_id.get_product_product_attachment_url(sol.product_id),
                     'product_id': sol.product_id.id,
@@ -32,6 +33,7 @@ class SaleOrder(models.Model):
                     'price_unit': sol.price_unit,
                     'start_date': str(sol.start_date),
                     'end_date': str(sol.end_date),
+                    'price_total': sol.price_total,
                 } for sol in order_id.order_line]
             }
 
