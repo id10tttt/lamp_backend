@@ -22,12 +22,12 @@ class SaleOrder(models.Model):
     stock_status = fields.Selection([
         ('10', '待出库'),
         ('20', '已出库，待入库'),
-    ], string='Stock Status', default='10')
+    ], string='Stock Status', default='10', tracking=True)
     payment_status = fields.Selection([
         ('10', '未收款'),
         ('20', '已收款'),
         ('30', '已结清'),
-    ], string='Payment Status', default='10')
+    ], string='Payment Status', default='10', tracking=True)
     payment_time = fields.Datetime('Payment Time')
     status = fields.Selection([
         ('10', '待确认'),
@@ -37,7 +37,7 @@ class SaleOrder(models.Model):
         ('50', '已取消'),
         ('60', '售后中'),
         ('70', '已删除'),
-    ], string='Status', default='10')
+    ], string='Status', default='10', tracking=True)
 
     pay_state = fields.Boolean('Pay State')
     return_time = fields.Datetime('Return Time')
@@ -69,6 +69,14 @@ class SaleOrder(models.Model):
     reward_amount = fields.Float("Reward Amount")
     redeem_amount = fields.Float('Redeem Amount')
 
+    def action_confirm(self):
+        res = super().action_confirm()
+
+        self.write({
+            'status': '20'
+        })
+
+        return res
 
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
