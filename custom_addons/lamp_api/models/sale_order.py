@@ -6,7 +6,7 @@ class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
     def parse_sale_order(self, order_ids):
-        order_data = []
+        resp_data = []
         for order_id in order_ids:
             order_data = {
                 'name': order_id.name,
@@ -35,7 +35,8 @@ class SaleOrder(models.Model):
                 } for sol in order_id.order_line]
             }
 
-        return order_data
+            resp_data.append(order_data)
+        return resp_data
 
     def get_current_order_price_total(self):
         pass
