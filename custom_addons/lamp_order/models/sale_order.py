@@ -19,10 +19,25 @@ class SaleOrder(models.Model):
     reserve = fields.Float('Reserve', digits=(16, 2))
     order_amount = fields.Float('Order Amount', digits=(16, 2))
     arrival_time = fields.Datetime('Arrival Time')
-    stock_status = fields.Selection([], string='Stock Status')
-    payment_status = fields.Selection([], string='Payment Status')
+    stock_status = fields.Selection([
+        ('10', '待出库'),
+        ('20', '已出库，待入库'),
+    ], string='Stock Status', default='10')
+    payment_status = fields.Selection([
+        ('10', '未收款'),
+        ('20', '已收款'),
+        ('30', '已结清'),
+    ], string='Payment Status', default='10')
     payment_time = fields.Datetime('Payment Time')
-    status = fields.Selection([], string='Status')
+    status = fields.Selection([
+        ('10', '待确认'),
+        ('20', '已确认'),
+        ('30', '租赁中'),
+        ('40', '已完成'),
+        ('50', '已取消'),
+        ('60', '售后中'),
+        ('70', '已删除'),
+    ], string='Status', default='10')
 
     pay_state = fields.Boolean('Pay State')
     return_time = fields.Datetime('Return Time')

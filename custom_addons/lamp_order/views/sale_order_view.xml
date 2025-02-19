@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
     <data>
+        <record id="view_quotation_tree_with_onboarding_inherit" model="ir.ui.view">
+            <field name="name">sale.order inherit</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_quotation_tree_with_onboarding"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='state']" position="after">
+                    <field name="status" optional="show"/>
+                    <field name="stock_status" optional="show"/>
+                    <field name="payment_status" optional="show"/>
+                </xpath>
+            </field>
+        </record>
+
         <record id="view_order_form_inherit" model="ir.ui.view">
             <field name="name">sale.order inherit</field>
             <field name="model">sale.order</field>
