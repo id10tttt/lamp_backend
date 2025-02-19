@@ -23,6 +23,7 @@ class SaleOrder(http.Controller, BaseController):
             request.env.context = dict(request.env.context, lang=lang)
             page = kwargs.get('page', 1)
             limit = kwargs.get('limit', 80)
+            status = kwargs.get('status')
         except Exception as e:
             _logger.info('出现了错误: {}'.format(e))
             return self.response_json_error(400, message='出现错误!{}'.format(e))
@@ -35,8 +36,38 @@ class SaleOrder(http.Controller, BaseController):
         except Exception as e:
             return self.response_json_error(400, message='数据类型错误')
 
+        filter_domain = [('partner_id', '=', request.partner_id)]
+
+        if status:
+            if status == 'to_confirm':
+                status_domain = [('status', '=', '10')]
+                filter_domain = expression.AND([filter_domain, status_domain])
+            elif status == 'to_pay':
+                status_domain = [
+                    ('status', '=', '20'),
+                    ('payment_status', '=', 10)
+                ]
+                filter_domain = expression.AND([filter_domain, status_domain])
+            elif status == 'to_delivery':
+                status_domain = [
+                    ('status', '=', '30'),
+                    ('stock_status', '=', '10')
+                ]
+                filter_domain = expression.AND([filter_domain, status_domain])
+            elif status == 'to_return':
+                status_domain = [
+                    ('status', '=', '30'),
+                    ('stock_status', '=', '20')
+                ]
+                filter_domain = expression.AND([filter_domain, status_domain])
+            elif status == 'completed':
+                status_domain = [
+                    ('status', '=', '40'),
+                ]
+                filter_domain = expression.AND([filter_domain, status_domain])
+
         order_ids = request.env['sale.order'].sudo().search([
-            ('partner_id', '=', request.partner_id)
+            filter_domain
         ], limit=limit, offset=offset, order='id desc')
         if not order_ids:
             return self.response_json_success(data=[], message='成功')

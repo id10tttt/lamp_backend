@@ -9,3 +9,4 @@ from . import lamp_product_category
 from . import lamp_res_currency
 from . import lamp_address
 from . import lamp_coupon
+from . import lamp_utils
