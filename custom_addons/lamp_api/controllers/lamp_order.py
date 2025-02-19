@@ -37,7 +37,7 @@ class SaleOrder(http.Controller, BaseController):
 
         order_ids = request.env['sale.order'].sudo().search([
             ('partner_id', '=', request.partner_id)
-        ])
+        ], limit=limit, offset=offset, order='id desc')
         if not order_ids:
             return self.response_json_success(data=[], message='成功')
 
@@ -47,6 +47,7 @@ class SaleOrder(http.Controller, BaseController):
 
     def get_end_and_start_days(self, start_date, end_date):
         date_formats = ["%Y-%m-%d %H:%M:%S", "%Y-%m-%d"]
+
         def parse_date(date_str):
             for fmt in date_formats:
                 try:
@@ -54,6 +55,7 @@ class SaleOrder(http.Controller, BaseController):
                 except ValueError:
                     continue
             return None
+
         if isinstance(start_date, str):
             start_date = parse_date(start_date)
         if isinstance(end_date, str):
