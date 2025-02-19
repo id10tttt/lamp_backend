@@ -66,9 +66,7 @@ class SaleOrder(http.Controller, BaseController):
                 ]
                 filter_domain = expression.AND([filter_domain, status_domain])
 
-        order_ids = request.env['sale.order'].sudo().search([
-            filter_domain
-        ], limit=limit, offset=offset, order='id desc')
+        order_ids = request.env['sale.order'].sudo().search(filter_domain, limit=limit, offset=offset, order='id desc')
         if not order_ids:
             return self.response_json_success(data=[], message='成功')
 
