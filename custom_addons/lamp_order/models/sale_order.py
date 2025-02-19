@@ -22,6 +22,7 @@ class SaleOrder(models.Model):
     stock_status = fields.Selection([
         ('10', '待出库'),
         ('20', '已出库，待入库'),
+        ('30', '已入库'),
     ], string='Stock Status', default='10', tracking=True)
     payment_status = fields.Selection([
         ('10', '未收款'),
