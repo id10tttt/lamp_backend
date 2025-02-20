@@ -17,6 +17,8 @@ class SaleOrder(models.Model):
                 'end_date': str(order_id.default_end_date),
                 'picker': order_id.picker,
                 'state': order_id.state,
+                'status_value': dict(order_id._fields['status']._description_selection(order_id.env)).get(
+                    order_id.status),
                 'status': order_id.status,
                 'payment_status': order_id.payment_status,
                 'stock_status': order_id.stock_status,
