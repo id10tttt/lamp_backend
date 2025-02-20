@@ -37,7 +37,6 @@ class SaleOrder(models.Model):
         ('40', '已完成'),
         ('50', '已取消'),
         ('60', '售后中'),
-        ('70', '已删除'),
     ], string='Status', default='10', tracking=True)
 
     pay_state = fields.Boolean('Pay State')
