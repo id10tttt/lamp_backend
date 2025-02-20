@@ -9,6 +9,7 @@ class SaleOrder(models.Model):
         resp_data = []
         for order_id in order_ids:
             order_data = {
+                'id': order_id.id,
                 'name': order_id.name,
                 'partner_id': order_id.partner_id.id,
                 'partner_name': order_id.partner_id.name,
