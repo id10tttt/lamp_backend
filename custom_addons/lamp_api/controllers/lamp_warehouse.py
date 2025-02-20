@@ -62,6 +62,7 @@ class StockWarehouse(http.Controller, BaseController):
             'address': warehouse_id.address,
             'province': warehouse_id.province,
             'warehouse_image': self.get_stock_warehouse_attachment_url(warehouse_id),
+            'customer_service': warehouse_id.customer_service
         } for warehouse_id in warehouse_ids]
 
         return self.response_json_success(data=warehouse_data, message='成功')
