@@ -321,7 +321,7 @@ class BaseController(object):
         if len(partner_id) != 1:
             return False
 
-        if not self.check_password(password, password.hash_password):
+        if not self.check_password(password, partner_id.hash_password):
             return False
 
         return partner_id
@@ -334,7 +334,7 @@ class BaseController(object):
         if not partner_id:
             return False
 
-        if not self.check_password(password, password.hash_password):
+        if not self.check_password(password, partner_id.hash_password):
             return False
 
         partner_id.write({
