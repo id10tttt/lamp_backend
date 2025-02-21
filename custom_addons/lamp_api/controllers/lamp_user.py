@@ -120,6 +120,56 @@ class LAMPUser(http.Controller, BaseController):
 
         return self.response_http_json_success(message='发送成功!', data={} if prod_env else resp_data)
 
+    @http.route('/api/v1/lamp/user/register', auth='public', methods=['POST'], csrf=False, cors="*", type='json')
+    def lamp_user_register(self, lang='en_US', **kwargs):
+
+        try:
+            request.env.context = dict(request.env.context, lang=lang)
+            payload_data = json.loads(request.httprequest.data)
+            _logger.info('payload_data: {}'.format(payload_data))
+        except Exception as e:
+            _logger.info('出现了错误: {}'.format(e))
+            return self.response_http_json_error(400, message='出现错误!{}'.format(e))
+
+        name = payload_data.get('name')
+        email = payload_data.get('email')
+        password = payload_data.get('password')
+        code = payload_data.get('code')
+
+        redis_key = None
+        if not all([email, code]):
+            return self.response_http_json_error(400, message='验证码错误!')
+
+        redis_key = email
+
+        redis_code = self.get_sms_code_from_redis(redis_key)
+
+        if not redis_code:
+            return self.response_http_json_error(400, message='请先获取验证码!')
+
+        partner_id = self.create_res_partner_by_email(redis_key, name, password)
+
+        if not partner_id:
+            return self.response_http_json_error(400, message='数据异常，请检查数据!!')
+
+        payload_data = {
+            'partner_id': partner_id,
+            'email': email,
+            'uid': partner_id.id,
+            'aud': LAMP_AUDIENCE,
+            'iss': LAMP_ISSUER
+        }
+        jwt_token = jwt_encode(payload_data, DEFAULT_TOKEN_EXPIRE)
+
+        save_access_token_to_redis(redis_key, jwt_token)
+
+        token_data = {
+            'access_token': jwt_token,
+            'expire': DEFAULT_TOKEN_EXPIRE
+        }
+
+        return self.response_http_json_success(token_data, message='登陆成功')
+
     @http.route('/api/v1/lamp/user/login', auth='public', methods=['POST'], csrf=False, cors="*", type='json')
     def lamp_user_login(self, lang='en_US', **kwargs):
 
@@ -131,38 +181,20 @@ class LAMPUser(http.Controller, BaseController):
             _logger.info('出现了错误: {}'.format(e))
             return self.response_http_json_error(400, message='出现错误!{}'.format(e))
 
-        mobile = payload_data.get('mobile')
         email = payload_data.get('email')
-        auth_type = payload_data.get('auth_type')
-        code = payload_data.get('code')
+        password = payload_data.get('password')
 
-        redis_key = None
-        if auth_type == 'mobile':
-            if not all([mobile, code]):
-                return self.response_http_json_error(400, message='验证码错误!')
-            redis_key = mobile
-        elif auth_type == 'email':
-            if not all([email, code]):
-                return self.response_http_json_error(400, message='验证码错误!')
-            redis_key = email
-        else:
-            return self.response_http_json_error(400, message='暂不支持该类型的认证!')
+        if not all([email, password]):
+            return self.response_http_json_error(400, message='验证码错误!')
+        redis_key = email
 
-        redis_code = self.get_sms_code_from_redis(redis_key)
-
-        if not redis_code:
-            return self.response_http_json_error(400, message='请先获取验证码!')
-
-        if auth_type == 'email':
-            partner_id = self.get_or_create_res_partner_by_email(redis_key)
-        else:
-            partner_id = self.get_or_create_res_partner(redis_key)
+        partner_id = self._check_credentials(email, password)
 
         if not partner_id:
-            return self.response_http_json_error(400, message='数据异常，请检查数据!!')
+            return self.response_http_json_error(400, message='登录失败!')
 
         payload_data = {
-            'mobile': mobile,
+            'id': partner_id.id,
             'email': email,
             'uid': partner_id.id,
             'aud': LAMP_AUDIENCE,

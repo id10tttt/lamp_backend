@@ -9,6 +9,7 @@ from .response_code import ResponseCode
 import dateutil.parser as parser
 from ..tools.tools_common import get_redis_client
 from odoo.exceptions import ValidationError
+from odoo.addons.base.models.res_users import DEFAULT_CRYPT_CONTEXT
 
 _logger = logging.getLogger(__name__)
 
@@ -34,6 +35,16 @@ class UserException(Exception):
 
 
 class BaseController(object):
+
+    def _crypt_context(self):
+        """ Passlib CryptContext instance used to encrypt and verify
+        passwords. Can be overridden if technical, legal or political matters
+        require different kdfs than the provided default.
+
+        Requires a CryptContext as deprecation and upgrade notices are used
+        internally
+        """
+        return DEFAULT_CRYPT_CONTEXT.copy()
 
     def parse_product_date(self, product_date):
         """
@@ -236,7 +247,7 @@ class BaseController(object):
 
         return False
 
-    def get_or_create_res_partner_by_email(self, email):
+    def get_or_create_res_partner_by_email(self, email, name=None):
         partner_id = request.env['res.partner'].sudo().search([
             ('email', '=', email)
         ])
@@ -248,7 +259,7 @@ class BaseController(object):
             partner_data = {
                 'user_type': 'user',
                 'odoo_create': False,
-                'name': 'E-Mail: {}'.format(email),
+                'name': name or 'E-Mail: {}'.format(email),
                 'email': email
             }
 
@@ -259,3 +270,48 @@ class BaseController(object):
             return partner_id
 
         return False
+
+    def hashed_password(self, password):
+        ctx = self._crypt_context()
+        hash_password = ctx.hash if hasattr(ctx, 'hash') else ctx.encrypt
+        hash_pwd = hash_password(password)
+
+        return hash_pwd
+
+    def create_res_partner_by_email(self, email, name, password):
+        partner_id = request.env['res.partner'].sudo().search([
+            ('email', '=', email)
+        ])
+
+        if partner_id and len(partner_id) == 1:
+            return partner_id
+
+        if not partner_id:
+            partner_data = {
+                'user_type': 'user',
+                'odoo_create': False,
+                'name': name or 'E-Mail: {}'.format(email),
+                'email': email,
+                'hash_password': self.hashed_password(password)
+            }
+
+            partner_id = request.env['res.partner'].sudo().create(partner_data)
+
+            _logger.info('保存新用户: {}'.format(partner_id))
+
+            return partner_id
+
+        return False
+
+    def _check_credentials(self, email, password):
+        partner_id = request.env['res.partner'].sudo().search([
+            ('email', '=', email)
+        ])
+
+        if len(partner_id) != 1:
+            return False
+
+        if partner_id.hash_password != self.hashed_password(password):
+            return False
+
+        return partner_id
