@@ -304,9 +304,8 @@ class BaseController(object):
         return False
 
     def check_password(self, password, hash_password):
-        hashed = [hash_password]
         valid, replacement = self._crypt_context() \
-            .verify_and_update(password, hashed)
+            .verify_and_update(password, hash_password)
 
         if not valid:
             return False
