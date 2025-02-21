@@ -45,12 +45,12 @@ class SaleOrder(http.Controller, BaseController):
             elif status == 'to_pay':
                 status_domain = [
                     ('status', '=', '20'),
-                    ('payment_status', '=', 10)
+                    ('payment_status', '=', '10')
                 ]
                 filter_domain = expression.AND([filter_domain, status_domain])
             elif status == 'to_delivery':
                 status_domain = [
-                    ('status', '=', '30'),
+                    ('status', 'in', ['20', '30']),
                     ('stock_status', '=', '10')
                 ]
                 filter_domain = expression.AND([filter_domain, status_domain])
