@@ -211,6 +211,36 @@ class LAMPUser(http.Controller, BaseController):
 
         return self.response_http_json_success(token_data, message='登陆成功')
 
+    @http.route('/api/v1/lamp/user/reset-password', auth='public', methods=['POST'], csrf=False, cors="*", type='json')
+    @verify_auth_token_only()
+    def reset_user_password(self, lang='en_US'):
+        try:
+            request.env.context = dict(request.env.context, lang=lang)
+            payload_data = json.loads(request.httprequest.data)
+            _logger.info('payload_data: {}'.format(payload_data))
+        except Exception as e:
+            _logger.info('出现了错误: {}'.format(e))
+            return self.response_http_json_error(400, message='出现错误!{}'.format(e))
+
+        password = payload_data.get('password')
+        new_password = payload_data.get('new_password')
+
+        if not all([new_password, password]):
+            return self.response_http_json_error(400, message='数据异常，不能为空!')
+
+        if new_password == password:
+            return self.response_http_json_error(400, message='重置的密码不能和当前的密码一致!')
+
+
+        update_state = self.update_partner_password(request.partner_id, password, new_password)
+
+        if not update_state:
+            return self.response_http_json_error(400, message='更新密码出错!')
+
+        return self.response_http_json_success({
+            'message': 'success'
+        })
+
     @http.route('/api/v1/lamp/token/check', auth='public', methods=['POST'], csrf=False, cors="*", type='json')
     @verify_auth_token_only()
     def check_user_login_token(self, lang='en_US'):

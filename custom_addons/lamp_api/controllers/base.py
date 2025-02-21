@@ -315,3 +315,19 @@ class BaseController(object):
             return False
 
         return partner_id
+
+    def update_partner_password(self, partner_id, password, new_password):
+        partner_id = request.env['res.partner'].sudo().search([
+            ('id', '=', partner_id)
+        ])
+
+        if not partner_id:
+            return False
+
+        if partner_id.hash_password != self.hashed_password(password):
+            return False
+
+        partner_id.write({
+            'hash_password': self.hashed_password(new_password)
+        })
+        return partner_id
