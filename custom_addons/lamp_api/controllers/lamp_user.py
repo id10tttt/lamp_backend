@@ -153,7 +153,7 @@ class LAMPUser(http.Controller, BaseController):
             return self.response_http_json_error(400, message='数据异常，请检查数据!!')
 
         payload_data = {
-            'partner_id': partner_id,
+            'partner_id': partner_id.id,
             'email': email,
             'uid': partner_id.id,
             'aud': LAMP_AUDIENCE,
