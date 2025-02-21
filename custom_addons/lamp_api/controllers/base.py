@@ -303,6 +303,16 @@ class BaseController(object):
 
         return False
 
+    def check_password(self, password, hash_password):
+        hashed = [hash_password]
+        valid, replacement = self._crypt_context() \
+            .verify_and_update(password, hashed)
+
+        if not valid:
+            return False
+
+        return True
+
     def _check_credentials(self, email, password):
         partner_id = request.env['res.partner'].sudo().search([
             ('email', '=', email)
@@ -311,7 +321,7 @@ class BaseController(object):
         if len(partner_id) != 1:
             return False
 
-        if partner_id.hash_password != self.hashed_password(password):
+        if not self.check_password(password, password.hash_password):
             return False
 
         return partner_id
@@ -324,7 +334,7 @@ class BaseController(object):
         if not partner_id:
             return False
 
-        if partner_id.hash_password != self.hashed_password(password):
+        if not self.check_password(password, password.hash_password):
             return False
 
         partner_id.write({
