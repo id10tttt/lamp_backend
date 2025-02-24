@@ -370,6 +370,7 @@ class LAMPUser(http.Controller, BaseController):
 
         lang = payload_data.get('lang')
         mobile = payload_data.get('mobile')
+        name = payload_data.get('name')
 
         update_partner = {}
         if avatar:
@@ -383,6 +384,9 @@ class LAMPUser(http.Controller, BaseController):
 
         if mobile:
             update_partner['mobile'] = mobile
+
+        if name:
+            update_partner['name'] = name
 
         if not update_partner:
             return self.response_http_json_error(code=400, message='没有可以更新的内容!')
