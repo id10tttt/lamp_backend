@@ -244,7 +244,6 @@ class LAMPUser(http.Controller, BaseController):
         if new_password == password:
             return self.response_http_json_error(400, message='重置的密码不能和当前的密码一致!')
 
-
         update_state = self.update_partner_password(request.partner_id, password, new_password)
 
         if not update_state:
@@ -254,7 +253,8 @@ class LAMPUser(http.Controller, BaseController):
             'message': 'success'
         })
 
-    @http.route('/api/v1/lamp/user/forget/password/code', auth='public', methods=['POST'], csrf=False, cors="*", type='json')
+    @http.route('/api/v1/lamp/user/forget/password/code', auth='public', methods=['POST'], csrf=False, cors="*",
+                type='json')
     def send_forget_user_password_email_code(self, lang='en_US'):
         try:
             request.env.context = dict(request.env.context, lang=lang)
@@ -348,3 +348,45 @@ class LAMPUser(http.Controller, BaseController):
             'customer_service': partner_id.warehouse_id.customer_service if partner_id.warehouse_id else '',
         }
         return self.response_json_success(user_data)
+
+    @http.route('/api/v1/lamp/user/profile', auth='public', methods=['PATCH'], csrf=False, cors="*", type='json')
+    @verify_auth_token_only()
+    def update_my_profile(self, lang='en_US'):
+        request.env.context = dict(request.env.context, lang=lang)
+        partner_id = request.env['res.partner'].sudo().browse(request.partner_id)
+
+        try:
+            request.env.context = dict(request.env.context, lang=lang)
+            payload_data = json.loads(request.httprequest.data)
+            _logger.info('payload_data: {}'.format(payload_data))
+            warehouse_id = payload_data.get('warehouse_id')
+            if warehouse_id:
+                warehouse_id = int(warehouse_id)
+        except Exception as e:
+            _logger.info('出现了错误: {}'.format(e))
+            return self.response_http_json_error(400, message='出现错误!{}'.format(e))
+
+        avatar = payload_data.get('avatar')
+
+        lang = payload_data.get('lang')
+        mobile = payload_data.get('mobile')
+
+        update_partner = {}
+        if avatar:
+            update_partner['image_1920'] = avatar
+
+        if warehouse_id:
+            update_partner['warehouse_id'] = warehouse_id
+
+        if lang:
+            update_partner['lang'] = lang
+
+        if mobile:
+            update_partner['mobile'] = mobile
+
+        if not update_partner:
+            return self.response_http_json_error(code=400, message='没有可以更新的内容!')
+
+        partner_id.write(update_partner)
+
+        return self.response_http_json_success(200, message='更新成功')
