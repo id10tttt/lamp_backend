@@ -10,6 +10,7 @@ class ResPartner(models.Model):
         ('remaining_points_check',
          'CHECK(remaining_points < 0)',
          "可用积分不能小于0"),
+        ('unique_email', 'unique(email)', '邮箱必须唯一!')
     ]
 
     legal_entity_front = fields.Image('Legal Entity Front', copy=False, attachment=True)
