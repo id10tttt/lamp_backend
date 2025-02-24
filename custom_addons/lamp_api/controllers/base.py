@@ -289,7 +289,11 @@ class BaseController(object):
 
         return hash_pwd
 
-    def create_res_partner_by_email(self, email, name, password):
+    def create_res_partner_by_email(self, payload_data):
+        email = payload_data.get('email')
+        password = payload_data.get('password')
+        warehouse_id = payload_data.get('warehouse_id')
+        lang = payload_data.get('lang')
         partner_id = request.env['res.partner'].sudo().search([
             ('email', '=', email)
         ])
@@ -301,11 +305,19 @@ class BaseController(object):
             partner_data = {
                 'user_type': 'user',
                 'odoo_create': False,
-                'name': name or 'E-Mail: {}'.format(email),
+                'name': payload_data.get('name') or 'E-Mail: {}'.format(email),
                 'email': email,
                 'hash_password': self.hashed_password(password)
             }
+            if warehouse_id:
+                partner_data.update({
+                    'warehouse_id': warehouse_id
+                })
 
+            if lang:
+                partner_data.update({
+                    'lang': lang
+                })
             partner_id = request.env['res.partner'].sudo().create(partner_data)
 
             _logger.info('保存新用户: {}'.format(partner_id))

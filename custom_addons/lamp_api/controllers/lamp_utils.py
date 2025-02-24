@@ -26,8 +26,15 @@ STATUS_MAP = {
 class LampUtils(http.Controller, BaseController):
     @http.route('/api/v1/lamp/utils/common/code', auth='public', methods=['GET'], csrf=False, cors="*", type='http')
     def get_all_common_code(self, lang='en_US', **kwargs):
+        lang_ids = request.env['res.lang'].sudo().search([
+            ('active', '=', True)
+        ])
         resp_code = {
-            'status': STATUS_MAP
+            'status': STATUS_MAP,
+            'lang': [{
+                'code': lang_id.code,
+                'name': lang_id.name
+            } for lang_id in lang_ids]
         }
 
         return self.response_json_success(data=resp_code, message='成功')
