@@ -430,7 +430,7 @@ class SaleOrder(http.Controller, BaseController):
             return self.response_http_json_error(400, message='当前订单状态，不允许执行确认操作!')
 
         try:
-            order_id.action_confirm_sale_order()
+            order_id.sudo().action_confirm_sale_order()
         except Exception as e:
             request.env.cr.rollback()
             return self.response_http_json_error(400, message='出现了错误: {}'.format(e))

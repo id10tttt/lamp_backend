@@ -114,7 +114,7 @@ class SaleOrder(models.Model):
     def action_confirm(self):
         res = super().action_confirm()
 
-        self.action_confirm_sale_order()
+        self.sudo().action_confirm_sale_order()
 
         return res
 
