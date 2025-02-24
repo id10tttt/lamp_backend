@@ -329,6 +329,8 @@ class LAMPUser(http.Controller, BaseController):
             'name': partner_id.name,
             'mobile': partner_id.mobile,
             'email': partner_id.email,
-            'remaining_points': partner_id.remaining_points
+            'remaining_points': partner_id.remaining_points,
+            'warehouse_id': partner_id.warehouse_id.id if partner_id.warehouse_id else '',
+            'warehouse_name': partner_id.warehouse_id.name if partner_id.warehouse_id else '',
         }
         return self.response_json_success(user_data)

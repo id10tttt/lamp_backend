@@ -31,6 +31,7 @@ class ResPartner(models.Model):
     remaining_points = fields.Integer(string="Available Points", compute='compute_total_earned', store=True, default=0)
 
     hash_password = fields.Char('密码')
+    warehouse_id = fields.Many2one('stock.warehouse', string='仓库')
 
     @api.depends('earned_loyalty_ids', 'redeem_loyalty_ids')
     def compute_total_earned(self):
