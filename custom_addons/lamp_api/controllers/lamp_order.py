@@ -16,6 +16,58 @@ MAX_MOBILE_SMS_LIMIT = 20
 
 
 class SaleOrder(http.Controller, BaseController):
+    @http.route('/api/v1/lamp/sale/order/detail', auth='public', methods=['GET'], csrf=False, cors="*", type='http')
+    @verify_auth_token_only()
+    def my_order_detail(self, lang='en_US', **kwargs):
+        try:
+            request.env.context = dict(request.env.context, lang=lang)
+            order_id = int(kwargs.get('order_id'))
+        except Exception as e:
+            _logger.info('出现了错误: {}'.format(e))
+            return self.response_json_error(400, message='出现错误!{}'.format(e))
+
+        filter_domain = [
+            ('partner_id', '=', request.partner_id),
+            ('id', '=', order_id)
+        ]
+
+        order_id = request.env['sale.order'].sudo().search(filter_domain)
+        if not order_id:
+            return self.response_json_error(400, message='订单数据异常!')
+
+        order_data = order_id.parse_sale_order(order_id)
+
+        return self.response_json_success(data=order_data, message='成功')
+
+    @http.route('/api/v1/lamp/sale/order/bill', auth='public', methods=['GET'], csrf=False, cors="*", type='http')
+    @verify_auth_token_only()
+    def my_order_bill_list(self, lang='en_US', **kwargs):
+        try:
+            request.env.context = dict(request.env.context, lang=lang)
+            order_id = int(kwargs.get('order_id'))
+        except Exception as e:
+            _logger.info('出现了错误: {}'.format(e))
+            return self.response_json_error(400, message='出现错误!{}'.format(e))
+
+        filter_domain = [
+            ('partner_id', '=', request.partner_id),
+            ('id', '=', order_id)
+        ]
+
+        order_id = request.env['sale.order'].sudo().search(filter_domain)
+        if not order_id:
+            return self.response_json_error(400, message='订单数据异常!')
+
+        bill_ids = order_id.order_line.invoice_lines.move_id.filtered(
+            lambda r: r.move_type in ('out_invoice', 'out_refund'))
+
+        bill_data = [{
+            'name': bill_id.name,
+            'amount_total': bill_id.amount_total
+        } for bill_id in bill_ids]
+
+        return self.response_json_success(data=bill_data, message='成功')
+
     @http.route('/api/v1/lamp/sale/order/my', auth='public', methods=['GET'], csrf=False, cors="*", type='http')
     @verify_auth_token_only()
     def my_order_list(self, lang='en_US', **kwargs):
