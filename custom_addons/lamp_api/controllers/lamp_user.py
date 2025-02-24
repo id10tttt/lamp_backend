@@ -394,3 +394,16 @@ class LAMPUser(http.Controller, BaseController):
         partner_id.write(update_partner)
 
         return self.response_http_json_success(200, message='更新成功')
+
+    @http.route('/api/v1/lamp/user/points/history', auth='public', methods=['get'], csrf=False, cors="*", type='http')
+    @verify_auth_token_only()
+    def user_point_history(self, lang='en_US'):
+        request.env.context = dict(request.env.context, lang=lang)
+        partner_id = request.env['res.partner'].sudo().browse(request.partner_id)
+
+        points_data = [{
+            'order_no': earned_loyalty_id.order_no,
+            'order_date': str(earned_loyalty_id.order_date),
+            'points': earned_loyalty_id.points,
+        } for earned_loyalty_id in partner_id.earned_loyalty_ids]
+        return self.response_json_success(points_data)
