@@ -74,7 +74,7 @@ class ProductProduct(http.Controller, BaseController):
         try:
             request.env.context = dict(request.env.context, lang=lang)
             product_id = kwargs.get('product_id')
-            _logger.info('payload_data: {}'.format(product_id))
+            _logger.info('product_id: {}'.format(product_id))
         except Exception as e:
             _logger.info('出现了错误: {}'.format(e))
             return self.response_json_error(400, message='出现错误!{}'.format(e))
