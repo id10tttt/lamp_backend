@@ -364,12 +364,12 @@ class BaseController(object):
         })
         return partner_id
 
-    def update_partner_password_forget_password(self, partner_id, password):
+    def update_partner_password_forget_password(self, email, password):
         partner_id = request.env['res.partner'].sudo().search([
-            ('id', '=', partner_id)
+            ('email', '=', email)
         ])
 
-        if not partner_id:
+        if not partner_id or len(partner_id) != 1:
             return False
         partner_id.write({
             'hash_password': self.hashed_password(password)

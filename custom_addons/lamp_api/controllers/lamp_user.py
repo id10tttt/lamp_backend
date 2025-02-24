@@ -294,7 +294,6 @@ class LAMPUser(http.Controller, BaseController):
     @http.route('/api/v1/lamp/user/forget-password', auth='public', methods=['POST'], csrf=False, cors="*", type='json')
     def forget_user_password(self, lang='en_US'):
         try:
-            partner_id = request.partner_id
             request.env.context = dict(request.env.context, lang=lang)
             payload_data = json.loads(request.httprequest.data)
             _logger.info('payload_data: {}'.format(payload_data))
@@ -317,7 +316,7 @@ class LAMPUser(http.Controller, BaseController):
         if cache_code.decode() != code:
             return self.response_http_json_error(400, message='验证码异常!')
 
-        update_state = self.update_partner_password_forget_password(partner_id, password)
+        update_state = self.update_partner_password_forget_password(email, password)
 
         if not update_state:
             return self.response_http_json_error(400, message='更新密码出错!')
