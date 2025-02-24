@@ -20,6 +20,7 @@ ERROR_CODE = {
 SMS_EX = 60 * 2
 DAILY_MOBILE_LIMIT_EX = 60 * 60 * 24
 SMS_REDIS_PREFIX = 'user:login:sms:code'
+EMAIL_RESET_REDIS_PREFIX = 'user:login:email:reset:code'
 SMS_CODE_DB = 1
 SMS_SEND_LOG_DB = 4
 
@@ -90,7 +91,7 @@ class BaseController(object):
             attachment_id.generate_access_token()
         base_url = request.env['ir.config_parameter'].sudo().get_param('web.base.url')
         return '{}/web/content/{}?access_token={}'.format(base_url, attachment_id.id,
-                                                                        attachment_id.access_token)
+                                                          attachment_id.access_token)
 
     def response_http_json_error(self, code, data=None, message=None):
         custom_code = 'CODE_{}'.format(code)
@@ -199,6 +200,16 @@ class BaseController(object):
         redis_client = get_redis_client(db=SMS_CODE_DB)
         redis_client.set('{}:{}'.format(SMS_REDIS_PREFIX, mobile), code, ex=SMS_EX)
         redis_client.close()
+
+    def save_cache_code_to_redis(self, redis_key, code):
+        redis_client = get_redis_client(db=SMS_CODE_DB)
+        redis_client.set('{}:{}'.format(EMAIL_RESET_REDIS_PREFIX, redis_key), code, ex=SMS_EX)
+        redis_client.close()
+
+    def get_cache_code_from_redis(self, redis_key):
+        redis_client = get_redis_client(db=SMS_CODE_DB)
+        code = redis_client.get('{}:{}'.format(EMAIL_RESET_REDIS_PREFIX, redis_key))
+        return code
 
     def get_sms_code_from_redis(self, mobile):
         redis_client = get_redis_client(db=SMS_CODE_DB)
@@ -338,5 +349,17 @@ class BaseController(object):
 
         partner_id.write({
             'hash_password': self.hashed_password(new_password)
+        })
+        return partner_id
+
+    def update_partner_password_forget_password(self, partner_id, password):
+        partner_id = request.env['res.partner'].sudo().search([
+            ('id', '=', partner_id)
+        ])
+
+        if not partner_id:
+            return False
+        partner_id.write({
+            'hash_password': self.hashed_password(password)
         })
         return partner_id

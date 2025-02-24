@@ -159,9 +159,9 @@ def check_access_token(access_token):
     try:
         decode_token = jwt_decode(access_token)
         uid = decode_token.get('uid')
-        mobile = decode_token.get('mobile')
+        email = decode_token.get('email')
 
-        redis_access_token = get_access_token_from_redis(mobile)
+        redis_access_token = get_access_token_from_redis(email)
 
         # 单点登录
         if not redis_access_token:
@@ -183,7 +183,7 @@ def check_access_token(access_token):
     if not partner_id or len(partner_id) != 1:
         return False, '失败'
 
-    if decode_token.get('mobile') != partner_id.mobile:
+    if email != partner_id.email:
         return False, '签名验证失败!'
 
     http.request.partner_id = partner_id.id

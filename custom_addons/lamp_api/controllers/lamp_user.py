@@ -241,6 +241,77 @@ class LAMPUser(http.Controller, BaseController):
             'message': 'success'
         })
 
+    @http.route('/api/v1/lamp/user/forget/password/code', auth='public', methods=['POST'], csrf=False, cors="*", type='json')
+    def send_forget_user_password_email_code(self, lang='en_US'):
+        try:
+            request.env.context = dict(request.env.context, lang=lang)
+            payload_data = json.loads(request.httprequest.data)
+            _logger.info('payload_data: {}'.format(payload_data))
+        except Exception as e:
+            _logger.info('出现了错误: {}'.format(e))
+            return self.response_http_json_error(400, message='出现错误!{}'.format(e))
+
+        email = payload_data.get('email')
+
+        if not email:
+            return self.response_http_json_error(400, message='数据异常，不能为空!')
+
+        redis_key = email
+
+        if self.get_cache_code_from_redis(redis_key):
+            return self.response_http_json_error(400, message='1分钟内，请不要重复发送!')
+
+        email_code = get_random_login_code()
+
+        server_id = request.env['ir.mail_server'].sudo().search([], limit=1)
+        mail = request.env['mail.mail'].sudo().create({
+            'subject': 'Reset Password Code',
+            'body_html': '<p>Dear Sir/Madam：</p><br/>Your code is :{}'.format(email_code),
+            'email_to': '{}'.format(email),
+            'email_from': server_id.smtp_user if server_id else False,
+        })
+        mail.send()
+
+        self.save_cache_code_to_redis(redis_key, email_code)
+
+        return self.response_http_json_success({
+            'message': 'success'
+        })
+
+    @http.route('/api/v1/lamp/user/forget-password', auth='public', methods=['POST'], csrf=False, cors="*", type='json')
+    def forget_user_password(self, lang='en_US'):
+        try:
+            request.env.context = dict(request.env.context, lang=lang)
+            payload_data = json.loads(request.httprequest.data)
+            _logger.info('payload_data: {}'.format(payload_data))
+        except Exception as e:
+            _logger.info('出现了错误: {}'.format(e))
+            return self.response_http_json_error(400, message='出现错误!{}'.format(e))
+
+        email = payload_data.get('email')
+        password = payload_data.get('password')
+        code = payload_data.get('code')
+
+        if not all([code, password]):
+            return self.response_http_json_error(400, message='数据异常，不能为空!')
+
+        cache_code = self.get_cache_code_from_redis(email)
+
+        if not cache_code:
+            return self.response_http_json_error(400, message='请先获取验证码!')
+
+        if cache_code != code:
+            return self.response_http_json_error(400, message='验证码异常!')
+
+        update_state = self.update_partner_password_forget_password(request.partner_id, password)
+
+        if not update_state:
+            return self.response_http_json_error(400, message='更新密码出错!')
+
+        return self.response_http_json_success({
+            'message': 'success'
+        })
+
     @http.route('/api/v1/lamp/token/check', auth='public', methods=['POST'], csrf=False, cors="*", type='json')
     @verify_auth_token_only()
     def check_user_login_token(self, lang='en_US'):
