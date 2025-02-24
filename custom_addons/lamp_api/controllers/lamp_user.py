@@ -300,7 +300,7 @@ class LAMPUser(http.Controller, BaseController):
         if not cache_code:
             return self.response_http_json_error(400, message='请先获取验证码!')
 
-        if cache_code != code:
+        if cache_code.decode() != code:
             return self.response_http_json_error(400, message='验证码异常!')
 
         update_state = self.update_partner_password_forget_password(request.partner_id, password)
