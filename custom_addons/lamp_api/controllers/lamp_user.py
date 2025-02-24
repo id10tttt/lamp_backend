@@ -340,6 +340,7 @@ class LAMPUser(http.Controller, BaseController):
 
         user_data = {
             'name': partner_id.name,
+            'avatar': partner_id.get_pres_partner_attachment_url(partner_id),
             'mobile': partner_id.mobile,
             'email': partner_id.email,
             'remaining_points': partner_id.remaining_points,

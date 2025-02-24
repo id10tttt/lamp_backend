@@ -40,3 +40,24 @@ class ResPartner(models.Model):
             total_earned = sum(each.earned_loyalty_ids.mapped("points"))
             total_redeem = sum(each.redeem_loyalty_ids.mapped("points"))
             each.remaining_points = total_earned - total_redeem
+
+    def get_ir_attachment_public_url(self, attachment_id):
+        if not attachment_id.access_token:
+            attachment_id.generate_access_token()
+        base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
+        return '{}/web/content/{}?access_token={}'.format(base_url, attachment_id.id,
+                                                          attachment_id.access_token)
+
+    def get_pres_partner_attachment_url(self, partner_id):
+        attachment_id = self.env['ir.attachment'].sudo().search([
+            ('res_model', '=', partner_id._name),
+            ('res_id', '=', partner_id.id),
+            ('res_field', '=', 'image_128')
+        ])
+
+        if not attachment_id:
+            return ''
+
+        attachment_url = self.get_ir_attachment_public_url(attachment_id[0])
+
+        return attachment_url
