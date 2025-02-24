@@ -80,8 +80,7 @@ class SaleOrder(models.Model):
         today = fields.Date.today()
         data = {
             'advance_payment_method': 'fixed',
-            'fixed_amount': total_amount,
-            'sale_order_ids': self.ids
+            'fixed_amount': total_amount
         }
 
         self.env['sale.advance.payment.inv'].sudo().with_context(active_model='sale.order', active_ids=self.ids,
