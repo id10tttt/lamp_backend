@@ -378,9 +378,7 @@ class SaleOrder(http.Controller, BaseController):
             return self.response_http_json_error(400, message='当前订单状态，不允许执行确认操作!')
 
         try:
-            order_id.write({
-                'status': '20'
-            })
+            order_id.action_confirm_sale_order()
         except Exception as e:
             request.env.cr.rollback()
             return self.response_http_json_error(400, message='出现了错误: {}'.format(e))
@@ -391,44 +389,44 @@ class SaleOrder(http.Controller, BaseController):
 
         return self.response_http_json_success(data=resp_data, message='确认成功')
 
-    @http.route('/api/v1/lamp/sale/order/confirm/payment', auth='public', methods=['POST'], csrf=False, cors="*", type='json')
-    @verify_auth_token_only()
-    def sale_order_confirm_payment(self, lang='en_US', **kwargs):
-        try:
-            request.env.context = dict(request.env.context, lang=lang)
-            payload_data = json.loads(request.httprequest.data)
-
-            order_id = int(payload_data.get('order_id'))
-        except Exception as e:
-            return self.response_http_json_error(400, message='出现了错误: {}'.format(e))
-
-        if not order_id:
-            return self.response_http_json_error(400, message='订单信息异常!')
-
-        order_id = request.env['sale.order'].sudo().search([
-            ('partner_id', '=', request.partner_id),
-            ('id', '=', order_id)
-        ])
-
-        if not order_id:
-            return self.response_http_json_error(400, message='订单信息异常!')
-
-        if order_id.status != '20':
-            return self.response_http_json_error(400, message='当前订单状态，不允许确认付款操作!')
-
-        try:
-            order_id.write({
-                'payment_status': '20'
-            })
-        except Exception as e:
-            request.env.cr.rollback()
-            return self.response_http_json_error(400, message='出现了错误: {}'.format(e))
-
-        resp_data = {
-            'id': order_id.id
-        }
-
-        return self.response_http_json_success(data=resp_data, message='确认成功')
+    # @http.route('/api/v1/lamp/sale/order/confirm/payment', auth='public', methods=['POST'], csrf=False, cors="*", type='json')
+    # @verify_auth_token_only()
+    # def sale_order_confirm_payment(self, lang='en_US', **kwargs):
+    #     try:
+    #         request.env.context = dict(request.env.context, lang=lang)
+    #         payload_data = json.loads(request.httprequest.data)
+    #
+    #         order_id = int(payload_data.get('order_id'))
+    #     except Exception as e:
+    #         return self.response_http_json_error(400, message='出现了错误: {}'.format(e))
+    #
+    #     if not order_id:
+    #         return self.response_http_json_error(400, message='订单信息异常!')
+    #
+    #     order_id = request.env['sale.order'].sudo().search([
+    #         ('partner_id', '=', request.partner_id),
+    #         ('id', '=', order_id)
+    #     ])
+    #
+    #     if not order_id:
+    #         return self.response_http_json_error(400, message='订单信息异常!')
+    #
+    #     if order_id.status != '20':
+    #         return self.response_http_json_error(400, message='当前订单状态，不允许确认付款操作!')
+    #
+    #     try:
+    #         order_id.write({
+    #             'payment_status': '20'
+    #         })
+    #     except Exception as e:
+    #         request.env.cr.rollback()
+    #         return self.response_http_json_error(400, message='出现了错误: {}'.format(e))
+    #
+    #     resp_data = {
+    #         'id': order_id.id
+    #     }
+    #
+    #     return self.response_http_json_success(data=resp_data, message='确认成功')
 
     @http.route('/api/v1/lamp/sale/order/cancel', auth='public', methods=['POST'], csrf=False, cors="*", type='json')
     @verify_auth_token_only()

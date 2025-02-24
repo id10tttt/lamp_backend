@@ -2,6 +2,7 @@
 from odoo import models, fields, api
 from odoo.tools import float_compare
 from datetime import timedelta
+from odoo.exceptions import ValidationError
 
 
 class SaleOrder(models.Model):
@@ -69,14 +70,40 @@ class SaleOrder(models.Model):
     reward_amount = fields.Float("Reward Amount")
     redeem_amount = fields.Float('Redeem Amount')
 
-    def action_confirm(self):
-        res = super().action_confirm()
+    # 确认付款单
+    def create_invoice_pay_now(self):
+        self.ensure_one()
+        if self.payment_status == '30':
+            raise ValidationError('订单已经支付!')
 
+        total_amount = self.amount_total
+        today = fields.Date.today()
+        data = {
+            'advance_payment_method': 'fixed',
+            'fixed_amount': total_amount,
+            'sale_order_ids': self.ids
+        }
+
+        self.env['sale.advance.payment.inv'].sudo().with_context(active_model='sale.order', active_ids=self.ids,
+                                                                 start_date=today, invoice_date_due=today).create(
+            data).create_invoices()
+
+        self.invoice_ids.filtered(lambda i: i.state == 'draft').action_post()
+
+    def action_confirm_sale_order(self):
+        for order_id in self:
+            order_id.create_invoice_pay_now()
         self.write({
             'status': '20'
         })
 
+    def action_confirm(self):
+        res = super().action_confirm()
+
+        self.action_confirm_sale_order()
+
         return res
+
 
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
