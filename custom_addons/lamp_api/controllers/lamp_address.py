@@ -127,10 +127,15 @@ class ResPartnerAddress(http.Controller, BaseController):
             'default_delivery': default_delivery
         }
 
-        partner_address_id = request.env['res.partner'].sudo().create(partner_data)
+        try:
+            partner_address_id = request.env['res.partner'].sudo().create(partner_data)
 
-        # 更新状态
-        self.change_partner_address_default_state(partner_address_id)
+            # 更新状态
+            self.change_partner_address_default_state(partner_address_id)
+
+        except Exception as e:
+            request.env.cr.rollback()
+            return self.response_http_json_error(400, message='地址添加错误! {}'.format(e))
 
         return self.response_http_json_success(data={
             'id': partner_address_id.id
