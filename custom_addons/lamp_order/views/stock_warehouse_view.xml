@@ -12,6 +12,9 @@
                     <field name="province"/>
                     <field name="warehouse_image"/>
                 </xpath>
+                <xpath expr="//notebook" position="attributes">
+                    <attribute name="groups">lamp_order.group_menu_field_invisible</attribute>
+                </xpath>
             </field>
         </record>
     </data>

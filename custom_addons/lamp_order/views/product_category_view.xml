@@ -13,5 +13,26 @@
                 </xpath>
             </field>
         </record>
+        <record id="product_category_form_view_inherit" model="ir.ui.view">
+            <field name="name">product.category form inherit</field>
+            <field name="model">product.category</field>
+            <field name="inherit_id" ref="stock.product_category_form_view_inherit"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='logistics']" position="attributes">
+                    <attribute name="groups">lamp_order.group_menu_field_invisible</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_category_property_form_inherit" model="ir.ui.view">
+            <field name="name">product.category form inherit</field>
+            <field name="model">product.category</field>
+            <field name="inherit_id" ref="account.view_category_property_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='account_property']" position="attributes">
+                    <attribute name="groups">lamp_order.group_menu_field_invisible</attribute>
+                </xpath>
+            </field>
+        </record>
     </data>
 </odoo>

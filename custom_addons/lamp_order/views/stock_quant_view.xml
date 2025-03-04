@@ -14,6 +14,7 @@
                 </xpath>
                 <xpath expr="//tree/field[@name='inventory_date']" position="replace">
                     <field name="in_date" string="入库日期" widget="date"/>
+                    <field name="value"/>
                 </xpath>
             </field>
         </record>

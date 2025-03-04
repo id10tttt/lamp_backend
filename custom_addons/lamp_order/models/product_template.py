@@ -24,3 +24,5 @@ class ProductTemplate(models.Model):
 
     product_template_image_ids = fields.One2many('product.image', 'product_tmpl_id', string="Extra Product Media",
                                                  copy=True)
+
+    put_on_shelves = fields.Boolean('Put On Shelves', default=True, copy=False)

@@ -6,8 +6,10 @@
     'depends': ['base', 'web', 'product', 'stock', 'sale', 'sale_management', 'sale_coupon', 'coupon'],
     "data": [
         "security/ir.model.access.csv",
+        "security/res_group.xml",
         "data/product_product.xml",
         "views/sale_order_view.xml",
+        "views/menu.xml",
         "views/res_partner_view.xml",
         "views/stock_warehouse_view.xml",
         "views/product_template_view.xml",
