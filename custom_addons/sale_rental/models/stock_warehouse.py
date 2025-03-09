@@ -32,7 +32,7 @@ class StockWarehouse(models.Model):
         check_company=True,
         domain="[('usage', '=', 'internal'), ('company_id', '=', company_id)]",
     )
-    rental_allowed = fields.Boolean()
+    rental_allowed = fields.Boolean(default=True)
     rental_route_id = fields.Many2one("stock.location.route", string="Rental Route")
     sell_rented_product_route_id = fields.Many2one(
         "stock.location.route", string="Sell Rented Product Route"
