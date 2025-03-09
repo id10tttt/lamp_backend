@@ -82,7 +82,7 @@ class SaleOrder(models.Model):
             order.invoice_ids = invoices
             order.invoice_count = len(invoices)
 
-            if all([invoice.payment_state == 'paid' for invoice in invoices]):
+            if all([invoice.payment_state == 'paid' for invoice in invoices]) and invoices:
                 order.payment_status = '30'
 
     # 确认付款单
