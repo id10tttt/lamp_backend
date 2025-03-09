@@ -8,7 +8,7 @@ import logging
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
-logger = logging.getLogger(__name__)
+_logger = logging.getLogger(__name__)
 
 
 class StockWarehouse(models.Model):
@@ -32,7 +32,7 @@ class StockWarehouse(models.Model):
         check_company=True,
         domain="[('usage', '=', 'internal'), ('company_id', '=', company_id)]",
     )
-    rental_allowed = fields.Boolean(default=True)
+    rental_allowed = fields.Boolean(default=False)
     rental_route_id = fields.Many2one("stock.location.route", string="Rental Route")
     sell_rented_product_route_id = fields.Many2one(
         "stock.location.route", string="Sell Rented Product Route"
@@ -47,23 +47,61 @@ class StockWarehouse(models.Model):
             self.rental_route_id = False
             self.sell_rented_product_route_id = False
 
+    def create_warehouse_rental_route(self):
+        self.ensure_one()
+        name = '{}-{}-Rental'.format(self.name, self.id)
+        route_id = self.env['stock.location.route'].sudo().search([
+            ('name', '=', name)
+        ])
+        if route_id:
+            return route_id
+        route_id = self.env['stock.location.route'].sudo().create({
+            'name': name,
+            'sequence': 100,
+            'warehouse_selectable': True,
+            'product_selectable': False,
+            'company_id': self.company_id.id
+        })
+        _logger.info('新建 Route: {}'.format(route_id))
+        return route_id
+
+    def create_warehouse_sell_rented_product_route(self):
+        self.ensure_one()
+        name = '{}-{}-Sell Rented Product'.format(self.name, self.id)
+        route_id = self.env['stock.location.route'].sudo().search([
+            ('name', '=', name)
+        ])
+        if route_id:
+            return route_id
+        route_id = self.env['stock.location.route'].sudo().create({
+            'name': name,
+            'sequence': 100,
+            'warehouse_selectable': True,
+            'product_selectable': False,
+            'company_id': self.company_id.id
+        })
+        _logger.info('新建 Route: {}'.format(route_id))
+        return route_id
+
     def _get_rental_push_pull_rules(self):
         self.ensure_one()
         route_obj = self.env["stock.location.route"]
         try:
-            rental_route = self.env.ref("sale_rental.route_warehouse0_rental")
+            # rental_route = self.env.ref("sale_rental.route_warehouse0_rental")
+            rental_route = self.create_warehouse_rental_route()
         except Exception:
-            rental_routes = route_obj.search([("name", "=", _("Rent"))])
+            rental_routes = route_obj.search([("name", "=", _("{}-{}-Rent".format(self.name, self.id)))])
             rental_route = rental_routes and rental_routes[0] or False
         if not rental_route:
             raise UserError(_("Can't find any generic 'Rent' route."))
         try:
-            sell_rented_product_route = self.env.ref(
-                "sale_rental.route_warehouse0_sell_rented_product"
-            )
+            # sell_rented_product_route = self.env.ref(
+            #     "sale_rental.route_warehouse0_sell_rented_product"
+            # )
+            sell_rented_product_route = self.create_warehouse_sell_rented_product_route()
         except Exception:
             sell_rented_product_routes = route_obj.search(
-                [("name", "=", _("Sell Rented Product"))]
+                [("name", "=", _('{}-{}-Sell Rented Product'.format(self.name, self.id)))]
             )
             sell_rented_product_route = (
                 sell_rented_product_routes and sell_rented_product_routes[0] or False
@@ -131,9 +169,10 @@ class StockWarehouse(models.Model):
         for wh in self:
             # create stock locations
             if not wh.rental_view_location_id:
+                rental_name = "{}-{}-Rental".format(wh.name, wh.id)
                 view_loc = slo.with_context(lang="en_US").search(
                     [
-                        ("name", "ilike", "Rental"),
+                        ("name", "ilike", rental_name),
                         ("location_id", "=", wh.view_location_id.id),
                         ("usage", "=", "view"),
                         ("company_id", "=", self.company_id.id),
@@ -143,21 +182,22 @@ class StockWarehouse(models.Model):
                 if not view_loc:
                     view_loc = slo.with_context(lang="en_US").create(
                         {
-                            "name": "Rental",
+                            "name": rental_name,
                             "location_id": wh.view_location_id.id,
                             "usage": "view",
                             "company_id": self.company_id.id,
                         }
                     )
-                    slo.browse(view_loc.id).name = _("Rental")
-                    logger.debug(
+                    slo.browse(view_loc.id).name = _(rental_name)
+                    _logger.debug(
                         "New view rental stock location created ID %d", view_loc.id
                     )
                 wh.rental_view_location_id = view_loc.id
             if not wh.rental_in_location_id:
+                rental_in_name = "{}-{}-Rental In".format(wh.name, wh.code)
                 in_loc = slo.with_context(lang="en_US").search(
                     [
-                        ("name", "ilike", "Rental In"),
+                        ("name", "ilike", rental_in_name),
                         ("location_id", "=", wh.rental_view_location_id.id),
                         ("company_id", "=", self.company_id.id),
                     ],
@@ -166,20 +206,21 @@ class StockWarehouse(models.Model):
                 if not in_loc:
                     in_loc = slo.with_context(lang="en_US").create(
                         {
-                            "name": "Rental In",
+                            "name": rental_in_name,
                             "location_id": wh.rental_view_location_id.id,
                             "company_id": self.company_id.id,
                         }
                     )
-                    slo.browse(in_loc.id).name = _("Rental In")
-                    logger.debug(
+                    slo.browse(in_loc.id).name = _(rental_in_name)
+                    _logger.debug(
                         "New in rental stock location created ID %d", in_loc.id
                     )
                 wh.rental_in_location_id = in_loc.id
             if not wh.rental_out_location_id:
+                rental_out_name = "{}-{}-Rental Out".format(wh.name, wh.code)
                 out_loc = slo.with_context(lang="en_US").search(
                     [
-                        ("name", "ilike", "Rental Out"),
+                        ("name", "ilike", rental_out_name),
                         ("location_id", "=", wh.rental_view_location_id.id),
                         ("company_id", "=", self.company_id.id),
                     ],
@@ -188,23 +229,26 @@ class StockWarehouse(models.Model):
                 if not out_loc:
                     out_loc = slo.with_context(lang="en_US").create(
                         {
-                            "name": "Rental Out",
+                            "name": rental_out_name,
                             "location_id": wh.rental_view_location_id.id,
                             "company_id": self.company_id.id,
                         }
                     )
-                    slo.browse(out_loc.id).name = _("Rental Out")
-                    logger.debug(
+                    slo.browse(out_loc.id).name = _(rental_out_name)
+                    _logger.debug(
                         "New out rental stock location created ID %d", out_loc.id
                     )
                 wh.rental_out_location_id = out_loc.id
 
     def write(self, vals):
         if "rental_allowed" in vals:
-            rental_route = self.env.ref("sale_rental.route_warehouse0_rental")
-            sell_rented_route = self.env.ref(
-                "sale_rental.route_warehouse0_sell_rented_product"
-            )
+            # rental_route = self.env.ref("sale_rental.route_warehouse0_rental")
+            rental_route = self.create_warehouse_rental_route()
+            # sell_rented_route = self.env.ref(
+            #     "sale_rental.route_warehouse0_sell_rented_product"
+            # )
+            sell_rented_route = self.create_warehouse_sell_rented_product_route()
+
             if vals.get("rental_allowed"):
                 self._create_rental_locations()
                 self.write(
