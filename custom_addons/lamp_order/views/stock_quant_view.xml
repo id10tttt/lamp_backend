@@ -14,7 +14,7 @@
                 </xpath>
                 <xpath expr="//tree/field[@name='inventory_date']" position="replace">
                     <field name="in_date" string="入库日期" widget="date"/>
-                    <field name="value"/>
+                    <field name="value" sum="1"/>
                 </xpath>
             </field>
         </record>
@@ -80,6 +80,7 @@
                            decoration-bf="inventory_diff_quantity != 0"/>
                     <field name="inventory_date" optional="hide"/>
                     <field name="in_date" string="入库日期" widget="date" optional="show"/>
+                    <field name="value" sum="1" optional="show"/>
                     <field name="user_id" string="用户" optional="hide"/>
                     <field name='company_id' string='公司' groups="base.group_multi_company" optional="hide"/>
                     <button name="action_inventory_history" type="object" class="btn btn-link text-info"
