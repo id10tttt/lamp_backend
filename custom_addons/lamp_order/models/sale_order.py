@@ -106,6 +106,13 @@ class SaleOrder(models.Model):
 
     def action_confirm_sale_order(self):
         for order_id in self:
+            invoices = order_id.order_line.invoice_lines.move_id.filtered(
+                lambda r: r.move_type in ('out_invoice', 'out_refund'))
+            if invoices:
+                self.write({
+                    'status': '20'
+                })
+                return True
             order_id.create_invoice_pay_now()
         self.write({
             'status': '20'
