@@ -89,7 +89,7 @@
             </field>
         </record>
         <record id="action_view_stock_quants_report" model="ir.actions.act_window">
-            <field name="name">库存报告</field>
+            <field name="name">今日盘点</field>
             <field name="res_model">stock.quant</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_mode">tree,form</field>
@@ -99,7 +99,7 @@
                 }
             </field>
         </record>
-        <menuitem id="stock.menu_valuation" name="库存报告"
+        <menuitem id="stock.menu_valuation" name="今日盘点"
                   parent="stock.menu_warehouse_report" sequence="100"
                   action="action_view_stock_quants_report"/>
     </data>

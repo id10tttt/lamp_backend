@@ -4,16 +4,48 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 18.0-20241125\n"
+"Project-Id-Version: Odoo Server 15.0-20240924\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-09 14:20+0000\n"
-"PO-Revision-Date: 2024-12-09 14:20+0000\n"
+"POT-Creation-Date: 2025-03-25 02:15+0000\n"
+"PO-Revision-Date: 2025-03-25 02:15+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
+
+#. module: lamp_order
+#: model_terms:ir.ui.view,arch_db:lamp_order.product_template_only_form_view_inherit
+msgid "<span class=\"o_stat_text\">Forecasted</span>"
+msgstr ""
+
+#. module: lamp_order
+#: model_terms:ir.ui.view,arch_db:lamp_order.product_template_only_form_view_inherit
+msgid ""
+"<span class=\"o_stat_text\">In:</span>\n"
+"                                <span class=\"o_stat_text\">Out:</span>"
+msgstr ""
+
+#. module: lamp_order
+#: model_terms:ir.ui.view,arch_db:lamp_order.product_template_only_form_view_inherit
+msgid "<span class=\"o_stat_text\">On Hand</span>"
+msgstr ""
+
+#. module: lamp_order
+#: model_terms:ir.ui.view,arch_db:lamp_order.product_template_only_form_view_inherit
+msgid "<span class=\"o_stat_text\">Sold</span>"
+msgstr ""
+
+#. module: lamp_order
+#: model_terms:ir.ui.view,arch_db:lamp_order.view_product_image_form
+msgid "<span>Video Preview</span>"
+msgstr ""
+
+#. module: lamp_order
+#: model_terms:ir.ui.view,arch_db:lamp_order.product_image_view_kanban
+msgid "Acceptable file size"
+msgstr ""
 
 #. module: lamp_order
 #: model:ir.model.fields,field_description:lamp_order.field_sale_order__active_address
@@ -46,6 +78,12 @@ msgid "Arrival Time"
 msgstr "到款时间"
 
 #. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_res_partner__remaining_points
+#: model:ir.model.fields,field_description:lamp_order.field_res_users__remaining_points
+msgid "Available Points"
+msgstr ""
+
+#. module: lamp_order
 #: model:ir.model.fields,field_description:lamp_order.field_sale_order__balance_amount
 msgid "Balance"
 msgstr "尾款"
@@ -54,6 +92,11 @@ msgstr "尾款"
 #: model:ir.model.fields,field_description:lamp_order.field_sale_order__billing_days
 msgid "Billing days"
 msgstr "计费天数"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_product_image__can_image_1024_be_zoomed
+msgid "Can Image 1024 be zoomed"
+msgstr ""
 
 #. module: lamp_order
 #: model:ir.model.fields,field_description:lamp_order.field_sale_order__changed
@@ -78,9 +121,37 @@ msgid "Coupon"
 msgstr "优惠券"
 
 #. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_product_image__create_uid
+#: model:ir.model.fields,field_description:lamp_order.field_stock_quant_forecast_report__create_uid
+#: model:ir.model.fields,field_description:lamp_order.field_stock_quant_forecast_wizard__create_uid
+#: model:ir.model.fields,field_description:lamp_order.field_website_earn_loyalty__create_uid
+#: model:ir.model.fields,field_description:lamp_order.field_website_redeem_loyalty__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_product_image__create_date
+#: model:ir.model.fields,field_description:lamp_order.field_stock_quant_forecast_report__create_date
+#: model:ir.model.fields,field_description:lamp_order.field_stock_quant_forecast_wizard__create_date
+#: model:ir.model.fields,field_description:lamp_order.field_website_earn_loyalty__create_date
+#: model:ir.model.fields,field_description:lamp_order.field_website_redeem_loyalty__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_website_earn_loyalty__partner_id
+#: model:ir.model.fields,field_description:lamp_order.field_website_redeem_loyalty__partner_id
 #: model:ir.model.fields.selection,name:lamp_order.selection__res_partner__user_type__customer
 msgid "Customer"
 msgstr "客户"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_stock_quant_forecast_report__date
+#: model:ir.model.fields,field_description:lamp_order.field_website_earn_loyalty__order_date
+#: model:ir.model.fields,field_description:lamp_order.field_website_redeem_loyalty__order_date
+#: model_terms:ir.ui.view,arch_db:lamp_order.stock_report_view_search
+msgid "Date"
+msgstr ""
 
 #. module: lamp_order
 #: model:ir.model.fields,field_description:lamp_order.field_sale_order__defer
@@ -105,9 +176,43 @@ msgid "Device code"
 msgstr "种类码"
 
 #. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_product_image__display_name
+#: model:ir.model.fields,field_description:lamp_order.field_stock_quant_forecast_report__display_name
+#: model:ir.model.fields,field_description:lamp_order.field_stock_quant_forecast_wizard__display_name
+#: model:ir.model.fields,field_description:lamp_order.field_website_earn_loyalty__display_name
+#: model:ir.model.fields,field_description:lamp_order.field_website_redeem_loyalty__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: lamp_order
 #: model:ir.model.fields,field_description:lamp_order.field_sale_order__dock
 msgid "Dock"
 msgstr "扣除押金"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_res_partner__earned_loyalty_ids
+#: model:ir.model.fields,field_description:lamp_order.field_res_users__earned_loyalty_ids
+#: model_terms:ir.ui.view,arch_db:lamp_order.view_partner_form_inherit
+msgid "Earned Loyalty"
+msgstr ""
+
+#. module: lamp_order
+#: model:ir.actions.act_window,name:lamp_order.action_view_website_earned_loyalty
+#: model:ir.ui.menu,name:lamp_order.sub_menu_earned
+#: model_terms:ir.ui.view,arch_db:lamp_order.view_partner_form_inherit
+msgid "Earned Points"
+msgstr ""
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_product_image__embed_code
+msgid "Embed Code"
+msgstr ""
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_product_product__product_template_image_ids
+#: model:ir.model.fields,field_description:lamp_order.field_product_template__product_template_image_ids
+msgid "Extra Product Media"
+msgstr ""
 
 #. module: lamp_order
 #: model:ir.model.fields,field_description:lamp_order.field_sale_order__full_reduction
@@ -121,9 +226,63 @@ msgid "Gross Weight"
 msgstr "毛重"
 
 #. module: lamp_order
+#: model_terms:ir.ui.view,arch_db:lamp_order.stock_report_view_search
+msgid "Group By"
+msgstr ""
+
+#. module: lamp_order
+#: model:res.groups,name:lamp_order.group_menu_field_invisible
+msgid "Hidden items"
+msgstr ""
+
+#. module: lamp_order
+#: model_terms:ir.ui.view,arch_db:lamp_order.product_image_view_kanban
+msgid "Huge file size. The image should be optimized/reduced."
+msgstr ""
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_product_image__id
+#: model:ir.model.fields,field_description:lamp_order.field_stock_quant_forecast_report__id
+#: model:ir.model.fields,field_description:lamp_order.field_stock_quant_forecast_wizard__id
+#: model:ir.model.fields,field_description:lamp_order.field_website_earn_loyalty__id
+#: model:ir.model.fields,field_description:lamp_order.field_website_redeem_loyalty__id
+msgid "ID"
+msgstr ""
+
+#. module: lamp_order
 #: model:ir.model.fields,field_description:lamp_order.field_sale_order__is_vip
 msgid "IS VIP"
 msgstr "是否是VIP"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_product_image__image_1920
+msgid "Image"
+msgstr ""
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_product_image__image_1024
+msgid "Image 1024"
+msgstr ""
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_product_image__image_128
+msgid "Image 128"
+msgstr ""
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_product_image__image_256
+msgid "Image 256"
+msgstr ""
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_product_image__image_512
+msgid "Image 512"
+msgstr ""
+
+#. module: lamp_order
+#: model_terms:ir.ui.view,arch_db:lamp_order.view_product_image_form
+msgid "Image Name"
+msgstr ""
 
 #. module: lamp_order
 #: model:ir.model.fields,field_description:lamp_order.field_sale_order__insurance_state
@@ -134,6 +293,33 @@ msgstr "投保状态"
 #: model:ir.model.fields,field_description:lamp_order.field_sale_order__labor_cost
 msgid "Labor Cost"
 msgstr "人工费"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_product_image____last_update
+#: model:ir.model.fields,field_description:lamp_order.field_stock_quant_forecast_report____last_update
+#: model:ir.model.fields,field_description:lamp_order.field_stock_quant_forecast_wizard____last_update
+#: model:ir.model.fields,field_description:lamp_order.field_website_earn_loyalty____last_update
+#: model:ir.model.fields,field_description:lamp_order.field_website_redeem_loyalty____last_update
+msgid "Last Modified on"
+msgstr ""
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_product_image__write_uid
+#: model:ir.model.fields,field_description:lamp_order.field_stock_quant_forecast_report__write_uid
+#: model:ir.model.fields,field_description:lamp_order.field_stock_quant_forecast_wizard__write_uid
+#: model:ir.model.fields,field_description:lamp_order.field_website_earn_loyalty__write_uid
+#: model:ir.model.fields,field_description:lamp_order.field_website_redeem_loyalty__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_product_image__write_date
+#: model:ir.model.fields,field_description:lamp_order.field_stock_quant_forecast_report__write_date
+#: model:ir.model.fields,field_description:lamp_order.field_stock_quant_forecast_wizard__write_date
+#: model:ir.model.fields,field_description:lamp_order.field_website_earn_loyalty__write_date
+#: model:ir.model.fields,field_description:lamp_order.field_website_redeem_loyalty__write_date
+msgid "Last Updated on"
+msgstr ""
 
 #. module: lamp_order
 #: model:ir.model.fields,field_description:lamp_order.field_res_partner__legal_entity_back
@@ -154,6 +340,18 @@ msgid "Logo Size"
 msgstr "Logo尺寸"
 
 #. module: lamp_order
+#: model_terms:ir.ui.view,arch_db:lamp_order.product_template_only_form_view_inherit
+msgid "Lot/Serial Numbers"
+msgstr ""
+
+#. module: lamp_order
+#: model:ir.ui.menu,name:lamp_order.main_menu
+#: model:product.product,name:lamp_order.loyalty_points
+#: model:product.template,name:lamp_order.loyalty_points_product_template
+msgid "Loyalty Points"
+msgstr "积分"
+
+#. module: lamp_order
 #: model:ir.model.fields,field_description:lamp_order.field_res_partner__money
 #: model:ir.model.fields,field_description:lamp_order.field_res_users__money
 msgid "Money"
@@ -164,6 +362,13 @@ msgstr "客户预留款"
 #: model:ir.model.fields,field_description:lamp_order.field_product_template__monthly_subscription
 msgid "Monthly Subscription"
 msgstr "包月价格"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_product_image__name
+#: model:ir.model.fields,field_description:lamp_order.field_website_earn_loyalty__name
+#: model:ir.model.fields,field_description:lamp_order.field_website_redeem_loyalty__name
+msgid "Name"
+msgstr ""
 
 #. module: lamp_order
 #: model:ir.model.fields,field_description:lamp_order.field_product_product__net_weight
@@ -178,9 +383,22 @@ msgid "Odoo Create"
 msgstr "Odoo 创建"
 
 #. module: lamp_order
+#: model_terms:ir.ui.view,arch_db:lamp_order.product_image_view_kanban
+msgid ""
+"Optimization required! Reduce the image size or increase your\n"
+"                                        compression settings."
+msgstr ""
+
+#. module: lamp_order
 #: model:ir.model.fields,field_description:lamp_order.field_sale_order__order_amount
 msgid "Order Amount"
 msgstr "订单金额"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_website_earn_loyalty__order_no
+#: model:ir.model.fields,field_description:lamp_order.field_website_redeem_loyalty__order_no
+msgid "Order/Ref"
+msgstr ""
 
 #. module: lamp_order
 #: model:ir.model.fields,field_description:lamp_order.field_product_product__package_type
@@ -216,6 +434,7 @@ msgstr "取货时间"
 
 #. module: lamp_order
 #: model:ir.model.fields,field_description:lamp_order.field_sale_order__picker
+#: model:ir.model.fields,field_description:lamp_order.field_sale_order__picker_partner_id
 msgid "Picker"
 msgstr "取货人"
 
@@ -240,9 +459,36 @@ msgid "Pickup Code"
 msgstr "取货码"
 
 #. module: lamp_order
-#: model:ir.model,name:lamp_order.model_product_template
+#: model_terms:ir.ui.view,arch_db:lamp_order.view_product_image_form
+msgid "Please enter a valid Video URL."
+msgstr ""
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_website_earn_loyalty__points
+#: model:ir.model.fields,field_description:lamp_order.field_website_redeem_loyalty__points
+msgid "Points"
+msgstr ""
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_website_redeem_loyalty__points_amount
+msgid "Points Amount"
+msgstr ""
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_stock_quant_forecast_report__product_id
 msgid "Product"
-msgstr "产品"
+msgstr ""
+
+#. module: lamp_order
+#: model:ir.model,name:lamp_order.model_product_image
+msgid "Product Image"
+msgstr ""
+
+#. module: lamp_order
+#: model_terms:ir.ui.view,arch_db:lamp_order.product_image_view_kanban
+#: model_terms:ir.ui.view,arch_db:lamp_order.view_product_image_form
+msgid "Product Images"
+msgstr ""
 
 #. module: lamp_order
 #: model:ir.model.fields,field_description:lamp_order.field_product_product__product_size
@@ -251,15 +497,93 @@ msgid "Product Size"
 msgstr "产品尺寸"
 
 #. module: lamp_order
+#: model:ir.model,name:lamp_order.model_product_template
+#: model:ir.model.fields,field_description:lamp_order.field_product_image__product_tmpl_id
+msgid "Product Template"
+msgstr "产品模板"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_stock_quant_forecast_report__product_tmpl_id
+msgid "Product Tmpl"
+msgstr ""
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_product_image__product_variant_id
+msgid "Product Variant"
+msgstr ""
+
+#. module: lamp_order
+#: code:addons/lamp_order/models/product_image.py:0
+#, python-format
+msgid ""
+"Provided video URL for '%s' is not valid. Please enter a valid video URL."
+msgstr ""
+
+#. module: lamp_order
 #: model:ir.model.fields,field_description:lamp_order.field_stock_warehouse__province
 msgid "Province"
 msgstr "省份"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_product_product__put_on_shelves
+#: model:ir.model.fields,field_description:lamp_order.field_product_template__put_on_shelves
+msgid "Put On Shelves"
+msgstr ""
+
+#. module: lamp_order
+#: model_terms:ir.ui.view,arch_db:lamp_order.product_template_only_form_view_inherit
+msgid "Putaway Rules"
+msgstr ""
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_stock_quant_forecast_report__product_qty
+msgid "Quantity"
+msgstr ""
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_sale_order__redeem_amount
+#: model_terms:ir.ui.view,arch_db:lamp_order.view_partner_form_inherit
+msgid "Redeem Amount"
+msgstr ""
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_res_partner__redeem_loyalty_ids
+#: model:ir.model.fields,field_description:lamp_order.field_res_users__redeem_loyalty_ids
+#: model_terms:ir.ui.view,arch_db:lamp_order.view_partner_form_inherit
+msgid "Redeem Loyalty"
+msgstr ""
+
+#. module: lamp_order
+#: model_terms:ir.ui.view,arch_db:lamp_order.view_partner_form_inherit
+msgid "Redeem Point"
+msgstr ""
+
+#. module: lamp_order
+#: model:ir.actions.act_window,name:lamp_order.action_view_website_redeem_loyalty
+#: model:ir.ui.menu,name:lamp_order.sub_menu_redeem
+msgid "Redeem Points"
+msgstr ""
+
+#. module: lamp_order
+#: model:ir.model,name:lamp_order.model_website_redeem_loyalty
+msgid "Redeem Points for Pos Order"
+msgstr ""
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_website_earn_loyalty__referral_partner_id
+msgid "Referred By"
+msgstr ""
 
 #. module: lamp_order
 #: model:ir.model.fields,field_description:lamp_order.field_product_product__rental
 #: model:ir.model.fields,field_description:lamp_order.field_product_template__rental
 msgid "Rental"
 msgstr "首日价格"
+
+#. module: lamp_order
+#: model_terms:ir.ui.view,arch_db:lamp_order.stock_report_view_search
+msgid "Report Quantity"
+msgstr ""
 
 #. module: lamp_order
 #: model:ir.model.fields,field_description:lamp_order.field_sale_order__reserve
@@ -272,9 +596,34 @@ msgid "Return Time"
 msgstr "归还时间"
 
 #. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_sale_order__reward_amount
+msgid "Reward Amount"
+msgstr "优惠金额"
+
+#. module: lamp_order
+#: model:ir.model,name:lamp_order.model_website_earn_loyalty
+msgid "Reward Points"
+msgstr ""
+
+#. module: lamp_order
 #: model:ir.model,name:lamp_order.model_sale_order
 msgid "Sales Order"
 msgstr "销售订单"
+
+#. module: lamp_order
+#: model:ir.model,name:lamp_order.model_sale_order_line
+msgid "Sales Order Line"
+msgstr "销售订单行"
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_product_image__sequence
+msgid "Sequence"
+msgstr ""
+
+#. module: lamp_order
+#: model_terms:ir.ui.view,arch_db:lamp_order.product_template_only_form_view_inherit
+msgid "Sold in the last 365 days"
+msgstr ""
 
 #. module: lamp_order
 #: model:ir.model.fields,field_description:lamp_order.field_sale_order__status
@@ -292,9 +641,30 @@ msgid "Stock preparation"
 msgstr "库存备货"
 
 #. module: lamp_order
+#: model_terms:ir.ui.view,arch_db:lamp_order.product_template_only_form_view_inherit
+msgid "Storage Capacities"
+msgstr ""
+
+#. module: lamp_order
 #: model:ir.model.fields.selection,name:lamp_order.selection__res_partner__user_type__supplier
 msgid "Supplier"
 msgstr "供应商"
+
+#. module: lamp_order
+#: model:ir.model,name:lamp_order.model_stock_picking
+msgid "Transfer"
+msgstr "调拨"
+
+#. module: lamp_order
+#: model:ir.model.fields,help:lamp_order.field_product_image__video_url
+msgid "URL of a video for showcasing your product."
+msgstr ""
+
+#. module: lamp_order
+#: model:product.product,uom_name:lamp_order.loyalty_points
+#: model:product.template,uom_name:lamp_order.loyalty_points_product_template
+msgid "Units"
+msgstr ""
 
 #. module: lamp_order
 #: model:ir.model.fields.selection,name:lamp_order.selection__res_partner__user_type__user
@@ -325,7 +695,14 @@ msgid "VIP Price"
 msgstr "会员价"
 
 #. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_product_image__video_url
+#: model_terms:ir.ui.view,arch_db:lamp_order.view_product_image_form
+msgid "Video URL"
+msgstr ""
+
+#. module: lamp_order
 #: model:ir.model,name:lamp_order.model_stock_warehouse
+#: model:ir.model.fields,field_description:lamp_order.field_stock_quant_forecast_report__warehouse_id
 msgid "Warehouse"
 msgstr "仓库"
 
@@ -333,3 +710,240 @@ msgstr "仓库"
 #: model:ir.model.fields,field_description:lamp_order.field_stock_warehouse__warehouse_image
 msgid "Warehouse Img"
 msgstr "仓库图片"
+
+#. module: lamp_order
+#: model_terms:ir.ui.view,arch_db:lamp_order.stock_report_view_graph
+msgid "report_stock_quantity_graph"
+msgstr ""
+
+#. module: lamp_order
+#: model:ir.actions.act_window,name:lamp_order.action_view_stock_quants_report
+msgid "今日盘点"
+msgstr ""
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_res_partner__warehouse_id
+#: model:ir.model.fields,field_description:lamp_order.field_res_users__warehouse_id
+#: model:ir.model.fields,field_description:lamp_order.field_stock_quant_forecast_wizard__warehouse_id
+#: model:ir.ui.menu,name:lamp_order.menu_warehouse
+msgid "仓库"
+msgstr ""
+
+#. module: lamp_order
+#: model:ir.ui.menu,name:lamp_order.menu_warehouse_manage_config
+msgid "仓库管理"
+msgstr ""
+
+#. module: lamp_order
+#: model_terms:ir.ui.view,arch_db:lamp_order.view_order_form_inherit
+msgid "优惠券"
+msgstr ""
+
+#. module: lamp_order
+#: model:ir.ui.menu,name:lamp_order.menu_location
+msgid "位置"
+msgstr ""
+
+#. module: lamp_order
+#: model_terms:ir.ui.view,arch_db:lamp_order.view_stock_quant_report
+#: model_terms:ir.ui.view,arch_db:lamp_order.view_stock_quant_tree_inventory_editable_inherit
+msgid "入库日期"
+msgstr ""
+
+#. module: lamp_order
+#: model_terms:ir.ui.view,arch_db:lamp_order.view_stock_quant_report
+msgid "公司"
+msgstr ""
+
+#. module: lamp_order
+#: model:ir.actions.act_window,name:lamp_order.report_stock_quantity_forecast_action
+#: model:ir.ui.menu,name:lamp_order.menu_rental_quant_forecast_inventory
+msgid "单仓日可用量"
+msgstr ""
+
+#. module: lamp_order
+#: model_terms:ir.ui.view,arch_db:lamp_order.view_stock_quant_report
+msgid "单位"
+msgstr ""
+
+#. module: lamp_order
+#: model_terms:ir.ui.view,arch_db:lamp_order.view_stock_quant_report
+#: model_terms:ir.ui.view,arch_db:lamp_order.view_stock_quant_tree_editable_inherit
+msgid "历史"
+msgstr ""
+
+#. module: lamp_order
+#: model_terms:ir.ui.view,arch_db:lamp_order.view_stock_quant_forecast_form_view
+msgid "取消"
+msgstr ""
+
+#. module: lamp_order
+#: model_terms:ir.ui.view,arch_db:lamp_order.view_stock_quant_report
+msgid "可用数"
+msgstr ""
+
+#. module: lamp_order
+#: model:ir.model.constraint,message:lamp_order.constraint_res_partner_remaining_points_check
+msgid "可用积分不能小于0"
+msgstr ""
+
+#. module: lamp_order
+#: model:ir.model.fields.selection,name:lamp_order.selection__sale_order__status__60
+msgid "售后中"
+msgstr ""
+
+#. module: lamp_order
+#: model_terms:ir.ui.view,arch_db:lamp_order.view_stock_quant_report
+msgid "在手数"
+msgstr ""
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_stock_warehouse__customer_service
+msgid "客服联系方式"
+msgstr ""
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_res_partner__hash_password
+#: model:ir.model.fields,field_description:lamp_order.field_res_users__hash_password
+msgid "密码"
+msgstr ""
+
+#. module: lamp_order
+#: model_terms:ir.ui.view,arch_db:lamp_order.view_stock_quant_report
+msgid "差异"
+msgstr ""
+
+#. module: lamp_order
+#: model:ir.model.fields.selection,name:lamp_order.selection__sale_order__stock_status__30
+msgid "已入库"
+msgstr ""
+
+#. module: lamp_order
+#: model:ir.model.fields.selection,name:lamp_order.selection__sale_order__stock_status__20
+msgid "已出库，待入库"
+msgstr ""
+
+#. module: lamp_order
+#: model:ir.model.fields.selection,name:lamp_order.selection__sale_order__status__50
+msgid "已取消"
+msgstr ""
+
+#. module: lamp_order
+#: model:ir.model.fields.selection,name:lamp_order.selection__sale_order__status__40
+msgid "已完成"
+msgstr ""
+
+#. module: lamp_order
+#: model:ir.model.fields.selection,name:lamp_order.selection__sale_order__payment_status__20
+msgid "已收款"
+msgstr ""
+
+#. module: lamp_order
+#: model:ir.model.fields.selection,name:lamp_order.selection__sale_order__status__20
+msgid "已确认"
+msgstr ""
+
+#. module: lamp_order
+#: model:ir.model.fields.selection,name:lamp_order.selection__sale_order__payment_status__30
+msgid "已结清"
+msgstr ""
+
+#. module: lamp_order
+#: model_terms:ir.ui.view,arch_db:lamp_order.view_order_form_inherit
+msgid "库存查询"
+msgstr ""
+
+#. module: lamp_order
+#: model_terms:ir.ui.view,arch_db:lamp_order.view_stock_quant_report
+#: model_terms:ir.ui.view,arch_db:lamp_order.view_stock_quant_tree_inventory_editable_inherit
+msgid "库存统计"
+msgstr ""
+
+#. module: lamp_order
+#: model:ir.model,name:lamp_order.model_stock_quant_forecast_report
+msgid "库存预测"
+msgstr ""
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_stock_quant_forecast_wizard__start_date
+msgid "开始日期"
+msgstr ""
+
+#. module: lamp_order
+#: model_terms:ir.ui.view,arch_db:lamp_order.view_stock_quant_forecast_form_view
+msgid "开始计算"
+msgstr ""
+
+#. module: lamp_order
+#: model:ir.model,name:lamp_order.model_stock_quant_forecast_wizard
+msgid "引导"
+msgstr ""
+
+#. module: lamp_order
+#: model:ir.model.fields.selection,name:lamp_order.selection__sale_order__stock_status__10
+msgid "待出库"
+msgstr ""
+
+#. module: lamp_order
+#: model:ir.model.fields.selection,name:lamp_order.selection__sale_order__status__10
+msgid "待确认"
+msgstr ""
+
+#. module: lamp_order
+#: model:ir.model.fields.selection,name:lamp_order.selection__sale_order__payment_status__10
+msgid "未收款"
+msgstr ""
+
+#. module: lamp_order
+#: model_terms:ir.ui.view,arch_db:lamp_order.view_stock_quant_report
+msgid "用户"
+msgstr ""
+
+#. module: lamp_order
+#: model:ir.model.fields.selection,name:lamp_order.selection__sale_order__status__30
+msgid "租赁中"
+msgstr ""
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_stock_quant_forecast_wizard__end_date
+msgid "结束日期"
+msgstr ""
+
+#. module: lamp_order
+#: model:ir.ui.menu,name:lamp_order.menu_compute_quant_forecast
+msgid "计算库存预测"
+msgstr ""
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_website_earn_loyalty__order_id
+#: model:ir.model.fields,field_description:lamp_order.field_website_redeem_loyalty__order_id
+msgid "订单"
+msgstr ""
+
+#. module: lamp_order
+#: model:ir.ui.menu,name:lamp_order.menu_product_variant_config_stock
+msgid "设备类型"
+msgstr ""
+
+#. module: lamp_order
+#: model:ir.model.constraint,message:lamp_order.constraint_res_partner_unique_email
+msgid "邮箱必须唯一!"
+msgstr ""
+
+#. module: lamp_order
+#: model:ir.actions.act_window,name:lamp_order.action_recompute_stock_inv_fee_wizard
+msgid "重新计算某日仓储费"
+msgstr ""
+
+#. module: lamp_order
+#: model_terms:ir.ui.view,arch_db:lamp_order.view_stock_quant_report
+#: model_terms:ir.ui.view,arch_db:lamp_order.view_stock_quant_tree_editable_inherit
+#: model_terms:ir.ui.view,arch_db:lamp_order.view_stock_quant_tree_inventory_editable_inherit
+msgid "预留的数量"
+msgstr ""
+
+#. module: lamp_order
+#: model:ir.model.fields,field_description:lamp_order.field_res_partner__default_delivery
+#: model:ir.model.fields,field_description:lamp_order.field_res_users__default_delivery
+msgid "默认取货地址"
+msgstr ""

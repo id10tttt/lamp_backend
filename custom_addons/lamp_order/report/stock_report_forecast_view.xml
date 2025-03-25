@@ -53,7 +53,7 @@
     </record>
 
     <record id="report_stock_quantity_forecast_action" model="ir.actions.act_window">
-        <field name="name">租赁库存预测</field>
+        <field name="name">单仓日可用量</field>
         <field name="res_model">stock.quant.forecast.report</field>
         <field name="view_mode">pivot,tree,graph</field>
         <field name="context">{
@@ -62,7 +62,7 @@
         </field>
     </record>
 
-    <menuitem id="menu_rental_quant_forecast_inventory" name="租赁库存预测" parent="stock.menu_warehouse_report" sequence="901"
+    <menuitem id="menu_rental_quant_forecast_inventory" name="单仓日可用量" parent="stock.menu_warehouse_report" sequence="901"
               action="report_stock_quantity_forecast_action"/>
 </odoo>
 
