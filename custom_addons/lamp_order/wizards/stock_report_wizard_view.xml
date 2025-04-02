@@ -31,7 +31,7 @@
             </field>
         </record>
         <record id="action_recompute_stock_inv_fee_wizard" model="ir.actions.act_window">
-            <field name="name">重新计算某日仓储费</field>
+            <field name="name">库存预测</field>
             <field name="res_model">stock.quant.forecast.wizard</field>
             <field name="view_mode">form</field>
             <field name="target">new</field>
