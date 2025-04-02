@@ -52,7 +52,8 @@ class StockQuantForcastReport(models.Model):
         ]
         date_domain = [
             ('date', '>=', all_days[0]),
-            ('date', '<=', all_days[-1])
+            ('date', '<=', all_days[-1]),
+            ('state', 'in', ['assigned', 'partially_available'])
         ]
         filter_domain = expression.AND([filter_domain, date_domain])
 
@@ -73,8 +74,6 @@ class StockQuantForcastReport(models.Model):
                 sm_out = today_sm.filtered(lambda sm: sm.location_dest_id == warehouse_id.rental_out_location_id)
                 product_qty = product_qty + sum(x.product_uom_qty for x in sm_in) - sum(
                     x.product_uom_qty for x in sm_out)
-                _logger.info('今天库存: {}, {}, {}'.format(product_qty, sum(x.product_uom_qty for x in sm_in),
-                                                           sum(x.product_uom_qty for x in sm_out)))
 
             today_qty = product_qty
             # 前一天
