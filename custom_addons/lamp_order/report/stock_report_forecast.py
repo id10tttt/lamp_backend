@@ -69,6 +69,8 @@ class StockQuantForcastReport(models.Model):
                 sm_in = today_sm.filtered(lambda sm: sm.location_dest_id == warehouse_id.rental_in_location_id)
                 sm_out = today_sm.filtered(lambda sm: sm.location_dest_id == warehouse_id.rental_out_location_id)
                 product_qty += sum(x.product_uom_qty for x in sm_in) - sum(x.product_uom_qty for x in sm_out)
+
+            today_qty = product_qty
             # 前一天
             for current_day in before_today[::-1]:
                 current_sm = range_sm.filtered(
@@ -95,7 +97,7 @@ class StockQuantForcastReport(models.Model):
 
                 all_report_data.append(tmp)
 
-            product_qty = product_quant.get('quantity')
+            product_qty = today_qty
             tmp = {
                 'date': today,
                 'warehouse_id': warehouse_id.id,
