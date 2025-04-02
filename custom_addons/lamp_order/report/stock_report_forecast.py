@@ -53,7 +53,7 @@ class StockQuantForcastReport(models.Model):
         date_domain = [
             ('date', '>=', all_days[0]),
             ('date', '<=', all_days[-1]),
-            ('state', 'in', ['assigned', 'partially_available'])
+            ('state', 'not in', ['cancel', 'done', 'draft'])
         ]
         filter_domain = expression.AND([filter_domain, date_domain])
 
