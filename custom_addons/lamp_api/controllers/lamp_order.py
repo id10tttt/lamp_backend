@@ -324,6 +324,15 @@ class SaleOrder(http.Controller, BaseController):
 
             redeem_points = payload_data.get('redeem_points', 0)
             warehouse_id = int(payload_data.get('warehouse_id'))
+            partner_id = request.env['res.partner'].sudo().search([
+                ('id', '=', request.partner_id)
+            ])
+            if partner_id.warehouse_id.id != warehouse_id:
+                return self.response_http_json_error(400,
+                                                     message='不允许跨仓库下单，阁下仅允许在注册的仓库 [{}] 下单!'.format(
+                    partner_id.warehouse_id.name
+                ))
+
             redeem_points = int(redeem_points) if redeem_points else 0
             order_data, coupon_ids, empty_cart_task = self.prepare_sale_order(payload_data)
 
