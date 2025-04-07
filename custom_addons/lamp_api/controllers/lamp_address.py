@@ -72,7 +72,7 @@ class ResPartnerAddress(http.Controller, BaseController):
             'street': child_id.street or '',
             'street2': child_id.street2 or '',
             'mobile': child_id.mobile or '',
-            'email': child_id.email or '',
+            'email': child_id.delivery_email or '',
             'default_delivery': child_id.default_delivery,
         } for child_id in partner_id.child_ids]
 
@@ -121,7 +121,7 @@ class ResPartnerAddress(http.Controller, BaseController):
             'street': street,
             'street2': street2,
             'mobile': mobile,
-            'email': email,
+            'delivery_email': email,
             'type': 'delivery',
             'parent_id': request.partner_id,
             'default_delivery': default_delivery
@@ -204,7 +204,10 @@ class ResPartnerAddress(http.Controller, BaseController):
 
         for up_key in update_key:
             if up_key in payload_data.keys():
-                update_value[up_key] = payload_data.get(up_key)
+                if up_key == 'email':
+                    update_value['delivery_email'] = payload_data.get(up_key)
+                else:
+                    update_value[up_key] = payload_data.get(up_key)
 
         if not update_value:
             return self.response_http_json_error(400, message='更新数据异常!')

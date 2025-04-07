@@ -12,6 +12,7 @@
                     <field name="legal_entity_front"/>
                     <field name="legal_entity_back"/>
                     <field name="default_delivery"/>
+                    <field name="delivery_email"/>
                     <field name="warehouse_id"/>
                 </xpath>
                 <xpath expr="//page[@name='internal_notes']" position="after">

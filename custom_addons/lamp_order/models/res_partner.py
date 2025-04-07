@@ -26,7 +26,7 @@ class ResPartner(models.Model):
     ], default='customer', ondelete='set null')
 
     default_delivery = fields.Boolean(string='默认取货地址', default=False, copy=False)
-
+    delivery_email = fields.Char('配送邮箱')
     earned_loyalty_ids = fields.One2many('website.earn.loyalty', 'partner_id', string="Earned Loyalty")
     redeem_loyalty_ids = fields.One2many('website.redeem.loyalty', 'partner_id', string="Redeem Loyalty")
     remaining_points = fields.Integer(string="Available Points", compute='compute_total_earned', store=True, default=0)
