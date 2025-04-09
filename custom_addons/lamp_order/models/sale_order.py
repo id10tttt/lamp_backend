@@ -146,6 +146,9 @@ class SaleOrderLine(models.Model):
     @api.onchange("product_id", "rental_qty")
     def rental_product_available_qty(self):
         self.ensure_one()
+        if not self.start_date:
+            return
+
         line_id = self
         res = {}
         if self.product_id and self.product_id.rented_product_id:
