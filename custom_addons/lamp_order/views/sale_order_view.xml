@@ -40,7 +40,7 @@
                         <group>
                             <field name="coupon"/>
                             <field name="reserve"/>
-                            <field name="order_amount"/>
+                            <field name="amount_total"/>
                         </group>
                         <group>
                             <field name="pay_state"/>
