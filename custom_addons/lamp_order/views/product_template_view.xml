@@ -6,6 +6,13 @@
             <field name="model">product.template</field>
             <field name="inherit_id" ref="product.product_template_only_form_view"/>
             <field name="arch" type="xml">
+                <xpath expr="//notebook/page[@name='general_information']/group[last()]" position="before">
+                    <group name="product_template_images" string="Extra Product Media"
+                           attrs="{'invisible': [('sale_ok','=',False)]}">
+                        <field name="product_template_image_ids" class="o_website_sale_image_list"
+                               context="{'default_name': name}" mode="kanban" add-label="Add a Media" nolabel="1"/>
+                    </group>
+                </xpath>
                 <xpath expr="//field[@name='detailed_type']" position="after">
                     <field name="rental"/>
                     <field name="device_code"/>
