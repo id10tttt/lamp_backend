@@ -58,10 +58,12 @@ class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
     start_date = fields.Date(
+        string='开始日期',
         readonly=True,
         states={"draft": [("readonly", False)], "sent": [("readonly", False)]},
     )
     end_date = fields.Date(
+        string='归还日期',
         readonly=True,
         states={"draft": [("readonly", False)], "sent": [("readonly", False)]},
     )
