@@ -30,6 +30,12 @@
                     <field name="pickup_code"/>
                 </xpath>
                 <xpath
+                        expr="//field[@name='order_line']/form//field[@name='product_id']"
+                        position="attributes"
+                >
+                    <attribute name="domain">[('detailed_type', '=', 'service')]</attribute>
+                </xpath>
+                <xpath
                         expr="//field[@name='order_line']/form//field[@name='customer_lead']"
                         position="after"
                 >
