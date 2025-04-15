@@ -50,7 +50,7 @@
                         </group>
                         <group>
                             <field name="pay_state"/>
-                            <field name="return_time"/>
+<!--                            <field name="return_time"/>-->
                             <field name="actual_return_time"/>
                         </group>
                     </group>
