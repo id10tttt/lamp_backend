@@ -13,8 +13,8 @@ from odoo.tools.misc import format_date
 class SaleOrder(models.Model):
     _inherit = "sale.order"
 
-    default_start_date = fields.Date()
-    default_end_date = fields.Date()
+    default_start_date = fields.Date(string='开始日期')
+    default_end_date = fields.Date(string='归还日期')
 
     @api.constrains("default_start_date", "default_end_date")
     def _check_default_start_end_dates(self):
