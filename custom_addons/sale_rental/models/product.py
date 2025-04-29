@@ -52,7 +52,7 @@ class ProductProduct(models.Model):
         for product_id in self:
             if product_id.rental_service_tmpl_ids:
                 continue
-            product_id.with_context(auto_create_rental=True).create(self._prepare_rental_product())
+            product_id.with_context(auto_create_rental=True).create(product_id._prepare_rental_product())
 
     @api.constrains("rented_product_id", "must_have_dates", "type", "uom_id")
     def _check_rental(self):
