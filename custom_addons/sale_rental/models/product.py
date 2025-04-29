@@ -5,6 +5,9 @@
 
 from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class ProductProduct(models.Model):
@@ -96,6 +99,14 @@ class ProductTemplate(models.Model):
     rental_service_tmpl_ids = fields.One2many(
         "product.template", "rented_product_tmpl_id", string="Rental Services"
     )
+
+    def write(self, vals):
+        res = super().write(vals)
+        if self.product_variant_ids and 'name' in vals and self.product_variant_ids.rental_service_ids and not self.env.context.get('auto_update_rental'):
+            self.product_variant_ids.rental_service_ids.with_context(auto_update_rental=True).write({
+                'name': '租赁服务: {}'.format(self.name)
+            })
+        return res
 
     def create_rental_product_auto(self):
         return self.product_variant_ids.create_rental_product_auto()
