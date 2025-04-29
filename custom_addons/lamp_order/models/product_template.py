@@ -5,9 +5,9 @@ from odoo import models, fields
 class ProductTemplate(models.Model):
     _inherit = 'product.template'
 
-    rental = fields.Float('Rental', digits=(16, 2))
+    rental = fields.Float('Rental', digits=(16, 2), required=True)
     device_code = fields.Char('Device code', translate=True)
-    delay_price = fields.Float('Delay Price', digits=(16, 2))
+    delay_price = fields.Float('Delay Price', digits=(16, 2), required=True)
     coupon = fields.Boolean('Coupon', default=False)
     package_type = fields.Char('Package Type', translate=True)
 

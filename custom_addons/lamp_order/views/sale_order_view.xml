@@ -45,6 +45,12 @@
                     <field name="customer_lead" invisible="1"/>
                     <button name="rental_product_available_qty" string="库存查询" type="object" class="oe_highlight"/>
                 </xpath>
+                <xpath expr="//field[@name='order_line']/form//field[@name='product_uom_qty']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='order_line']/form//field[@name='product_uom']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
                 <xpath expr="//notebook" position="before">
                     <group>
                         <group>

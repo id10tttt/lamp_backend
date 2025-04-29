@@ -4,7 +4,9 @@ from odoo.tools import float_compare
 from datetime import timedelta
 import random
 from odoo.exceptions import ValidationError
+import logging
 
+_logger = logging.getLogger(__name__)
 
 
 class SaleOrder(models.Model):
@@ -159,6 +161,62 @@ class SaleOrderLine(models.Model):
         stock_out_qty = sum(x.product_uom_qty for x in stock_out)
 
         return stock_in_qty, stock_out_qty
+
+    def compute_rental_price_total(self):
+        line_product_id = self.product_id
+        if line_product_id.rented_product_id:
+            product_id = line_product_id.rented_product_id
+        else:
+            product_id = line_product_id
+        template_id = product_id.product_tmpl_id
+
+        first_day_price_unit = template_id.rental
+        delay_price_unit = template_id.delay_price
+        first_day_price = first_day_price_unit * self.number_of_days * self.rental_qty
+
+        delay_price = delay_price_unit * (self.number_of_days - 1) * self.rental_qty
+
+        return first_day_price + delay_price
+
+    @api.depends('product_uom_qty', 'discount', 'price_unit', 'tax_id', 'rental_qty')
+    def _compute_amount(self):
+        """
+        Compute the amounts of the SO line.
+        """
+        for line in self:
+            if line.rental_type:
+                # 价格 = 首日单价 + 次日 * 数量
+                price_total = line.compute_rental_price_total()
+                _logger.info('price_total: {}'.format(price_total))
+                line.update({
+                    'price_subtotal': price_total,
+                    'price_total': price_total,
+                    'price_tax': 0,
+                })
+            else:
+                price = line.price_unit * (1 - (line.discount or 0.0) / 100.0)
+                taxes = line.tax_id.compute_all(price, line.order_id.currency_id, line.product_uom_qty,
+                                                product=line.product_id, partner=line.order_id.partner_shipping_id)
+                line.update({
+                    'price_tax': sum(t.get('amount', 0.0) for t in taxes.get('taxes', [])),
+                    'price_total': taxes['total_included'],
+                    'price_subtotal': taxes['total_excluded'],
+                })
+
+    @api.onchange('product_id')
+    def change_product_unit_price(self):
+        for line_id in self:
+            line_product_id = line_id.product_id
+            if line_product_id.rented_product_id:
+                product_id = line_product_id.rented_product_id
+            else:
+                product_id = line_product_id
+
+            template_id = product_id.product_tmpl_id
+            if not template_id:
+                line_id.price_unit = 0
+            else:
+                line_id.price_unit = template_id.rental
 
     @api.onchange("product_id", "rental_qty")
     def rental_product_available_qty(self):
