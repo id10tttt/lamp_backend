@@ -5,6 +5,8 @@ from odoo import models, fields
 class StockPicking(models.Model):
     _inherit = 'stock.picking'
 
+    note = fields.Html(related='sale_id.note', string='备注')
+
     def change_sale_order_status(self, picking_ids):
         for picking_id in picking_ids:
             group_id = picking_id.group_id

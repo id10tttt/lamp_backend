@@ -148,6 +148,14 @@ class SaleOrder(models.Model):
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
 
+    rental_qty = fields.Float(
+        string="租赁数量",
+        digits="Product Unit of Measure",
+        readonly=True,
+        states={"draft": [("readonly", False)]},
+        help="Indicate the number of items that will be rented.",
+    )
+
     def get_date_range_available_qty(self, move_date, order_line):
         stock_move_ids = self.env['stock.move'].sudo().search([
             ('date', '=', move_date),

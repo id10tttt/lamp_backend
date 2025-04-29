@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="action_picking_tree_incoming" model="ir.actions.act_window">
+            <field name="name">Transfers</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_mode">tree,kanban,form,calendar</field>
+            <field name="domain">[('picking_type_code', '=', 'incoming')]</field>
+            <field name="context">{'contact_display': 'partner_address', 'default_company_id': allowed_company_ids[0]}
+            </field>
+            <field name="search_view_id" ref="stock.view_picking_internal_search"/>
+        </record>
+        <record id="action_picking_tree_outgoing" model="ir.actions.act_window">
+            <field name="name">Transfers</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_mode">tree,kanban,form,calendar</field>
+            <field name="domain">[('picking_type_code', '=', 'outgoing')]</field>
+            <field name="context">{'contact_display': 'partner_address', 'default_company_id': allowed_company_ids[0]}
+            </field>
+            <field name="search_view_id" ref="stock.view_picking_internal_search"/>
+        </record>
+        <record id="action_picking_tree_internal" model="ir.actions.act_window">
+            <field name="name">Transfers</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_mode">tree,kanban,form,calendar</field>
+            <field name="domain">[('picking_type_code', '=', 'internal')]</field>
+            <field name="context">{'contact_display': 'partner_address', 'default_company_id': allowed_company_ids[0]}
+            </field>
+            <field name="search_view_id" ref="stock.view_picking_internal_search"/>
+        </record>
+        <menuitem id="all_stock_picking" name="调拨" sequence="1" parent="stock.menu_stock_warehouse_mgmt"/>
+        <menuitem id="all_stock_picking_incoming" name="入库" sequence="1" parent="all_stock_picking"
+                  action="action_picking_tree_incoming"/>
+        <menuitem id="all_stock_picking_outgoing" name="出库" sequence="2" parent="all_stock_picking"
+                  action="action_picking_tree_outgoing"/>
+        <menuitem id="all_stock_picking_internal" name="内部调拨" sequence="3" parent="all_stock_picking"
+                  action="action_picking_tree_internal"/>
+
+        <record id="vpicktree_inherit" model="ir.ui.view">
+            <field name="name">stock.picking list inherit</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.vpicktree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='origin']" position="after">
+                    <field name="note"/>
+                </xpath>
+                <xpath expr="//field[@name='name']" position="attributes">
+                    <attribute name="string">调拨单号</attribute>
+                </xpath>
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="picking_type_code"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="view_picking_internal_search_inherit" model="ir.ui.view">
+            <field name="name">stock.picking search inherit</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_internal_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//search" position="inside">
+                    <separator/>
+                    <filter name="picking_type_code_incoming" string="收货"
+                            domain="[('picking_type_code', '=', 'incoming')]"/>
+                    <filter name="picking_type_code_outgoing" string="出库"
+                            domain="[('picking_type_code', '=', 'outgoing')]"/>
+                    <filter name="picking_type_code_internal" string="内部调拨"
+                            domain="[('picking_type_code', '=', 'internal')]"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
