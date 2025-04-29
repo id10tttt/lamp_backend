@@ -50,7 +50,7 @@ class StockWarehouse(http.Controller, BaseController):
         except Exception as e:
             return self.response_json_error(400, message='数据类型错误')
 
-        filter_domain = []
+        filter_domain = [('rental_allowed', '=', True)]
         if byid:
             filter_domain = [('id', '=', byid)]
         warehouse_ids = request.env['stock.warehouse'].sudo().search(filter_domain, limit=limit, offset=offset)

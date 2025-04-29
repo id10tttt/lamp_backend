@@ -72,6 +72,7 @@ class SaleOrderLine(models.Model):
         inverse="_inverse_number_of_days",
         readonly=False,
         store=True,
+        string='天数'
     )
     must_have_dates = fields.Boolean(related="product_id.must_have_dates")
 

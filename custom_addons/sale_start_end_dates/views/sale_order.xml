@@ -43,7 +43,7 @@
                     attrs="{'required': [('must_have_dates', '=', True)]}"
                     optional="show"
                 />
-                <field name="number_of_days" optional="hide" />
+                <field name="number_of_days" optional="show" />
                 <field name="must_have_dates" invisible="1" />
             </xpath>
             <field name="partner_id" position="after">

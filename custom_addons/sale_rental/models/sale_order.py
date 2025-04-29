@@ -54,7 +54,7 @@ class SaleOrderLine(models.Model):
         states={"draft": [("readonly", False)]},
     )
     rental_qty = fields.Float(
-        string="Rental Quantity",
+        string="租赁数量",
         digits="Product Unit of Measure",
         readonly=True,
         states={"draft": [("readonly", False)]},

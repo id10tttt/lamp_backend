@@ -21,6 +21,39 @@ class ProductProduct(models.Model):
         "product.product", "rented_product_id", string="Related Rental Services"
     )
 
+    @api.model
+    def _prepare_rental_product(self):
+        day_uom_id = self.env.ref("uom.product_uom_day").id
+        vals = {
+            "type": "service",
+            "detailed_type": "service",
+            "sale_ok": True,
+            "purchase_ok": False,
+            "uom_id": day_uom_id,
+            "uom_po_id": day_uom_id,
+            "list_price": self.rental,
+            "name": '租赁服务: {}'.format(self.name),
+            "default_code": self.default_code,
+            "rented_product_id": self.id,
+            "must_have_dates": True,
+            "categ_id": self.categ_id.id,
+            "invoice_policy": "order",
+        }
+        return vals
+
+    @api.model
+    def create(self, values):
+        res = super().create(values)
+        if not self.env.context.get('auto_create_rental'):
+            res.create_rental_product_auto()
+        return res
+
+    def create_rental_product_auto(self):
+        for product_id in self:
+            if product_id.rental_service_tmpl_ids:
+                continue
+            product_id.with_context(auto_create_rental=True).create(self._prepare_rental_product())
+
     @api.constrains("rented_product_id", "must_have_dates", "type", "uom_id")
     def _check_rental(self):
         day_uom = self.env.ref("uom.product_uom_day")
@@ -63,6 +96,9 @@ class ProductTemplate(models.Model):
     rental_service_tmpl_ids = fields.One2many(
         "product.template", "rented_product_tmpl_id", string="Rental Services"
     )
+
+    def create_rental_product_auto(self):
+        return self.product_variant_ids.create_rental_product_auto()
 
     @api.depends("product_variant_ids", "product_variant_ids.rented_product_id")
     def _compute_rented_product_tmpl_id(self):

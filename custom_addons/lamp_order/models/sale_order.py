@@ -2,18 +2,24 @@
 from odoo import models, fields, api
 from odoo.tools import float_compare
 from datetime import timedelta
+import random
 from odoo.exceptions import ValidationError
+
 
 
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
+    def get_random_char(self, randon_num=6):
+        random_list = random.sample('ABCDEFGHIJLMNOPQRSTUVWXYZ1234567890', randon_num)
+        return ''.join(str(x) for x in random_list)
+
     defer = fields.Boolean('Defer', default=False, copy=False, tracking=True)
     picker_partner_id = fields.Many2one('res.partner', string='Picker')
-    picker = fields.Char('Picker')
-    picker_phone = fields.Char('Picker Phone')
-    pick_time = fields.Datetime('Pick Time')
-    actual_pick_time = fields.Datetime('Actual Pick time')
+    picker = fields.Char('Picker', tracking=True)
+    picker_phone = fields.Char('Picker Phone', tracking=True)
+    pick_time = fields.Datetime('Pick Time', tracking=True)
+    actual_pick_time = fields.Datetime('Actual Pick time', tracking=True)
 
     full_reduction = fields.Char('Full Reduction')
     coupon = fields.Char('Coupon')
@@ -40,7 +46,7 @@ class SaleOrder(models.Model):
         ('60', '售后中'),
     ], string='Status', default='10', tracking=True)
 
-    pay_state = fields.Boolean('Pay State')
+    pay_state = fields.Boolean('Pay State', tracking=True)
     return_time = fields.Datetime('Return Time')
     actual_return_time = fields.Datetime('Actual Return time')
 
@@ -49,7 +55,7 @@ class SaleOrder(models.Model):
     labor_cost = fields.Float('Labor Cost', digits=(16, 2))
 
     active_address = fields.Char('Active address')
-    billing_days = fields.Integer('Billing days')
+    billing_days = fields.Integer('Billing days', compute='_compute_billing_days')
 
     balance_amount = fields.Float('Balance', digits=(16, 2))
 
@@ -58,7 +64,7 @@ class SaleOrder(models.Model):
     stock_preparation = fields.Boolean('Stock preparation', default=False)
     changed = fields.Boolean('Change')
 
-    pickup_code = fields.Char('Pickup Code')
+    pickup_code = fields.Char('Pickup Code', default=lambda self: self.get_random_char(), tracking=True)
     check_pickup_code = fields.Boolean('Check Pickup Code')
 
     is_vip = fields.Boolean('IS VIP')
@@ -69,6 +75,17 @@ class SaleOrder(models.Model):
 
     reward_amount = fields.Float("Reward Amount")
     redeem_amount = fields.Float('Redeem Amount')
+
+    default_start_date = fields.Date(string='开始日期', tracking=True)
+    default_end_date = fields.Date(string='归还日期', tracking=True)
+
+    @api.depends('default_start_date', 'default_end_date')
+    def _compute_billing_days(self):
+        for line_id in self:
+            if line_id.default_start_date and line_id.default_end_date:
+                line_id.billing_days = (line_id.default_end_date - line_id.default_start_date).days + 1
+            else:
+                line_id.billing_days = 0
 
     @api.depends('order_line.invoice_lines')
     def _get_invoiced(self):
