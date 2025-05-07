@@ -42,10 +42,10 @@ class SaleOrderLine(models.Model):
     rental = fields.Boolean(default=False)
     can_sell_rental = fields.Boolean(string="Can Sell from Rental")
     rental_type = fields.Selection(
-        [("new_rental", "New Rental"), ("rental_extension", "Rental Extension")],
+        [("new_rental", "新租赁"), ("rental_extension", "续租")],
         readonly=True,
         states={"draft": [("readonly", False)]},
-        default='new_rental'
+        string='租赁类型'
     )
     extension_rental_id = fields.Many2one(
         "sale.rental",
