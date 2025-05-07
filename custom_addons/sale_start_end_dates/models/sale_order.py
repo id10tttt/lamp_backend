@@ -53,6 +53,15 @@ class SaleOrder(models.Model):
         ):
             self.default_start_date = self.default_end_date
 
+    def write(self, vals):
+        res = super().write(vals)
+        if 'default_start_date' in vals.keys():
+            pass
+
+        if 'default_end_date' in vals.keys():
+            pass
+
+        return res
 
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
@@ -67,6 +76,7 @@ class SaleOrderLine(models.Model):
         readonly=True,
         states={"draft": [("readonly", False)], "sent": [("readonly", False)]},
     )
+    order_date_state = fields.Boolean(compute="compute_order_start_and_end_date")
     number_of_days = fields.Integer(
         compute="_compute_number_of_days",
         inverse="_inverse_number_of_days",
@@ -75,6 +85,15 @@ class SaleOrderLine(models.Model):
         string='天数'
     )
     must_have_dates = fields.Boolean(related="product_id.must_have_dates")
+
+    @api.depends('order_id.default_start_date', 'order_id.default_end_date')
+    def compute_order_start_and_end_date(self):
+        for line_id in self:
+            if line_id.order_id.default_start_date:
+                line_id.start_date = line_id.order_id.default_start_date
+            if line_id.order_id.default_end_date:
+                line_id.end_date = line_id.order_id.default_end_date
+            line_id.order_date_state = True
 
     @api.depends("start_date", "end_date")
     def _compute_number_of_days(self):

@@ -45,6 +45,7 @@ class SaleOrderLine(models.Model):
         [("new_rental", "New Rental"), ("rental_extension", "Rental Extension")],
         readonly=True,
         states={"draft": [("readonly", False)]},
+        default='new_rental'
     )
     extension_rental_id = fields.Many2one(
         "sale.rental",
@@ -354,3 +355,12 @@ class SaleOrderLine(models.Model):
     def rental_type_change(self):
         if self.rental_type == "new_rental":
             self.extension_rental_id = False
+
+    @api.depends("start_date", "end_date")
+    def _compute_number_of_days(self):
+        for line in self:
+            days = False
+            if line.start_date and line.end_date:
+                days = (line.end_date - line.start_date).days + 1
+            line.number_of_days = days
+            line.product_uom_qty = days * line.rental_qty
