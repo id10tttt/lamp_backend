@@ -180,7 +180,7 @@ class SaleOrderLine(models.Model):
 
         first_day_price_unit = template_id.rental
         delay_price_unit = template_id.delay_price
-        first_day_price = first_day_price_unit * self.number_of_days * self.rental_qty
+        first_day_price = first_day_price_unit * 1 * self.rental_qty
 
         delay_price = delay_price_unit * (self.number_of_days - 1) * self.rental_qty
 
