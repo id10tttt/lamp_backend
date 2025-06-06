@@ -292,6 +292,7 @@ class SaleOrder(http.Controller, BaseController):
             'picker_partner_id': picker_partner_id.id,
             'picker': picker_partner_id.name,
             'picker_phone': picker_partner_id.mobile,
+            'company_id': warehouse_id.company_id.id,
             # 'pick_time': pick_time,
             'state': 'draft',
             'stock_status': '10',
