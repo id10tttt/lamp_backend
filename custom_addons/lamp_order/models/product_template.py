@@ -26,3 +26,4 @@ class ProductTemplate(models.Model):
                                                  copy=True)
 
     put_on_shelves = fields.Boolean('Put On Shelves', default=True, copy=False)
+    company_id = fields.Many2one('res.company', default=lambda self: self.env.company)
