@@ -330,7 +330,7 @@ class SaleOrder(http.Controller, BaseController):
             ])
             if partner_id.warehouse_id.id != warehouse_id:
                 return self.response_http_json_error(400,
-                                                     message='不允许跨仓库下单，阁下仅允许在注册的仓库 [{}] 下单!'.format(
+                                                     message='不允许跨仓库下单，仅允许在注册的仓库 [{}] 下单!'.format(
                     partner_id.warehouse_id.name
                 ))
 
