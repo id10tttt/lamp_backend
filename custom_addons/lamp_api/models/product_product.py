@@ -17,7 +17,10 @@ class ProductProduct(models.Model):
                                                           attachment_id.access_token)
 
     def get_product_product_attachment_url(self, product_id):
-        product_tmpl_id = product_id.product_tmpl_id
+        if product_id.rented_product_id:
+            product_tmpl_id = product_id.rented_product_id
+        else:
+            product_tmpl_id = product_id.product_tmpl_id
         attachment_id = self.env['ir.attachment'].sudo().search([
             ('res_model', '=', product_tmpl_id._name),
             ('res_id', '=', product_tmpl_id.id),

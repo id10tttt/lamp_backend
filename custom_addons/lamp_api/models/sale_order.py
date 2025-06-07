@@ -37,7 +37,7 @@ class SaleOrder(models.Model):
                     'start_date': str(sol.start_date),
                     'end_date': str(sol.end_date),
                     'price_total': sol.price_total,
-                } for sol in order_id.order_line]
+                } for sol in order_id.order_line.filtered(lambda x: not x.is_downpayment)]
             }
 
             resp_data.append(order_data)

@@ -201,7 +201,10 @@ class LAMPUser(http.Controller, BaseController):
             return self.response_http_json_error(400, message='验证码错误!')
         redis_key = email
 
-        partner_id = self._check_credentials(email, password)
+        try:
+            partner_id = self._check_credentials(email, password)
+        except Exception as e:
+            return self.response_http_json_error(400, message='出现了错误! {}'.format(e))
 
         if not partner_id:
             return self.response_http_json_error(400, message='登录失败!')
