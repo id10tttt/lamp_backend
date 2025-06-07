@@ -59,10 +59,10 @@ class StockWarehouse(http.Controller, BaseController):
             'id': warehouse_id.id,
             'name': warehouse_id.name,
             'code': warehouse_id.code,
-            'address': warehouse_id.address,
-            'province': warehouse_id.province,
+            'address': warehouse_id.address or '',
+            'province': warehouse_id.province or '',
             'warehouse_image': self.get_stock_warehouse_attachment_url(warehouse_id),
-            'customer_service': warehouse_id.customer_service
+            'customer_service': warehouse_id.customer_service or ''
         } for warehouse_id in warehouse_ids]
 
         return self.response_json_success(data=warehouse_data, message='成功')
@@ -86,9 +86,10 @@ class StockWarehouse(http.Controller, BaseController):
             'id': warehouse_id.id,
             'name': warehouse_id.name,
             'code': warehouse_id.code,
-            'address': warehouse_id.address,
-            'province': warehouse_id.province,
+            'address': warehouse_id.address or '',
+            'province': warehouse_id.province or '',
             'warehouse_image': self.get_stock_warehouse_attachment_url(warehouse_id),
+            'customer_service': warehouse_id.customer_service or ''
         }
 
         return self.response_http_json_success(data=warehouse_data, message='成功')
@@ -108,9 +109,10 @@ class StockWarehouse(http.Controller, BaseController):
             'id': warehouse_id.id,
             'name': warehouse_id.name,
             'code': warehouse_id.code,
-            'address': warehouse_id.address,
-            'province': warehouse_id.province,
+            'address': warehouse_id.address or '',
+            'province': warehouse_id.province or '',
             'warehouse_image': self.get_stock_warehouse_attachment_url(warehouse_id),
+            'customer_service': warehouse_id.customer_service or ''
         }
 
         return self.response_json_success(data=warehouse_data, message='成功')

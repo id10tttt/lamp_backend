@@ -329,6 +329,9 @@ class SaleOrder(http.Controller, BaseController):
                 ('id', '=', request.partner_id)
             ])
             if partner_id.warehouse_id.id != warehouse_id:
+                if not partner_id.warehouse_id:
+                    return self.response_http_json_error(400, message='未配置允许的仓库! 请联系商家!')
+
                 return self.response_http_json_error(400,
                                                      message='不允许跨仓库下单，仅允许在注册的仓库 [{}] 下单!'.format(
                     partner_id.warehouse_id.name
