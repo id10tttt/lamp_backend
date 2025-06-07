@@ -5,6 +5,28 @@ from odoo import models
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
+    def parse_sale_order_line_data(self, order_id):
+        order_line_data = []
+        for sol in order_id.order_line.filtered(lambda x: not x.is_downpayment):
+            if sol.product_id.rented_product_id:
+                product_id = sol.product_id.rented_product_id
+            else:
+                product_id = sol.product_id
+
+            order_line_data.append({
+                'product_image': product_id.get_product_product_attachment_url(product_id),
+                'product_id': product_id.id,
+                'product_name': product_id.name,
+                'name': sol.name,
+                'product_uom_qty': sol.product_uom_qty,
+                'price_unit': sol.price_unit,
+                'start_date': str(sol.start_date),
+                'end_date': str(sol.end_date),
+                'price_total': sol.price_total,
+            })
+
+        return order_line_data
+
     def parse_sale_order(self, order_ids):
         resp_data = []
         for order_id in order_ids:
@@ -27,17 +49,7 @@ class SaleOrder(models.Model):
                 'warehouse_id': order_id.warehouse_id.id,
                 'warehouse_name': order_id.warehouse_id.name,
                 'amount_total': order_id.amount_total,
-                'order_line': [{
-                    'product_image': sol.product_id.get_product_product_attachment_url(sol.product_id),
-                    'product_id': sol.product_id.id,
-                    'product_name': sol.product_id.name,
-                    'name': sol.name,
-                    'product_uom_qty': sol.product_uom_qty,
-                    'price_unit': sol.price_unit,
-                    'start_date': str(sol.start_date),
-                    'end_date': str(sol.end_date),
-                    'price_total': sol.price_total,
-                } for sol in order_id.order_line.filtered(lambda x: not x.is_downpayment)]
+                'order_line': self.parse_sale_order_line_data(order_id)
             }
 
             resp_data.append(order_data)
