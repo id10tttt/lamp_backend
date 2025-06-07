@@ -16,6 +16,10 @@ class ProductProduct(models.Model):
         return '{}/web/content/{}?access_token={}'.format(base_url, attachment_id.id,
                                                           attachment_id.access_token)
 
+    def get_default_image_url(self):
+        base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
+        return '{}/base/static/description/icon.png'.format(base_url)
+
     def get_product_product_attachment_url(self, product_id):
         if product_id.rented_product_id:
             product_tmpl_id = product_id.rented_product_id
@@ -28,7 +32,7 @@ class ProductProduct(models.Model):
         ])
 
         if not attachment_id:
-            return ''
+            return self.get_default_image_url()
 
         attachment_url = self.get_ir_attachment_public_url(attachment_id[0])
 
