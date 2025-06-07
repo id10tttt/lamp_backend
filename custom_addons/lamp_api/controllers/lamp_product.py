@@ -10,7 +10,6 @@ _logger = logging.getLogger(__name__)
 MAX_MOBILE_SMS_LIMIT = 20
 
 
-
 class ProductProduct(http.Controller, BaseController):
     @http.route('/api/v1/lamp/product', auth='public', methods=['GET'], csrf=False, cors="*", type='http')
     def get_product_list(self, lang='en_US', **kwargs):
@@ -57,13 +56,14 @@ class ProductProduct(http.Controller, BaseController):
         # 根据库存，查找物料
         quant_ids = request.env['stock.quant'].sudo().search(filter_domain)
 
-        filter_domain = [('id', 'in', quant_ids.product_id.ids)]
+        filter_domain = [('id', 'in', list(set(quant_ids.product_id.ids)))]
 
         if product_name:
             name_domain = [('name', 'ilike', product_name)]
             filter_domain = expression.AND([filter_domain, name_domain])
 
-        product_ids = request.env['product.product'].sudo().search(filter_domain, limit=limit, offset=offset)
+        product_ids = request.env['product.product'].sudo().search(filter_domain, limit=limit, offset=offset,
+                                                                   order='id desc')
 
         product_data = request.env['product.product'].parse_product_data(product_ids)
 
