@@ -204,7 +204,6 @@ class SaleOrderLine(models.Model):
                 vals = line._prepare_new_rental_procurement_values(group)
                 try:
                     line._run_rental_procurement(vals)
-                    logger.info('shall we>? {}'.format(line))
                 except UserError as error:
                     errors.append(error.name)
 

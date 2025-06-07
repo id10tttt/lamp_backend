@@ -186,12 +186,6 @@ class SaleOrderLine(models.Model):
 
         return first_day_price + delay_price
 
-    def write(self, values):
-        _logger.info('更新......................{}'.format(values))
-        res = super().write(values)
-
-        return res
-
     @api.depends('product_uom_qty', 'discount', 'price_unit', 'tax_id', 'rental_qty')
     def _compute_amount(self):
         """
