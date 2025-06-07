@@ -52,7 +52,8 @@
                     <field name="inventory_quantity_set" invisible="1"/>
                     <field name="location_id" domain="[('usage', 'in', ['internal', 'transit'])]"
                            attrs="{'readonly': [('id', '!=', False)]}" invisible="context.get('hide_location', False)"
-                           options="{'no_create': True}"/>
+                           options="{'no_create': True}" optional="show"/>
+                    <field name="warehouse_id" optional="show"/>
                     <field name="product_id" attrs="{'readonly': [('id', '!=', False)]}"
                            readonly="context.get('single_product', False)" force_save="1"
                            optional="show"
