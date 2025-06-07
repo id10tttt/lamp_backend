@@ -90,18 +90,16 @@ class SaleOrderLine(models.Model):
     def compute_order_start_and_end_date(self):
         for line_id in self:
             if line_id.order_id.default_start_date:
-                line_id.start_date = line_id.order_id.default_start_date
+                if line_id.order_id.default_start_date != line_id.start_date:
+                    line_id.start_date = line_id.order_id.default_start_date
             if line_id.order_id.default_end_date:
-                line_id.end_date = line_id.order_id.default_end_date
+                if line_id.order_id.default_end_date != line_id.end_date:
+                    line_id.end_date = line_id.order_id.default_end_date
             line_id.order_date_state = True
 
     @api.depends("start_date", "end_date")
     def _compute_number_of_days(self):
-        for line in self:
-            days = False
-            if line.start_date and line.end_date:
-                days = (line.end_date - line.start_date).days + 1
-            line.number_of_days = days
+        pass
 
     @api.onchange("number_of_days")
     def _inverse_number_of_days(self):

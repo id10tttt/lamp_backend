@@ -204,6 +204,7 @@ class SaleOrderLine(models.Model):
                 vals = line._prepare_new_rental_procurement_values(group)
                 try:
                     line._run_rental_procurement(vals)
+                    logger.info('shall we>? {}'.format(line))
                 except UserError as error:
                     errors.append(error.name)
 
@@ -359,8 +360,13 @@ class SaleOrderLine(models.Model):
     @api.depends("start_date", "end_date")
     def _compute_number_of_days(self):
         for line in self:
+            if line.order_id.state != 'draft':
+                continue
             days = False
             if line.start_date and line.end_date:
                 days = (line.end_date - line.start_date).days + 1
-            line.number_of_days = days
-            line.product_uom_qty = days * line.rental_qty
+            if line.number_of_days == days:
+                line.number_of_days = days
+            else:
+                line.number_of_days = days
+                line.product_uom_qty = days * line.rental_qty

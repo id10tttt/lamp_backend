@@ -23,6 +23,13 @@
         "report/stock_report_forecast_view.xml",
         "wizards/stock_report_wizard_view.xml",
     ],
+    'assets': {
+        'web.assets_backend': [
+            'lamp_order/static/src/js/disable_quick_create_edit.js',
+            'lamp_order/static/src/js/web_title.js',
+            'lamp_order/static/src/js/form_disable_button.js',
+        ],
+    },
     "installable": True,
     "auto_install": False,
 }
