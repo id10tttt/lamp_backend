@@ -58,6 +58,6 @@
     <menuitem id="config_log_menu"
               name="接口日志"
               parent="lamp_menu_root"
-              sequence="1"
+              sequence="10"
               action="api_request_log_action"/>
 </odoo>

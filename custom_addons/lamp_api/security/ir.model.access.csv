@@ -1,2 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 lamp_api.access_api_request_log,access_api_request_log,lamp_api.model_api_request_log,base.group_user,1,1,1,1
+lamp_api.access_lamp_banner,access_lamp_banner,lamp_api.model_lamp_banner,base.group_user,1,1,1,1
+lamp_api.access_lamp_promotion,access_lamp_promotion,lamp_api.model_lamp_promotion,base.group_user,1,1,1,1

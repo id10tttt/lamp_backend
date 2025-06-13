@@ -10,5 +10,7 @@
         'security/ir.model.access.csv',
         'views/menu.xml',
         'views/api_request_log_view.xml',
+        'views/lamp_banner_view.xml',
+        'views/lamp_promotion_view.xml'
     ]
 }

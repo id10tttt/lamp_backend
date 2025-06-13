@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <record id="api_lamp_banner_form" model="ir.ui.view">
+        <field name="name">lamp.banner.view.form</field>
+        <field name="model">lamp.banner</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="title"/>
+                        </group>
+                        <group>
+                            <field name="product_id" domain="[('detailed_type', '=', 'product')]"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="image" widget="image"/>
+                    </group>
+                    <group>
+                        <field name="remark"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="api_lamp_banner_tree" model="ir.ui.view">
+        <field name="name">lamp.banner.view.tree</field>
+        <field name="model">lamp.banner</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="title"/>
+                <field name="product_id"/>
+                <field name="remark"/>
+            </tree>
+        </field>
+    </record>
+    <record id="api_lamp_banner_action" model="ir.actions.act_window">
+        <field name="name">Banner设置</field>
+        <field name="res_model">lamp.banner</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="lamp_banner_config"
+              name="Banner设置"
+              parent="lamp_menu_root"
+              sequence="2"
+              action="api_lamp_banner_action"/>
+</odoo>
