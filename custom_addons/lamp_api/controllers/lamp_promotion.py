@@ -52,7 +52,8 @@ class LampPromotion(http.Controller, BaseController):
 
         promotion_data = [{
             'id': promotion_id.id,
-            'title': promotion_id.title,
+            'title': promotion_id.name,
+            'description': promotion_id.description,
             'image': self.get_promotion_attachment_url(promotion_id),
             'product_id': promotion_id.product_id.id,
             'product_name': promotion_id.product_id.name
