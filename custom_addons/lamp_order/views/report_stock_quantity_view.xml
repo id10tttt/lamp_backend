@@ -5,24 +5,24 @@
             <field name="name">stock_report_view_tree</field>
             <field name="model">report.stock.quantity</field>
             <field name="arch" type="xml">
-                <tree>
+                <list>
                     <field name="date" interval="day"/>
                     <field name="product_id"/>
                     <field name="state"/>
                     <field name="product_qty" sum="1"/>
                     <field name="warehouse_id"/>
-                </tree>
+                </list>
             </field>
         </record>
-        <record id="stock.report_stock_quantity_action" model="ir.actions.act_window">
-            <field name="name">Forecasted Inventory</field>
-            <field name="res_model">report.stock.quantity</field>
-            <field name="view_mode">graph,tree,pivot</field>
-            <field name="context">{
-                'search_default_filter_forecast': 1,
-                'graph_groupbys': ['date:day', 'state', 'product_id'],
-                }
-            </field>
-        </record>
+<!--        <record id="stock.report_stock_quantity_action" model="ir.actions.act_window">-->
+<!--            <field name="name">Forecasted Inventory</field>-->
+<!--            <field name="res_model">report.stock.quantity</field>-->
+<!--            <field name="view_mode">graph,list,pivot</field>-->
+<!--            <field name="context">{-->
+<!--                'search_default_filter_forecast': 1,-->
+<!--                'graph_groupbys': ['date:day', 'state', 'product_id'],-->
+<!--                }-->
+<!--            </field>-->
+<!--        </record>-->
     </data>
 </odoo>

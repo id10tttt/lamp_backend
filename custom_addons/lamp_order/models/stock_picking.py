@@ -4,16 +4,13 @@ from odoo import models, fields
 
 class StockPicking(models.Model):
     _inherit = 'stock.picking'
+    _order = 'id desc'
 
     note = fields.Html(related='sale_id.note', string='备注')
 
     def change_sale_order_status(self, picking_ids):
         for picking_id in picking_ids:
-            group_id = picking_id.group_id
-            if not group_id:
-                continue
-
-            sale_id = group_id.sale_id
+            sale_id = picking_id.sale_id
             if not sale_id:
                 continue
 

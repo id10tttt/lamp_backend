@@ -4,12 +4,12 @@ from odoo.tools import date_utils
 import json
 import datetime
 from odoo import http
-from odoo.http import Response, request, JsonRequest
+from odoo.http import Response, request
 from .response_code import ResponseCode
 import dateutil.parser as parser
 from ..tools.tools_common import get_redis_client
 from odoo.exceptions import ValidationError
-from odoo.addons.base.models.res_users import DEFAULT_CRYPT_CONTEXT
+from odoo.addons.base.models.res_users import CryptContext, MIN_ROUNDS
 
 _logger = logging.getLogger(__name__)
 
@@ -42,10 +42,20 @@ class BaseController(object):
         passwords. Can be overridden if technical, legal or political matters
         require different kdfs than the provided default.
 
-        Requires a CryptContext as deprecation and upgrade notices are used
-        internally
+        The work factor of the default KDF can be configured using the
+        ``password.hashing.rounds`` ICP.
         """
-        return DEFAULT_CRYPT_CONTEXT.copy()
+        cfg = self.env['ir.config_parameter'].sudo()
+        return CryptContext(
+            # kdf which can be verified by the context. The default encryption
+            # kdf is the first of the list
+            ['pbkdf2_sha512', 'plaintext'],
+            # deprecated algorithms are still verified as usual, but
+            # ``needs_update`` will indicate that the stored hash should be
+            # replaced by a more recent algorithm.
+            deprecated=['auto'],
+            pbkdf2_sha512__rounds=max(MIN_ROUNDS, int(cfg.get_param('password.hashing.rounds', 0))),
+        )
 
     def parse_product_date(self, product_date):
         """

@@ -33,9 +33,9 @@ class StockWarehouse(models.Model):
         domain="[('usage', '=', 'internal'), ('company_id', '=', company_id)]",
     )
     rental_allowed = fields.Boolean(default=False)
-    rental_route_id = fields.Many2one("stock.location.route", string="Rental Route")
+    rental_route_id = fields.Many2one("stock.route", string="Rental Route")
     sell_rented_product_route_id = fields.Many2one(
-        "stock.location.route", string="Sell Rented Product Route"
+        "stock.route", string="Sell Rented Product Route"
     )
 
     @api.onchange("rental_allowed")
@@ -50,12 +50,12 @@ class StockWarehouse(models.Model):
     def create_warehouse_rental_route(self):
         self.ensure_one()
         name = '{}-{}-Rental'.format(self.name, self.id)
-        route_id = self.env['stock.location.route'].sudo().search([
+        route_id = self.env['stock.route'].sudo().search([
             ('name', '=', name)
         ])
         if route_id:
             return route_id
-        route_id = self.env['stock.location.route'].sudo().create({
+        route_id = self.env['stock.route'].sudo().create({
             'name': name,
             'sequence': 100,
             'warehouse_selectable': True,
@@ -68,12 +68,12 @@ class StockWarehouse(models.Model):
     def create_warehouse_sell_rented_product_route(self):
         self.ensure_one()
         name = '{}-{}-Sell Rented Product'.format(self.name, self.id)
-        route_id = self.env['stock.location.route'].sudo().search([
+        route_id = self.env['stock.route'].sudo().search([
             ('name', '=', name)
         ])
         if route_id:
             return route_id
-        route_id = self.env['stock.location.route'].sudo().create({
+        route_id = self.env['stock.route'].sudo().create({
             'name': name,
             'sequence': 100,
             'warehouse_selectable': True,
@@ -85,7 +85,7 @@ class StockWarehouse(models.Model):
 
     def _get_rental_push_pull_rules(self):
         self.ensure_one()
-        route_obj = self.env["stock.location.route"]
+        route_obj = self.env["stock.route"]
         try:
             # rental_route = self.env.ref("sale_rental.route_warehouse0_rental")
             rental_route = self.create_warehouse_rental_route()
@@ -125,8 +125,9 @@ class StockWarehouse(models.Model):
                 self.rental_in_location_id, self.rental_out_location_id, ""
             ),
             "location_src_id": self.rental_in_location_id.id,
-            "location_id": self.rental_out_location_id.id,
+            "location_dest_id": self.rental_out_location_id.id,
             "route_id": rental_route.id,
+            'location_dest_from_rule': True,
             "action": "pull",
             "picking_type_id": self.out_type_id.id,
             "warehouse_id": self.id,
@@ -137,7 +138,8 @@ class StockWarehouse(models.Model):
                 self.rental_out_location_id, self.rental_in_location_id, ""
             ),
             "location_src_id": self.rental_out_location_id.id,
-            "location_id": self.rental_in_location_id.id,
+            "location_dest_id": self.rental_in_location_id.id,
+            'location_dest_from_rule': True,
             "route_id": rental_route.id,
             "action": "push",
             "picking_type_id": self.in_type_id.id,
@@ -150,8 +152,9 @@ class StockWarehouse(models.Model):
                 self.rental_out_location_id, customer_loc, ""
             ),
             "location_src_id": self.rental_out_location_id.id,
-            "location_id": customer_loc.id,
+            "location_dest_id": customer_loc.id,
             "route_id": sell_rented_product_route.id,
+            'location_dest_from_rule': True,
             "action": "pull",
             "picking_type_id": self.out_type_id.id,
             "warehouse_id": self.id,

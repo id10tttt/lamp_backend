@@ -23,10 +23,6 @@
                         <button string="开始计算" type="object" name="start_quant_forecast" class="btn-primary"/>
                         <button string="取消" special="cancel" class="btn-secondary"/>
                     </footer>
-                    <script type="text/javascript">
-                        $('.modal-dialog').draggable();
-                        $('.modal-content').resizable();
-                    </script>
                 </form>
             </field>
         </record>

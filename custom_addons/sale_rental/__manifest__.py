@@ -5,7 +5,6 @@
 
 {
     "name": "Sale Rental",
-    "version": "15.0.1.0.2",
     "category": "Sales",
     "license": "AGPL-3",
     "summary": "Manage Rental of Products",
@@ -23,6 +22,5 @@
         "wizard/create_rental_product_view.xml",
         "views/product.xml",
     ],
-    "demo": ["demo/rental_demo.xml"],
     "installable": True,
 }

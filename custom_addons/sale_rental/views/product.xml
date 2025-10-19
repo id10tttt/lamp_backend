@@ -24,20 +24,20 @@
                 <group
                         name="rental-service"
                         string="Rental"
-                        attrs="{'invisible': [('type', '!=', 'service')]}"
+                        invisible="type != 'service'"
                 >
                     <field name="rented_product_id"/>
                 </group>
                 <group
                         name="rental-product"
-                        attrs="{'invisible': [('type', '=', 'service')]}"
+                        invisible="type == 'service'"
                         string="Rental Services"
                         col="1"
                 >
                     <field
                             name="rental_service_ids"
                             nolabel="1"
-                            attrs="{'invisible': [('rental_service_ids', '=', [])]}"
+                            invisible="rental_service_ids == False"
                     />
                     <button
                             type="action"
@@ -59,27 +59,10 @@
                 <group
                         name="rental-service-template"
                         string="Rental"
-                        attrs="{'invisible': ['|', ('type', '!=', 'service'), ('product_variant_count', '>', 1)]}"
+                        invisible="type != 'service' or product_variant_count > 1"
                 >
                     <field name="rented_product_tmpl_id"/>
                 </group>
-<!--                <group-->
-<!--                        name="rental-product-template"-->
-<!--                        attrs="{'invisible': ['|', ('type', '=', 'service'), ('product_variant_count', '>', 1)]}"-->
-<!--                        string="Rental Services"-->
-<!--                        col="1"-->
-<!--                >-->
-<!--                    <field-->
-<!--                            name="rental_service_tmpl_ids"-->
-<!--                            nolabel="1"-->
-<!--                            attrs="{'invisible': [('rental_service_tmpl_ids', '=', [])]}"-->
-<!--                    />-->
-<!--                    <button-->
-<!--                            type="action"-->
-<!--                            name="%(sale_rental.create_rental_product_action)d"-->
-<!--                            string="Create Rental Service"-->
-<!--                    />-->
-<!--                </group>-->
             </group>
         </field>
     </record>

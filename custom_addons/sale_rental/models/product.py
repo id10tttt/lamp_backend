@@ -29,11 +29,10 @@ class ProductProduct(models.Model):
         day_uom_id = self.env.ref("uom.product_uom_day").id
         vals = {
             "type": "service",
-            "detailed_type": "service",
             "sale_ok": True,
             "purchase_ok": False,
             "uom_id": day_uom_id,
-            "uom_po_id": day_uom_id,
+            # "uom_po_id": day_uom_id,
             "list_price": self.rental,
             "name": '租赁服务: {}'.format(self.name),
             "default_code": self.default_code,

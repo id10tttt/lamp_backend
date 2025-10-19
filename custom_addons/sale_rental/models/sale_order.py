@@ -43,8 +43,6 @@ class SaleOrderLine(models.Model):
     can_sell_rental = fields.Boolean(string="Can Sell from Rental")
     rental_type = fields.Selection(
         [("new_rental", "新租赁"), ("rental_extension", "续租")],
-        readonly=True,
-        states={"draft": [("readonly", False)]},
         string='租赁类型'
     )
     extension_rental_id = fields.Many2one(
@@ -52,13 +50,10 @@ class SaleOrderLine(models.Model):
         string="Rental to Extend",
         check_company=True,
         readonly=True,
-        states={"draft": [("readonly", False)]},
     )
     rental_qty = fields.Float(
         string="租赁数量",
         digits="Product Unit of Measure",
-        readonly=True,
-        states={"draft": [("readonly", False)]},
         help="Indicate the number of items that will be rented.",
     )
     sell_rental_id = fields.Many2one(
@@ -66,16 +61,15 @@ class SaleOrderLine(models.Model):
         string="Rental to Sell",
         check_company=True,
         readonly=True,
-        states={"draft": [("readonly", False)]},
     )
 
-    _sql_constraints = [
-        (
-            "rental_qty_positive",
-            "CHECK(rental_qty >= 0)",
-            "The rental quantity must be positive or null.",
-        )
-    ]
+    # _sql_constraints = [
+    #     (
+    #         "rental_qty_positive",
+    #         "CHECK(rental_qty >= 0)",
+    #         "The rental quantity must be positive or null.",
+    #     )
+    # ]
 
     @api.constrains(
         "rental_type",
@@ -157,10 +151,9 @@ class SaleOrderLine(models.Model):
         self.ensure_one()
         return {"start_order_line_id": self.id}
 
-    def _prepare_new_rental_procurement_values(self, group=False):
+    def _prepare_new_rental_procurement_values(self):
         vals = {
             "company_id": self.order_id.company_id,
-            "group_id": group,
             "sale_line_id": self.id,
             "date_planned": self.start_date,
             "route_ids": self.route_id or self.order_id.warehouse_id.rental_route_id,
@@ -169,43 +162,36 @@ class SaleOrderLine(models.Model):
         }
         return vals
 
-    def _run_rental_procurement(self, vals):
+    def _create_procurements(self, values):
         self.ensure_one()
-        procurements = [
-            self.env["procurement.group"].Procurement(
-                self.product_id.rented_product_id,
-                self.rental_qty,
-                self.product_id.rented_product_id.uom_id,
-                self.order_id.warehouse_id.rental_out_location_id,
-                self.name,
-                self.order_id.name,
-                self.order_id.company_id,
-                vals,
-            )
-        ]
-        self.env["procurement.group"].run(procurements)
+        return [self.env['stock.rule'].Procurement(
+            self.product_id.rented_product_id,
+            self.rental_qty,
+            self.product_id.rented_product_id.uom_id,
+            self.order_id.warehouse_id.rental_out_location_id,
+            self.product_id.display_name,
+            self.order_id.name,
+            self.order_id.company_id,
+            values)]
+
+    def _run_rental_procurement(self, values, qty):
+        self.ensure_one()
+        procurements = self._create_procurements(values)
+
+        self.env['stock.rule'].run(procurements)
 
     def _action_launch_stock_rule(self, previous_product_uom_qty=False):
         errors = []
         for line in self:
             if line.rental_type == "new_rental" and line.product_id.rented_product_id:
-                group = line.order_id.procurement_group_id
-                if not group:
-                    group = self.env["procurement.group"].create(
-                        {
-                            "name": line.order_id.name,
-                            "move_type": line.order_id.picking_policy,
-                            "sale_id": line.order_id.id,
-                            "partner_id": line.order_id.partner_shipping_id.id,
-                        }
-                    )
-                    line.order_id.procurement_group_id = group
+                qty = line._get_qty_procurement(previous_product_uom_qty)
+                references = line.order_id.stock_reference_ids
+                if not references:
+                    self.env['stock.reference'].create(line._prepare_reference_vals())
 
-                vals = line._prepare_new_rental_procurement_values(group)
-                try:
-                    line._run_rental_procurement(vals)
-                except UserError as error:
-                    errors.append(error.name)
+                vals = line._prepare_procurement_values()
+                logger.info(f'vals: xxxxxxxxxxxx{vals}')
+                line._run_rental_procurement(vals, qty)
 
                 self.env["sale.rental"].create(line._prepare_rental())
 
@@ -240,15 +226,25 @@ class SaleOrderLine(models.Model):
         )
         return res
 
-    def _prepare_procurement_values(self, group_id=False):
+    def _prepare_procurement_values(self):
         """
         Overriding this function to changethe route
         on selling rental product
         """
-        vals = super()._prepare_procurement_values(group_id=group_id)
+        vals = super()._prepare_procurement_values()
         if self.sell_rental_id:
             vals.update(
-                {"route_ids": self.order_id.warehouse_id.sell_rented_product_route_id}
+                {
+                    "route_ids": self.order_id.warehouse_id.sell_rented_product_route_id,
+                }
+            )
+
+        if self.rental:
+            vals.update(
+                {
+                    "route_ids": self.order_id.warehouse_id.rental_route_id,
+                    'location_final_id': self.order_id.warehouse_id.rental_in_location_id
+                }
             )
         return vals
 

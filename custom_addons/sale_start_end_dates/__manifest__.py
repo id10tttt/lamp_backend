@@ -5,7 +5,6 @@
 
 {
     "name": "Sale Start End Dates",
-    "version": "15.0.1.0.1",
     "category": "Sales",
     "license": "AGPL-3",
     "summary": "Adds start date and end date on sale order lines",

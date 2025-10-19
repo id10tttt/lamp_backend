@@ -32,7 +32,7 @@ class StockQuantReportForecastWizard(models.TransientModel):
             report_ids = report_obj.create(res)
             return {
                 'name': '租赁库存预测',
-                'view_mode': 'tree,pivot,graph',
+                'view_mode': 'list,pivot,graph',
                 'domain': [('id', 'in', report_ids.ids)],
                 'res_model': 'stock.quant.forecast.report',
                 'type': 'ir.actions.act_window',

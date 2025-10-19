@@ -12,7 +12,7 @@ _logger = logging.getLogger(__name__)
 
 class AuthJWTAuth(http.Controller, BaseController):
 
-    @http.route('/auth_oauth/google/signin', type='json', auth='public', methods=['GET'], csrf=False)
+    @http.route('/auth_oauth/google/signin', type='jsonrpc', auth='public', methods=['GET'], csrf=False)
     def get_oauth_signin_url(self, *args, **kwargs):
         flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
             'client_secret.json',
@@ -34,7 +34,7 @@ class AuthJWTAuth(http.Controller, BaseController):
             'state': state
         }, message='成功')
 
-    @http.route('/auth_oauth/google/oauth2callback', type='json', auth='public', methods=['POST'], csrf=False)
+    @http.route('/auth_oauth/google/oauth2callback', type='jsonrpc', auth='public', methods=['POST'], csrf=False)
     def oauth_signin(self, *args, **kwargs):
         # 获取 OAuth2 登录信息
         provider = kwargs.get('provider')

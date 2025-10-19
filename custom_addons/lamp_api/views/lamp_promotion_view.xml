@@ -11,7 +11,7 @@
                             <field name="name"/>
                         </group>
                         <group>
-                            <field name="product_id" domain="[('detailed_type', '=', 'product')]"/>
+                            <field name="product_id" domain="[('type', '=', 'product')]"/>
                         </group>
                     </group>
                     <group>
@@ -28,17 +28,17 @@
         <field name="name">lamp.promotion.view.tree</field>
         <field name="model">lamp.promotion</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="name"/>
                 <field name="product_id"/>
                 <field name="description"/>
-            </tree>
+            </list>
         </field>
     </record>
     <record id="api_lamp_promotion_action" model="ir.actions.act_window">
         <field name="name">近期活动</field>
         <field name="res_model">lamp.promotion</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 
     <menuitem id="lamp_promotion_config"

@@ -1,10 +1,11 @@
-FROM registry.cn-shanghai.aliyuncs.com/odoo-1di0t/odoo:15
+FROM registry.cn-shanghai.aliyuncs.com/odoo-1di0t/odoo:19
 MAINTAINER 1di0t
 
 WORKDIR /custom_addons
 
 USER root
-COPY requirements.odoo.txt .
-RUN pip install -r requirements.odoo.txt -i https://pypi.mirrors.ustc.edu.cn/simple/
+COPY requirements.odoo.txt /tmp/requirements.txt
+RUN pip install uv --break-system-packages -i https://pypi.mirrors.ustc.edu.cn/simple/
+RUN uv pip install --system --break-system-packages --no-cache-dir -r /tmp/requirements.txt --trusted-host mirrors.cloud.tencent.com -i http://mirrors.cloud.tencent.com/pypi/simple
 
 USER odoo

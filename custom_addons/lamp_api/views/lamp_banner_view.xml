@@ -11,7 +11,7 @@
                             <field name="title"/>
                         </group>
                         <group>
-                            <field name="product_id" domain="[('detailed_type', '=', 'product')]"/>
+                            <field name="product_id" domain="[('type', '=', 'product')]"/>
                         </group>
                     </group>
                     <group>
@@ -28,17 +28,17 @@
         <field name="name">lamp.banner.view.tree</field>
         <field name="model">lamp.banner</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="title"/>
                 <field name="product_id"/>
                 <field name="remark"/>
-            </tree>
+            </list>
         </field>
     </record>
     <record id="api_lamp_banner_action" model="ir.actions.act_window">
         <field name="name">Banner设置</field>
         <field name="res_model">lamp.banner</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 
     <menuitem id="lamp_banner_config"

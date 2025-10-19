@@ -114,13 +114,6 @@ msgid "Contact"
 msgstr "联系人"
 
 #. module: lamp_order
-#: model:ir.model.fields,field_description:lamp_order.field_product_product__coupon
-#: model:ir.model.fields,field_description:lamp_order.field_product_template__coupon
-#: model:ir.model.fields,field_description:lamp_order.field_sale_order__coupon
-msgid "Coupon"
-msgstr "优惠券"
-
-#. module: lamp_order
 #: model:ir.model.fields,field_description:lamp_order.field_product_image__create_uid
 #: model:ir.model.fields,field_description:lamp_order.field_stock_quant_forecast_report__create_uid
 #: model:ir.model.fields,field_description:lamp_order.field_stock_quant_forecast_wizard__create_uid
@@ -201,11 +194,6 @@ msgstr ""
 #: model:ir.ui.menu,name:lamp_order.sub_menu_earned
 #: model_terms:ir.ui.view,arch_db:lamp_order.view_partner_form_inherit
 msgid "Earned Points"
-msgstr ""
-
-#. module: lamp_order
-#: model:ir.model.fields,field_description:lamp_order.field_product_image__embed_code
-msgid "Embed Code"
 msgstr ""
 
 #. module: lamp_order

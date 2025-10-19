@@ -44,9 +44,9 @@
                 <xpath expr="//field[@name='partner_id']" position="after">
                     <field name="warehouse_id"/>
                 </xpath>
-                <xpath expr="//page[@name='optional_products']" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </xpath>
+<!--                <xpath expr="//page[@name='optional_products']" position="attributes">-->
+<!--                    <attribute name="invisible">1</attribute>-->
+<!--                </xpath>-->
                 <xpath expr="//page[@name='customer_signature']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
@@ -57,7 +57,7 @@
                     <field name="pickup_code"/>
                 </xpath>
                 <xpath expr="//field[@name='order_line']/form//field[@name='product_id']" position="attributes">
-                    <attribute name="domain">[('detailed_type', '=', 'service')]</attribute>
+                    <attribute name="domain">[('type', '=', 'service')]</attribute>
                 </xpath>
                 <xpath expr="//field[@name='order_line']/form//field[@name='customer_lead']" position="replace">
                     <field name="customer_lead" invisible="1"/>
@@ -66,13 +66,13 @@
                 <xpath expr="//field[@name='order_line']/form//field[@name='product_uom_qty']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
-                <xpath expr="//field[@name='order_line']/form//field[@name='product_uom']" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </xpath>
+<!--                <xpath expr="//field[@name='order_line']/form//field[@name='product_uom']" position="attributes">-->
+<!--                    <attribute name="invisible">1</attribute>-->
+<!--                </xpath>-->
                 <xpath expr="//notebook" position="before">
                     <group>
                         <group>
-                            <field name="coupon" invisible="1"/>
+<!--                            <field name="coupon" invisible="1"/>-->
                             <field name="reserve"/>
                             <field name="amount_total"/>
                         </group>
@@ -121,17 +121,17 @@
                         <field name="picker_selfie"/>
                     </group>
                 </xpath>
-                <xpath expr="//notebook/page[@name='other_information']" position="before">
-                    <page string="优惠券">
-                        <group>
-                            <field name="promo_code"/>
-                            <field name="redeem_amount"/>
-                            <field name="reward_amount"/>
-                            <field name="code_promo_program_id"/>
-                            <field name="applied_coupon_ids"/>
-                        </group>
-                    </page>
-                </xpath>
+<!--                <xpath expr="//notebook/page[@name='other_information']" position="before">-->
+<!--                    <page string="优惠券">-->
+<!--                        <group>-->
+<!--                            <field name="promo_code"/>-->
+<!--                            <field name="redeem_amount"/>-->
+<!--                            <field name="reward_amount"/>-->
+<!--                            <field name="code_promo_program_id"/>-->
+<!--                            <field name="applied_coupon_ids"/>-->
+<!--                        </group>-->
+<!--                    </page>-->
+<!--                </xpath>-->
             </field>
         </record>
     </data>

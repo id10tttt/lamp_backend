@@ -6,12 +6,12 @@ class ResPartner(models.Model):
     _inherit = 'res.partner'
     _order = 'id desc'
 
-    _sql_constraints = [
-        ('remaining_points_check',
-         'CHECK(remaining_points < 0)',
-         "可用积分不能小于0"),
-        ('unique_email', 'unique(email)', '邮箱必须唯一!')
-    ]
+    # _sql_constraints = [
+    #     ('remaining_points_check',
+    #      'CHECK(remaining_points < 0)',
+    #      "可用积分不能小于0"),
+    #     ('unique_email', 'unique(email)', '邮箱必须唯一!')
+    # ]
 
     legal_entity_front = fields.Image('Legal Entity Front', copy=False, attachment=True)
     legal_entity_back = fields.Image('Legal Entity Back', copy=False, attachment=True)

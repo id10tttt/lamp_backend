@@ -5,9 +5,9 @@ from odoo import models, fields
 class ProductTemplate(models.Model):
     _inherit = 'product.template'
 
-    rental = fields.Float('Rental', digits=(16, 2), required=True)
+    rental = fields.Float('Rental', digits=(16, 2), required=True, default=0.00)
     device_code = fields.Char('Device code', translate=True)
-    delay_price = fields.Float('Delay Price', digits=(16, 2), required=True)
+    delay_price = fields.Float('Delay Price', digits=(16, 2), required=True, default=0.00)
     coupon = fields.Boolean('Coupon', default=False)
     package_type = fields.Char('Package Type', translate=True)
 
@@ -20,7 +20,7 @@ class ProductTemplate(models.Model):
     monthly_subscription = fields.Float('Monthly Subscription')
 
     vip_price = fields.Float('VIP Price', digits=(16, 2))
-    vip_monthly_price = fields.Float('VIP Monthly Price', digits=(16, 2))
+    vip_monthly_price = fields.Float('VIP Monthly Price', digits=(16, 2), default=0.00)
 
     product_template_image_ids = fields.One2many('product.image', 'product_tmpl_id', string="Extra Product Media",
                                                  copy=True)

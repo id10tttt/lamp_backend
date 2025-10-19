@@ -78,7 +78,7 @@ class ResPartnerAddress(http.Controller, BaseController):
 
         return self.response_json_success(data=partner_data, message='成功')
 
-    @http.route('/api/v1/lamp/res/partner/address', auth='public', methods=['POST'], csrf=False, cors="*", type='json')
+    @http.route('/api/v1/lamp/res/partner/address', auth='public', methods=['POST'], csrf=False, cors="*", type='jsonrpc')
     @verify_auth_token_only()
     def add_new_address(self, lang='en_US', **kwargs):
         try:
@@ -149,7 +149,7 @@ class ResPartnerAddress(http.Controller, BaseController):
                 'default_delivery': False
             })
 
-    @http.route('/api/v1/lamp/res/partner/address', auth='public', methods=['PATCH'], csrf=False, cors="*", type='json')
+    @http.route('/api/v1/lamp/res/partner/address', auth='public', methods=['PATCH'], csrf=False, cors="*", type='jsonrpc')
     @verify_auth_token_only()
     def patch_my_address(self, lang='en_US', **kwargs):
         update_key = ['name', 'city', 'street', 'street2', 'mobile', 'email', 'default_delivery']
@@ -221,7 +221,7 @@ class ResPartnerAddress(http.Controller, BaseController):
         }, message='修改成功')
 
     @http.route('/api/v1/lamp/res/partner/address', auth='public', methods=['DELETE'], csrf=False, cors="*",
-                type='json')
+                type='jsonrpc')
     @verify_auth_token_only()
     def delete_my_address(self, lang='en_US', **kwargs):
         try:

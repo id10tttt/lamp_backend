@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from odoo import models, fields, tools
 import logging
-from odoo.osv import expression
+from odoo.fields import Domain
 from datetime import datetime, timedelta
 
 _logger = logging.getLogger(__name__)
@@ -40,106 +40,95 @@ class StockQuantForcastReport(models.Model):
         before_today = [x for x in all_days if x < today]
         after_today = [x for x in all_days if x > today]
 
-        # 当前仓库位置下面的所有库存
-        today_quant = self.env['stock.quant'].sudo().search_read(domain=[
+        # 当前仓库真实库存（done状态的结果）
+        today_quants = self.env['stock.quant'].sudo().search_read(domain=[
             ('location_id', '=', warehouse_id.rental_in_location_id.id)
         ], fields=['product_id', 'quantity'])
 
-        filter_domain = [
+        # 所有调拨单（使用 scheduled_date）
+        move_domain = [
             '|',
             ('location_id', 'in', all_location_ids),
-            ('location_dest_id', 'in', all_location_ids)
+            ('location_dest_id', 'in', all_location_ids),
+            ('picking_id.scheduled_date', '>=', all_days[0]),
+            ('picking_id.scheduled_date', '<=', all_days[-1]),
+            ('state', 'in', ['confirmed', 'assigned', 'done']),
         ]
-        date_domain = [
-            ('date', '>=', all_days[0]),
-            ('date', '<=', all_days[-1]),
-            ('state', 'not in', ['cancel', 'done', 'draft'])
-        ]
-        filter_domain = expression.AND([filter_domain, date_domain])
-
-        range_sm = self.env['stock.move'].sudo().search(filter_domain)
+        stock_moves = self.env['stock.move'].sudo().search(move_domain)
 
         all_report_data = []
 
-        for product_quant in today_quant:
-            product_id = product_quant.get('product_id')[0]
-            product_qty = product_quant.get('quantity')
-            _logger.info('当前库存: {}, {}'.format(
-                product_id, product_qty
-            ))
-            today_sm = range_sm.filtered(
-                lambda sm: sm.date.date() == today and sm.product_id.id == product_id)
-            if today_sm:
-                sm_in = today_sm.filtered(lambda sm: sm.location_dest_id == warehouse_id.rental_in_location_id)
-                sm_out = today_sm.filtered(lambda sm: sm.location_dest_id == warehouse_id.rental_out_location_id)
-                product_qty = product_qty + sum(x.product_uom_qty for x in sm_in) - sum(
-                    x.product_uom_qty for x in sm_out)
+        for quant in today_quants:
+            product_id = quant['product_id'][0]
+            real_qty = quant['quantity']  # 当前实际库存
 
-            today_qty = product_qty
-            # 前一天
-            for current_day in before_today[::-1]:
-                current_sm = range_sm.filtered(
-                    lambda sm: sm.date.date() == current_day and sm.product_id.id == product_id)
-                if not current_sm:
-                    tmp = {
-                        'date': current_day,
-                        'warehouse_id': warehouse_id.id,
-                        'product_id': product_id,
-                        'product_qty': product_qty
-                    }
-                else:
-                    sm_in = current_sm.filtered(lambda sm: sm.location_dest_id == warehouse_id.rental_in_location_id)
-                    sm_out = current_sm.filtered(lambda sm: sm.location_dest_id == warehouse_id.rental_out_location_id)
+            # ===== 1️⃣ 历史库存（仅统计 done 状态）=====
+            qty_before = real_qty
+            for d in reversed(before_today):
+                moves = stock_moves.filtered(
+                    lambda sm: sm.picking_id.scheduled_date.date() == d and sm.product_id.id == product_id
+                )
+                done_in = moves.filtered(
+                    lambda sm: sm.location_dest_id == warehouse_id.rental_in_location_id and sm.state == 'done')
+                done_out = moves.filtered(
+                    lambda sm: sm.location_id == warehouse_id.rental_in_location_id and sm.state == 'done')
 
-                    product_qty = product_qty - sum(x.product_uom_qty for x in sm_in) + sum(
-                        x.product_uom_qty for x in sm_out)
-                    tmp = {
-                        'date': current_day,
-                        'warehouse_id': warehouse_id.id,
-                        'product_id': product_id,
-                        'product_qty': product_qty
-                    }
+                qty_before = qty_before - sum(done_in.mapped('product_uom_qty')) + sum(
+                    done_out.mapped('product_uom_qty'))
+                all_report_data.append({
+                    'date': d,
+                    'warehouse_id': warehouse_id.id,
+                    'product_id': product_id,
+                    'product_qty': qty_before
+                })
 
-                all_report_data.append(tmp)
+            # ===== 2️⃣ 今日库存（真实库存 + 今日待完成调拨）=====
+            today_moves = stock_moves.filtered(
+                lambda sm: sm.picking_id.scheduled_date.date() == today and sm.product_id.id == product_id
+            )
 
-            product_qty = today_qty
-            tmp = {
+            in_wait = today_moves.filtered(
+                lambda sm: sm.location_dest_id == warehouse_id.rental_in_location_id and sm.state in ['confirmed',
+                                                                                                      'assigned'])
+            out_wait = today_moves.filtered(
+                lambda sm: sm.location_id == warehouse_id.rental_in_location_id and sm.state in ['confirmed',
+                                                                                                 'assigned'])
+
+            today_estimate = real_qty + sum(in_wait.mapped('product_uom_qty')) - sum(
+                out_wait.mapped('product_uom_qty'))
+
+            # 保存“今日预估库存”
+            all_report_data.append({
                 'date': today,
                 'warehouse_id': warehouse_id.id,
                 'product_id': product_id,
-                'product_qty': product_qty
-            }
+                'product_qty': today_estimate
+            })
 
-            all_report_data.append(tmp)
+            # ===== 3️⃣ 未来库存（基于今日预估逐日推算）=====
+            qty_future = today_estimate
+            for d in after_today:
+                moves = stock_moves.filtered(
+                    lambda sm: sm.picking_id.scheduled_date.date() == d and sm.product_id.id == product_id
+                )
+                incoming = moves.filtered(
+                    lambda sm: sm.location_dest_id == warehouse_id.rental_in_location_id and sm.state in ['confirmed',
+                                                                                                          'assigned'])
+                outgoing = moves.filtered(
+                    lambda sm: sm.location_id == warehouse_id.rental_in_location_id and sm.state in ['confirmed',
+                                                                                                     'assigned'])
 
-            # 　后一天
-            for current_day in after_today:
-                current_sm = range_sm.filtered(
-                    lambda sm: sm.date.date() == current_day and sm.product_id.id == product_id)
-                if not current_sm:
-                    tmp = {
-                        'date': current_day,
-                        'warehouse_id': warehouse_id.id,
-                        'product_id': product_id,
-                        'product_qty': product_qty
-                    }
-                else:
-                    sm_in = current_sm.filtered(lambda sm: sm.location_dest_id == warehouse_id.rental_in_location_id)
-                    sm_out = current_sm.filtered(lambda sm: sm.location_dest_id == warehouse_id.rental_out_location_id)
-
-                    product_qty = product_qty + sum(x.product_uom_qty for x in sm_in) - sum(
-                        x.product_uom_qty for x in sm_out)
-                    tmp = {
-                        'date': current_day,
-                        'warehouse_id': warehouse_id.id,
-                        'product_id': product_id,
-                        'product_qty': product_qty
-                    }
-
-                all_report_data.append(tmp)
+                qty_future = qty_future + sum(incoming.mapped('product_uom_qty')) - sum(
+                    outgoing.mapped('product_uom_qty'))
+                all_report_data.append({
+                    'date': d,
+                    'warehouse_id': warehouse_id.id,
+                    'product_id': product_id,
+                    'product_qty': qty_future
+                })
 
         if all_report_data:
-            _logger.info('all_report_data: {}'.format(all_report_data))
-            all_report_data = sorted(all_report_data, key=lambda x: x.get('date'))
+            all_report_data = sorted(all_report_data, key=lambda x: x['date'])
 
+        _logger.info('📦 Stock report data: %s', all_report_data)
         return all_report_data

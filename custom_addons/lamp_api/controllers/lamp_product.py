@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from odoo import http
 from odoo.http import request
-from odoo.osv import expression
+from odoo.fields import Domain
 from .base import BaseController
 import logging
 
@@ -45,22 +45,24 @@ class ProductProduct(http.Controller, BaseController):
         # rental_in_location_id = warehouse_id.rental_in_location_id
         # rental_out_location_id = warehouse_id.rental_out_location_id
 
-        filter_domain = [('location_id.warehouse_id', '=', warehouse_id.id)]
+        filter_domain = Domain([('location_id.warehouse_id', '=', warehouse_id.id)])
+
         if categ_id:
-            categ_domain = ['|',
-                            ('product_id.categ_id', '=', int(categ_id)),
-                            ('product_id.categ_id.parent_id', '=', int(categ_id))]
+            categ_domain = Domain([
+                '|',
+                ('product_id.categ_id', '=', int(categ_id)),
+                ('product_id.categ_id.parent_id', '=', int(categ_id)),
+            ])
+            filter_domain = filter_domain & categ_domain
 
-            filter_domain = expression.AND([filter_domain, categ_domain])
-
-        # 根据库存，查找物料
+        # 根据库存查找物料
         quant_ids = request.env['stock.quant'].sudo().search(filter_domain)
 
-        filter_domain = [('id', 'in', list(set(quant_ids.product_id.ids)))]
+        filter_domain = Domain([('id', 'in', list(set(quant_ids.product_id.ids)))])
 
         if product_name:
-            name_domain = [('name', 'ilike', product_name)]
-            filter_domain = expression.AND([filter_domain, name_domain])
+            name_domain = Domain([('name', 'ilike', product_name)])
+            filter_domain = filter_domain & name_domain
 
         product_ids = request.env['product.product'].sudo().search(filter_domain, limit=limit, offset=offset,
                                                                    order='id desc')

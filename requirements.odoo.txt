@@ -6,3 +6,4 @@ packaging
 fsspec==2024.5.0
 packaging
 boto3
+google-api-python-client

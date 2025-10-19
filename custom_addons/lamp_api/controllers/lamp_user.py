@@ -36,7 +36,7 @@ class LAMPUser(http.Controller, BaseController):
 
         return self.response_json_success(data=resp_data, message='成功')
 
-    @http.route('/api/v1/lamp/user/login/code', auth='public', methods=['POST'], csrf=False, cors="*", type='json')
+    @http.route('/api/v1/lamp/user/login/code', auth='public', methods=['POST'], csrf=False, cors="*", type='jsonrpc')
     def lamp_user_login_code(self, lang='en_US', **kwargs):
 
         try:
@@ -120,7 +120,7 @@ class LAMPUser(http.Controller, BaseController):
 
         return self.response_http_json_success(message='发送成功!', data={} if prod_env else resp_data)
 
-    @http.route('/api/v1/lamp/user/register', auth='public', methods=['POST'], csrf=False, cors="*", type='json')
+    @http.route('/api/v1/lamp/user/register', auth='public', methods=['POST'], csrf=False, cors="*", type='jsonrpc')
     def lamp_user_register(self, lang='en_US', **kwargs):
 
         try:
@@ -183,7 +183,7 @@ class LAMPUser(http.Controller, BaseController):
 
         return self.response_http_json_success(token_data, message='登陆成功')
 
-    @http.route('/api/v1/lamp/user/login', auth='public', methods=['POST'], csrf=False, cors="*", type='json')
+    @http.route('/api/v1/lamp/user/login', auth='public', methods=['POST'], csrf=False, cors="*", type='jsonrpc')
     def lamp_user_login(self, lang='en_US', **kwargs):
 
         try:
@@ -227,7 +227,7 @@ class LAMPUser(http.Controller, BaseController):
 
         return self.response_http_json_success(token_data, message='登陆成功')
 
-    @http.route('/api/v1/lamp/user/reset-password', auth='public', methods=['POST'], csrf=False, cors="*", type='json')
+    @http.route('/api/v1/lamp/user/reset-password', auth='public', methods=['POST'], csrf=False, cors="*", type='jsonrpc')
     @verify_auth_token_only()
     def reset_user_password(self, lang='en_US'):
         try:
@@ -257,7 +257,7 @@ class LAMPUser(http.Controller, BaseController):
         })
 
     @http.route('/api/v1/lamp/user/forget/password/code', auth='public', methods=['POST'], csrf=False, cors="*",
-                type='json')
+                type='jsonrpc')
     def send_forget_user_password_email_code(self, lang='en_US'):
         try:
             request.env.context = dict(request.env.context, lang=lang)
@@ -294,7 +294,7 @@ class LAMPUser(http.Controller, BaseController):
             'message': 'success'
         })
 
-    @http.route('/api/v1/lamp/user/forget-password', auth='public', methods=['POST'], csrf=False, cors="*", type='json')
+    @http.route('/api/v1/lamp/user/forget-password', auth='public', methods=['POST'], csrf=False, cors="*", type='jsonrpc')
     def forget_user_password(self, lang='en_US'):
         try:
             request.env.context = dict(request.env.context, lang=lang)
@@ -328,7 +328,7 @@ class LAMPUser(http.Controller, BaseController):
             'message': 'success'
         })
 
-    @http.route('/api/v1/lamp/token/check', auth='public', methods=['POST'], csrf=False, cors="*", type='json')
+    @http.route('/api/v1/lamp/token/check', auth='public', methods=['POST'], csrf=False, cors="*", type='jsonrpc')
     @verify_auth_token_only()
     def check_user_login_token(self, lang='en_US'):
         return self.response_http_json_success({
@@ -353,7 +353,7 @@ class LAMPUser(http.Controller, BaseController):
         }
         return self.response_json_success(user_data)
 
-    @http.route('/api/v1/lamp/user/profile', auth='public', methods=['PATCH'], csrf=False, cors="*", type='json')
+    @http.route('/api/v1/lamp/user/profile', auth='public', methods=['PATCH'], csrf=False, cors="*", type='jsonrpc')
     @verify_auth_token_only()
     def update_my_profile(self, lang='en_US'):
         request.env.context = dict(request.env.context, lang=lang)

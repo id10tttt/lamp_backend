@@ -51,21 +51,16 @@
                 <notebook>
                     <page name="extensions" string="Rental Extensions">
                         <field name="extension_order_line_ids" nolabel="1">
-                            <tree>
+                            <list>
                                 <field name="order_id" />
                                 <field name="order_partner_id" />
                                 <field name="name" />
                                 <field name="start_date" />
                                 <field name="end_date" />
                                 <field name="product_uom_qty" />
-                                <field
-                                        name="product_uom"
-                                        string="Unit of Measure"
-                                        groups="uom.group_uom"
-                                    />
                                 <field name="price_subtotal" sum="Total" />
                                 <field name="state" />
-                            </tree>
+                            </list>
                         </field>
                     </page>
                     <page name="sell" string="Sell Rented Product">
@@ -87,7 +82,7 @@
     <field name="name">sale.rental.tree</field>
     <field name="model">sale.rental</field>
     <field name="arch" type="xml">
-        <tree create="false" edit="false">
+        <list create="false" edit="false">
             <field name="start_order_id" optional="show" />
             <field name="partner_id" />
             <field name="rented_product_id" />
@@ -111,7 +106,7 @@
                     decoration-muted="state == 'cancel'"
                     decoration-danger="state == 'sold'"
                 />
-        </tree>
+        </list>
     </field>
 </record>
 
@@ -136,28 +131,28 @@
                 />
             <filter name="sold" string="Sold" domain="[('state', '=', 'sold')]" />
             <filter name="in" string="Back In" domain="[('state', '=', 'in')]" />
-            <group string="Group By" name="groupby">
-                <filter
-                        name="partner_groupby"
-                        string="Customer"
-                        context="{'group_by': 'partner_id'}"
-                    />
-                <filter
-                        name="state_groupby"
-                        string="State"
-                        context="{'group_by': 'state'}"
-                    />
-                <filter
-                        name="start_date_groupby"
-                        string="Start Date"
-                        context="{'group_by': 'start_date'}"
-                    />
-                <filter
-                        name="end_date_groupby"
-                        string="End Date"
-                        context="{'group_by': 'end_date'}"
-                    />
-            </group>
+<!--            <group string="Group By" name="groupby">-->
+<!--                <filter-->
+<!--                        name="partner_groupby"-->
+<!--                        string="Customer"-->
+<!--                        context="{'group_by': 'partner_id'}"-->
+<!--                    />-->
+<!--                <filter-->
+<!--                        name="state_groupby"-->
+<!--                        string="State"-->
+<!--                        context="{'group_by': 'state'}"-->
+<!--                    />-->
+<!--                <filter-->
+<!--                        name="start_date_groupby"-->
+<!--                        string="Start Date"-->
+<!--                        context="{'group_by': 'start_date'}"-->
+<!--                    />-->
+<!--                <filter-->
+<!--                        name="end_date_groupby"-->
+<!--                        string="End Date"-->
+<!--                        context="{'group_by': 'end_date'}"-->
+<!--                    />-->
+<!--            </group>-->
         </search>
     </field>
 </record>
@@ -180,7 +175,7 @@
 <record id="sale_rental_action" model="ir.actions.act_window">
     <field name="name">Rentals</field>
     <field name="res_model">sale.rental</field>
-    <field name="view_mode">tree,form,pivot</field>
+    <field name="view_mode">list,form,pivot</field>
 </record>
 
 <menuitem

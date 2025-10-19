@@ -68,13 +68,9 @@ class SaleOrderLine(models.Model):
 
     start_date = fields.Date(
         string='开始日期',
-        readonly=True,
-        states={"draft": [("readonly", False)], "sent": [("readonly", False)]},
     )
     end_date = fields.Date(
         string='归还日期',
-        readonly=True,
-        states={"draft": [("readonly", False)], "sent": [("readonly", False)]},
     )
     order_date_state = fields.Boolean(compute="compute_order_start_and_end_date")
     number_of_days = fields.Integer(

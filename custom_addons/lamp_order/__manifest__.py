@@ -3,7 +3,7 @@
     "summary": "Lamp Order",
     "author": "1di0t",
     "license": "AGPL-3",
-    'depends': ['base', 'web', 'product', 'stock', 'sale', 'sale_management', 'sale_coupon', 'coupon', 'account'],
+    'depends': ['base', 'web', 'product', 'stock', 'sale', 'sale_management', 'account'],
     "data": [
         "security/ir.model.access.csv",
         "security/res_group.xml",
@@ -16,7 +16,7 @@
         "views/stock_quant_view.xml",
         "views/product_category_view.xml",
         "views/stock_location_view.xml",
-        "views/product_image_view.xml",
+        # "views/product_image_view.xml",
         "views/stock_picking_view.xml",
         "views/loyalty_view.xml",
         "views/report_stock_quantity_view.xml",
@@ -25,9 +25,9 @@
     ],
     'assets': {
         'web.assets_backend': [
-            'lamp_order/static/src/js/disable_quick_create_edit.js',
-            'lamp_order/static/src/js/web_title.js',
-            'lamp_order/static/src/js/form_disable_button.js',
+            # 'lamp_order/static/src/js/disable_quick_create_edit.js',
+            # 'lamp_order/static/src/js/web_title.js',
+            # 'lamp_order/static/src/js/form_disable_button.js',
         ],
     },
     "installable": True,

@@ -6,7 +6,7 @@ from odoo.http import request
 import json
 from .base import BaseController
 import logging
-from odoo.osv import expression
+from odoo.fields import Domain
 from odoo.exceptions import ValidationError, UserError
 from ..tools.tools_common import verify_auth_token_only, get_lamp_order_number, delete_shopping_cart_data
 
@@ -88,35 +88,35 @@ class SaleOrder(http.Controller, BaseController):
         except Exception as e:
             return self.response_json_error(400, message='数据类型错误')
 
-        filter_domain = [('partner_id', '=', request.partner_id)]
+        filter_domain = Domain([('partner_id', '=', request.partner_id)])
 
         if status:
             if status == 'to_confirm':
-                status_domain = [('status', '=', '10')]
-                filter_domain = expression.AND([filter_domain, status_domain])
+                status_domain = Domain([('status', '=', '10')])
+                filter_domain = filter_domain & status_domain
             elif status == 'to_pay':
-                status_domain = [
+                status_domain = Domain([
                     ('status', '=', '20'),
                     ('payment_status', '=', '10')
-                ]
-                filter_domain = expression.AND([filter_domain, status_domain])
+                ])
+                filter_domain = filter_domain & status_domain
             elif status == 'to_delivery':
-                status_domain = [
+                status_domain = Domain([
                     ('status', 'in', ['20', '30']),
                     ('stock_status', '=', '10')
-                ]
-                filter_domain = expression.AND([filter_domain, status_domain])
+                ])
+                filter_domain = filter_domain & status_domain
             elif status == 'to_return':
-                status_domain = [
+                status_domain = Domain([
                     ('status', '=', '30'),
                     ('stock_status', '=', '20')
-                ]
-                filter_domain = expression.AND([filter_domain, status_domain])
+                ])
+                filter_domain = filter_domain & status_domain
             elif status == 'completed':
-                status_domain = [
+                status_domain = Domain([
                     ('status', '=', '40'),
-                ]
-                filter_domain = expression.AND([filter_domain, status_domain])
+                ])
+                filter_domain = filter_domain & status_domain
 
         order_ids = request.env['sale.order'].sudo().search(filter_domain, limit=limit, offset=offset, order='id desc')
         if not order_ids:
@@ -316,7 +316,7 @@ class SaleOrder(http.Controller, BaseController):
         redis_key = '{}:{}'.format(product_id, warehouse_id)
         delete_shopping_cart_data(request.partner_id, redis_key)
 
-    @http.route('/api/v1/lamp/sale/order', auth='public', methods=['POST'], csrf=False, cors="*", type='json')
+    @http.route('/api/v1/lamp/sale/order', auth='public', methods=['POST'], csrf=False, cors="*", type='jsonrpc')
     @verify_auth_token_only()
     def create_sale_order(self, lang='en_US', **kwargs):
         try:
@@ -375,7 +375,7 @@ class SaleOrder(http.Controller, BaseController):
         }
         return self.response_http_json_success(data=resp_data, message='成功')
 
-    @http.route('/api/v1/lamp/sale/order/amount', auth='public', methods=['POST'], csrf=False, cors="*", type='json')
+    @http.route('/api/v1/lamp/sale/order/amount', auth='public', methods=['POST'], csrf=False, cors="*", type='jsonrpc')
     @verify_auth_token_only()
     def get_sale_order_price_amount(self, lang='en_US', **kwargs):
         try:
@@ -417,7 +417,7 @@ class SaleOrder(http.Controller, BaseController):
         }
         return self.response_http_json_success(data=resp_data, message='成功')
 
-    @http.route('/api/v1/lamp/sale/order/confirm', auth='public', methods=['POST'], csrf=False, cors="*", type='json')
+    @http.route('/api/v1/lamp/sale/order/confirm', auth='public', methods=['POST'], csrf=False, cors="*", type='jsonrpc')
     @verify_auth_token_only()
     def sale_order_confirm(self, lang='en_US', **kwargs):
         try:
@@ -493,7 +493,7 @@ class SaleOrder(http.Controller, BaseController):
     #
     #     return self.response_http_json_success(data=resp_data, message='确认成功')
 
-    @http.route('/api/v1/lamp/sale/order/cancel', auth='public', methods=['POST'], csrf=False, cors="*", type='json')
+    @http.route('/api/v1/lamp/sale/order/cancel', auth='public', methods=['POST'], csrf=False, cors="*", type='jsonrpc')
     @verify_auth_token_only()
     def sale_order_cancel(self, lang='en_US', **kwargs):
         try:

@@ -151,8 +151,6 @@ class SaleOrderLine(models.Model):
     rental_qty = fields.Float(
         string="租赁数量",
         digits="Product Unit of Measure",
-        readonly=True,
-        states={"draft": [("readonly", False)]},
         help="Indicate the number of items that will be rented.",
     )
 
@@ -186,11 +184,35 @@ class SaleOrderLine(models.Model):
 
         return first_day_price + delay_price
 
-    @api.depends('product_uom_qty', 'discount', 'price_unit', 'tax_id', 'rental_qty')
+    def _prepare_base_line_for_taxes_computation(self, **kwargs):
+        """ Convert the current record to a dictionary in order to use the generic taxes computation method
+        defined on account.tax.
+
+        :return: A python dictionary.
+        """
+        self.ensure_one()
+        company = self.order_id.company_id or self.env.company
+        base_values = {
+            'tax_ids': self.tax_ids,
+            'quantity': self.product_uom_qty,
+            'partner_id': self.order_id.partner_id,
+            'currency_id': self.order_id.currency_id or company.currency_id,
+            'rate': self.order_id.currency_rate,
+        }
+        if self._is_global_discount():
+            base_values['special_type'] = 'global_discount'
+        elif self.is_downpayment:
+            base_values['special_type'] = 'down_payment'
+        base_values.update(kwargs)
+        return self.env['account.tax']._prepare_base_line_for_taxes_computation(self, **base_values)
+
+    @api.depends('product_uom_qty', 'discount', 'price_unit', 'rental_qty')
+    # @api.depends('product_uom_qty', 'discount', 'price_unit', 'tax_id', 'rental_qty')
     def _compute_amount(self):
         """
         Compute the amounts of the SO line.
         """
+        AccountTax = self.env['account.tax']
         for line in self:
             if line.rental_type:
                 # 价格 = 首日单价 + 次日 * 数量
@@ -203,13 +225,17 @@ class SaleOrderLine(models.Model):
                 })
             else:
                 price = line.price_unit * (1 - (line.discount or 0.0) / 100.0)
-                taxes = line.tax_id.compute_all(price, line.order_id.currency_id, line.product_uom_qty,
-                                                product=line.product_id, partner=line.order_id.partner_shipping_id)
-                line.update({
-                    'price_tax': sum(t.get('amount', 0.0) for t in taxes.get('taxes', [])),
-                    'price_total': taxes['total_included'],
-                    'price_subtotal': taxes['total_excluded'],
+                company = line.company_id or self.env.company
+                base_line = line._prepare_base_line_for_taxes_computation()
+                base_line.update({
+                    'price_unit': price
                 })
+                AccountTax._add_tax_details_in_base_line(base_line, company)
+                AccountTax._round_base_lines_tax_details([base_line], company)
+
+                line.price_subtotal = base_line['tax_details']['total_excluded_currency']
+                line.price_total = base_line['tax_details']['total_included_currency']
+                line.price_tax = line.price_total - line.price_subtotal
 
     @api.onchange('product_id')
     def change_product_unit_price(self):

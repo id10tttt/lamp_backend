@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
         <!-- This view should only be used from the product o2m because the required field product_tmpl_id has to be automatically set. -->
@@ -23,16 +23,6 @@
                             <div class="row">
                                 <div class="col">
                                     <field name="image_1920" widget="image"/>
-                                </div>
-                                <div class="col" attrs="{'invisible': [('video_url', 'in', ['', False])]}">
-                                    <div class="o_video_container p-2">
-                                        <span>Video Preview</span>
-                                        <field name="embed_code" class="mt-2" widget="video_preview"/>
-                                        <h4 class="o_invalid_warning text-muted text-center"
-                                            attrs="{'invisible': [('embed_code', '!=', False)]}">
-                                            Please enter a valid Video URL.
-                                        </h4>
-                                    </div>
                                 </div>
                             </div>
                         </div>

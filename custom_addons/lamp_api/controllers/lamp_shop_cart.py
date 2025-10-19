@@ -33,7 +33,7 @@ class ShoppingCart(BaseController, http.Controller):
         _logger.info('resp_data: {}'.format(resp_data))
         return self.response_json_success(data=resp_data)
 
-    @http.route('/api/v1/lamp/cart/update', auth='public', methods=['POST'], csrf=False, cors="*", type='json')
+    @http.route('/api/v1/lamp/cart/update', auth='public', methods=['POST'], csrf=False, cors="*", type='jsonrpc')
     @verify_auth_token_only()
     def update_shop_cart_info(self, lang='en_US', **kwargs):
         payload_data = json.loads(request.httprequest.data)
@@ -85,7 +85,7 @@ class ShoppingCart(BaseController, http.Controller):
 
         return self.response_http_json_success()
 
-    @http.route('/api/v1/lamp/cart/add', auth='public', methods=['POST'], csrf=False, cors="*", type='json')
+    @http.route('/api/v1/lamp/cart/add', auth='public', methods=['POST'], csrf=False, cors="*", type='jsonrpc')
     @verify_auth_token_only()
     def add_shop_cart_info(self, lang='en_US', **kwargs):
         payload_data = json.loads(request.httprequest.data)
@@ -127,7 +127,7 @@ class ShoppingCart(BaseController, http.Controller):
             'uuid': redis_key
         })
 
-    @http.route('/api/v1/lamp/cart/delete', auth='public', methods=['DELETE'], csrf=False, cors="*", type='json')
+    @http.route('/api/v1/lamp/cart/delete', auth='public', methods=['DELETE'], csrf=False, cors="*", type='jsonrpc')
     @verify_auth_token_only()
     def delete_shop_cart(self, lang='en_US', **kwargs):
         payload_data = json.loads(request.httprequest.data)

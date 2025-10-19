@@ -11,25 +11,28 @@
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='order_line']/form//field[@name='product_id']" position="after">
+            <xpath expr="//field[@name='order_line']/form//div[field[@name='product_id']]" position="after">
                 <field name="start_date"
-                       attrs="{'invisible': [('must_have_dates', '=', False)], 'required': [('must_have_dates', '=', True)]}"/>
+                       invisible="must_have_dates == False"
+                       required="must_have_dates == True"/>
                 <field name="end_date"
-                       attrs="{'invisible': [('must_have_dates', '=', False)], 'required': [('must_have_dates', '=', True)]}"/>
+                       invisible="must_have_dates == False"
+                       required="must_have_dates == True"/>
                 <field name="number_of_days"
-                       attrs="{'invisible': [('must_have_dates', '=', False)], 'required': [('must_have_dates', '=', True)]}"/>
+                       invisible="must_have_dates == False"
+                       required="must_have_dates == True"/>
                 <field name="must_have_dates" invisible="1"/>
             </xpath>
-            <xpath expr="//field[@name='order_line']/tree/field[@name='name']" position="after">
+            <xpath expr="//field[@name='order_line']/list/field[@name='product_id']" position="after">
                 <field name="start_date"
-                       attrs="{'required': [('must_have_dates', '=', True)]}"
+                       required="must_have_dates == True"
                        optional="show"/>
                 <field name="end_date"
-                       attrs="{'required': [('must_have_dates', '=', True)]}"
+                       required="must_have_dates == True"
                        optional="show"/>
                 <field name="number_of_days" optional="show"/>
-                <field name="must_have_dates" invisible="1"/>
-                <field name="order_date_state" invisible="1"/>
+<!--                <field name="must_have_dates" invisible="1"/>-->
+<!--                <field name="order_date_state" invisible="1"/>-->
             </xpath>
             <field name="partner_id" position="after">
                 <field name="default_start_date" required="True"/>

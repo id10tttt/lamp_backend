@@ -68,7 +68,7 @@ class StockWarehouse(http.Controller, BaseController):
         return self.response_json_success(data=warehouse_data, message='成功')
 
     @http.route('/api/v1/lamp/warehouse/detail', auth='public', methods=['POST'], csrf=False, cors="*",
-                type='json')
+                type='jsonrpc')
     def fetch_warehouse_detail(self, lang='en_US', **kwargs):
         try:
             request.env.context = dict(request.env.context, lang=lang)

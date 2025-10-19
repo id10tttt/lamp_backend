@@ -3,7 +3,7 @@ import datetime
 
 from odoo import http
 from odoo.http import request
-from odoo.osv import expression
+from odoo.fields import Domain
 import json
 from .base import BaseController
 import logging
@@ -57,11 +57,11 @@ class CouponCoupon(http.Controller, BaseController):
     @http.route('/api/v1/lamp/coupon/my', auth='public', methods=['GET'], csrf=False, cors="*", type='http')
     @verify_auth_token_only()
     def get_my_coupon_list(self, lang='en_US', **kwargs):
-        filter_domain = [('partner_id', '=', request.partner_id)]
+        filter_domain = Domain([('partner_id', '=', request.partner_id)])
         state = kwargs.get('state')
         if state:
-            state_domain = [('state', '=', state)]
-            filter_domain = expression.AND([filter_domain, state_domain])
+            state_domain = Domain([('state', '=', state)])
+            filter_domain = filter_domain & state_domain
 
         coupon_ids = request.env['coupon.coupon'].sudo().search(filter_domain)
 
@@ -88,7 +88,7 @@ class CouponCoupon(http.Controller, BaseController):
 
         return self.response_json_success(data=coupon_data, message='成功')
 
-    @http.route('/api/v1/lamp/coupon/collect', auth='public', methods=['POST'], csrf=False, cors="*", type='json')
+    @http.route('/api/v1/lamp/coupon/collect', auth='public', methods=['POST'], csrf=False, cors="*", type='jsonrpc')
     @verify_auth_token_only()
     def collect_coupon(self, lang='en_US', **kwargs):
         try:

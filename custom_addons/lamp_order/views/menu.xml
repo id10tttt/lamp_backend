@@ -1,29 +1,20 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
         <record id="stock.menu_routes_config" model="ir.ui.menu">
-            <field name="groups_id" eval="[(6, False, [ref('lamp_order.group_menu_field_invisible')])]"/>
+            <field name="group_ids" eval="[(6, 0, [ref('lamp_order.group_menu_field_invisible')])]"/>
         </record>
         <record id="stock.menu_pickingtype" model="ir.ui.menu">
-            <field name="groups_id" eval="[(6, False, [ref('lamp_order.group_menu_field_invisible')])]"/>
-        </record>
-        <record id="stock.menu_storage_categoty_capacity_config" model="ir.ui.menu">
-            <field name="groups_id" eval="[(6, False, [ref('lamp_order.group_menu_field_invisible')])]"/>
+            <field name="group_ids" eval="[(6, 0, [ref('lamp_order.group_menu_field_invisible')])]"/>
         </record>
         <record id="stock.menu_putaway" model="ir.ui.menu">
-            <field name="groups_id" eval="[(6, False, [ref('lamp_order.group_menu_field_invisible')])]"/>
+            <field name="group_ids" eval="[(6, 0, [ref('lamp_order.group_menu_field_invisible')])]"/>
         </record>
         <record id="stock.menu_action_rules_form" model="ir.ui.menu">
-            <field name="groups_id" eval="[(6, False, [ref('lamp_order.group_menu_field_invisible')])]"/>
+            <field name="group_ids" eval="[(6, 0, [ref('lamp_order.group_menu_field_invisible')])]"/>
         </record>
         <record id="stock.menu_product_category_config_stock" model="ir.ui.menu">
-            <field name="groups_id" eval="[(6, False, [ref('lamp_order.group_menu_field_invisible')])]"/>
-        </record>
-        <record id="stock.menu_reordering_rules_config" model="ir.ui.menu">
-            <field name="groups_id" eval="[(6, False, [ref('lamp_order.group_menu_field_invisible')])]"/>
-        </record>
-        <record id="stock.menu_wms_barcode_nomenclature_all" model="ir.ui.menu">
-            <field name="groups_id" eval="[(6, False, [ref('lamp_order.group_menu_field_invisible')])]"/>
+            <field name="group_ids" eval="[(6, 0, [ref('lamp_order.group_menu_field_invisible')])]"/>
         </record>
         <menuitem id="menu_product_variant_config_stock" name="设备类型" action="product.product_category_action_form"
                   parent="stock.menu_stock_inventory_control" sequence="2"/>
@@ -54,21 +45,18 @@
             <field name="name">设备</field>
         </record>
 
-        <record id="account.account_management_menu" model="ir.ui.menu">
-            <field name="groups_id" eval="[(6, False, [ref('lamp_order.group_menu_field_invisible')])]"/>
-        </record>
         <record id="account.product_product_menu_purchasable" model="ir.ui.menu">
-            <field name="groups_id" eval="[(6, False, [ref('lamp_order.group_menu_field_invisible')])]"/>
+            <field name="group_ids" eval="[(6, 0, [ref('lamp_order.group_menu_field_invisible')])]"/>
         </record>
         <record id="account.product_product_menu_sellable" model="ir.ui.menu">
-            <field name="groups_id" eval="[(6, False, [ref('lamp_order.group_menu_field_invisible')])]"/>
+            <field name="group_ids" eval="[(6, 0, [ref('lamp_order.group_menu_field_invisible')])]"/>
         </record>
         <record id="sale.menu_product_template_action" model="ir.ui.menu">
-            <field name="groups_id" eval="[(6, False, [ref('lamp_order.group_menu_field_invisible')])]"/>
+            <field name="group_ids" eval="[(6, 0, [ref('lamp_order.group_menu_field_invisible')])]"/>
         </record>
 
         <record id="stock.menu_stock_config_settings" model="ir.ui.menu">
-            <field name="groups_id" eval="[(6, False, [ref('lamp_order.group_menu_field_invisible')])]"/>
+            <field name="group_ids" eval="[(6, 0, [ref('lamp_order.group_menu_field_invisible')])]"/>
         </record>
         <menuitem id="menu_warehouse_manage_config" name="仓库管理" parent="stock.menu_stock_root"
                   sequence="99"/>
