@@ -22,7 +22,8 @@ class SaleOrder(models.Model):
     @api.depends('order_line.rental_qty', 'order_line.product_uom_qty')
     def _compute_total_rental_qty(self):
         for order_id in self:
-            order_id.total_rental_qty = sum(x.product_uom_qty for x in order_id.order_line.filtered(lambda x: x.product_id.rental_product_id))
+            order_id.total_rental_qty = sum(
+                x.product_uom_qty for x in order_id.order_line.filtered(lambda x: x.product_id.rented_product_id))
 
     def action_cancel(self):
         """
@@ -32,7 +33,7 @@ class SaleOrder(models.Model):
         res = super().action_cancel()
         for order in self:
             for line in order.order_line.filtered(
-                lambda l: l.rental_type == "rental_extension" and l.extension_rental_id
+                    lambda l: l.rental_type == "rental_extension" and l.extension_rental_id
             ):
                 initial_end_date = line.extension_rental_id.end_date
                 line.extension_rental_id.in_move_id.write(
@@ -197,16 +198,15 @@ class SaleOrderLine(models.Model):
                     self.env['stock.reference'].create(line._prepare_reference_vals())
 
                 vals = line._prepare_procurement_values()
-                logger.info(f'vals: xxxxxxxxxxxx{vals}')
                 line._run_rental_procurement(vals, qty)
 
                 self.env["sale.rental"].create(line._prepare_rental())
 
             elif (
-                line.rental_type == "rental_extension"
-                and line.product_id.rented_product_id
-                and line.extension_rental_id
-                and line.extension_rental_id.in_move_id
+                    line.rental_type == "rental_extension"
+                    and line.product_id.rented_product_id
+                    and line.extension_rental_id
+                    and line.extension_rental_id.in_move_id
             ):
                 end_datetime = fields.Datetime.to_datetime(line.end_date)
                 line.extension_rental_id.in_move_id.write(
@@ -266,9 +266,9 @@ class SaleOrderLine(models.Model):
                 if not self.rental_type:
                     self.rental_type = "new_rental"
                 elif (
-                    self.rental_type == "new_rental"
-                    and self.rental_qty
-                    and self.order_id.warehouse_id
+                        self.rental_type == "new_rental"
+                        and self.rental_qty
+                        and self.order_id.warehouse_id
                 ):
                     product_uom = self.product_id.rented_product_id.uom_id
                     warehouse = self.order_id.warehouse_id
@@ -277,8 +277,8 @@ class SaleOrderLine(models.Model):
                         location=rental_in_location.id
                     ).product_id.rented_product_id
                     in_location_available_qty = (
-                        rented_product_ctx.qty_available
-                        - rented_product_ctx.outgoing_qty
+                            rented_product_ctx.qty_available
+                            - rented_product_ctx.outgoing_qty
                     )
                     compare_qty = float_compare(
                         in_location_available_qty,
@@ -295,12 +295,12 @@ class SaleOrderLine(models.Model):
                                 "you get some units back in the mean time or "
                                 "re-supply the stock location '%(location)s'."
                             )
-                            % {
-                                "rental_qty": self.rental_qty,
-                                "uom": product_uom.name,
-                                "available_qty": in_location_available_qty,
-                                "location": rental_in_location.name,
-                            },
+                                       % {
+                                           "rental_qty": self.rental_qty,
+                                           "uom": product_uom.name,
+                                           "available_qty": in_location_available_qty,
+                                           "location": rental_in_location.name,
+                                       },
                         }
             elif self.product_id.rental_service_ids:
                 self.can_sell_rental = True
@@ -327,9 +327,9 @@ class SaleOrderLine(models.Model):
     @api.onchange("extension_rental_id")
     def extension_rental_id_change(self):
         if (
-            self.product_id
-            and self.rental_type == "rental_extension"
-            and self.extension_rental_id
+                self.product_id
+                and self.rental_type == "rental_extension"
+                and self.extension_rental_id
         ):
             if self.extension_rental_id.rental_product_id != self.product_id:
                 raise UserError(
