@@ -29,8 +29,8 @@ services:
       - postgres-db
       - redis-server
     ports:
-      - "8099:8069"
-      - "8092:8072"
+      - "8069:8069"
+      - "8072:8072"
     volumes:
       - ./odoo-files:/var/lib/odoo
       - ./config:/etc/odoo
