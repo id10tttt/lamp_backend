@@ -2,6 +2,7 @@
 from odoo import models, fields, tools
 import logging
 from odoo.fields import Domain
+from odoo.exceptions import UserError
 from datetime import datetime, timedelta
 
 _logger = logging.getLogger(__name__)
@@ -50,8 +51,8 @@ class StockQuantForcastReport(models.Model):
             '|',
             ('location_id', 'in', all_location_ids),
             ('location_dest_id', 'in', all_location_ids),
-            ('picking_id.scheduled_date', '>=', all_days[0]),
-            ('picking_id.scheduled_date', '<=', all_days[-1]),
+            ('date', '>=', all_days[0]),
+            ('date', '<=', all_days[-1]),
             ('state', 'in', ['confirmed', 'assigned', 'done']),
         ]
         stock_moves = self.env['stock.move'].sudo().search(move_domain)
@@ -66,15 +67,22 @@ class StockQuantForcastReport(models.Model):
             qty_before = real_qty
             for d in reversed(before_today):
                 moves = stock_moves.filtered(
-                    lambda sm: sm.picking_id.scheduled_date.date() == d and sm.product_id.id == product_id
+                    lambda sm: sm.date.date() == d and sm.product_id.id == product_id
                 )
                 done_in = moves.filtered(
                     lambda sm: sm.location_dest_id == warehouse_id.rental_in_location_id and sm.state == 'done')
                 done_out = moves.filtered(
                     lambda sm: sm.location_id == warehouse_id.rental_in_location_id and sm.state == 'done')
 
+                repair_wait = moves.filtered(
+                    lambda sm: sm.location_id == warehouse_id.rental_in_location_id and
+                               sm.location_dest_id == warehouse_id.rental_in_location_id and
+                               sm.state in ['confirmed', 'assigned'])
+
                 qty_before = qty_before - sum(done_in.mapped('product_uom_qty')) + sum(
-                    done_out.mapped('product_uom_qty'))
+                    done_out.mapped('product_uom_qty')) - sum(repair_wait.mapped('product_uom_qty'))
+
+
                 all_report_data.append({
                     'date': d,
                     'warehouse_id': warehouse_id.id,
@@ -84,9 +92,10 @@ class StockQuantForcastReport(models.Model):
 
             # ===== 2️⃣ 今日库存（真实库存 + 今日待完成调拨）=====
             today_moves = stock_moves.filtered(
-                lambda sm: sm.picking_id.scheduled_date.date() == today and sm.product_id.id == product_id
+                lambda sm: sm.date.date() == today and sm.product_id.id == product_id
             )
 
+            _logger.info(f'today_moves: {today_moves} {today_moves.move_line_ids}')
             in_wait = today_moves.filtered(
                 lambda sm: sm.location_dest_id == warehouse_id.rental_in_location_id and sm.state in ['confirmed',
                                                                                                       'assigned'])
@@ -94,8 +103,13 @@ class StockQuantForcastReport(models.Model):
                 lambda sm: sm.location_id == warehouse_id.rental_in_location_id and sm.state in ['confirmed',
                                                                                                  'assigned'])
 
+            repair_wait = today_moves.filtered(
+                lambda sm: sm.location_id == warehouse_id.rental_in_location_id and
+                           sm.location_dest_id == warehouse_id.rental_in_location_id and
+                           sm.state in ['confirmed', 'assigned'])
+
             today_estimate = real_qty + sum(in_wait.mapped('product_uom_qty')) - sum(
-                out_wait.mapped('product_uom_qty'))
+                out_wait.mapped('product_uom_qty')) - sum(repair_wait.mapped('product_uom_qty'))
 
             # 保存“今日预估库存”
             all_report_data.append({
@@ -109,7 +123,7 @@ class StockQuantForcastReport(models.Model):
             qty_future = today_estimate
             for d in after_today:
                 moves = stock_moves.filtered(
-                    lambda sm: sm.picking_id.scheduled_date.date() == d and sm.product_id.id == product_id
+                    lambda sm: sm.date.date() == d and sm.product_id.id == product_id
                 )
                 incoming = moves.filtered(
                     lambda sm: sm.location_dest_id == warehouse_id.rental_in_location_id and sm.state in ['confirmed',
@@ -118,8 +132,13 @@ class StockQuantForcastReport(models.Model):
                     lambda sm: sm.location_id == warehouse_id.rental_in_location_id and sm.state in ['confirmed',
                                                                                                      'assigned'])
 
+                repair_wait = moves.filtered(
+                    lambda sm: sm.location_id == warehouse_id.rental_in_location_id and
+                               sm.location_dest_id == warehouse_id.rental_in_location_id and
+                               sm.state in ['confirmed', 'assigned'])
+
                 qty_future = qty_future + sum(incoming.mapped('product_uom_qty')) - sum(
-                    outgoing.mapped('product_uom_qty'))
+                    outgoing.mapped('product_uom_qty')) - sum(repair_wait.mapped('product_uom_qty'))
                 all_report_data.append({
                     'date': d,
                     'warehouse_id': warehouse_id.id,
