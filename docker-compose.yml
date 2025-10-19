@@ -9,14 +9,25 @@ services:
       - POSTGRES_DB=postgres
       - POSTGRES_PASSWORD=${DB_PASS:-odoo}
       - POSTGRES_USER=${DB_USER:-odoo}
-#      - POSTGRES_DB=lamp_db
+      #      - POSTGRES_DB=lamp_db
       - PGDATA=/var/lib/postgresql/data/pgdata
-#    ports:
-#      - "5432:5432"  # 映射 PostgreSQL 的端口
+    #    ports:
+    #      - "5432:5432"  # 映射 PostgreSQL 的端口
     volumes:
       - ./pg-data:/var/lib/postgresql/data/pgdata  # 数据持久化
-    networks:
-      - backend
+
+  # Redis 服务
+  redis-server:
+    image: registry.cn-shanghai.aliyuncs.com/odoo-1di0t/redis:alpine  # 使用 Redis 的轻量级 alpine 镜像
+    restart: always
+    command: redis-server --save 20 1 --loglevel warning --requirepass ${RD_PASS:-odoo}
+    volumes:
+      - ./cache:/data
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "16m"
+        max-file: "8"
 
   odoo-backend-19:
     build:
@@ -45,45 +56,3 @@ services:
       options:
         max-size: "16m"
         max-file: "8"
-    networks:
-      - backend
-
-#  # FastAPI 应用服务
-#  fastapi:
-#    build:
-#      context: .
-#      dockerfile: Dockerfile.fastapi  # 当前目录下的 Dockerfile
-#    container_name: fastapi-app
-#    ports:
-#      - "8000:8000"  # 映射端口
-#    environment:
-#      - DATABASE_URL=postgresql://odoo:odoo@postgres-db:5432/odoo  # PostgreSQL 连接URL
-#      - REDIS_URL=redis://:odoo@redis-server:6379  # Redis 连接URL
-#    depends_on:
-#      - postgres-db  # 依赖 PostgreSQL 服务
-#      - redis-server  # 依赖 Redis 服务
-#    restart: always
-#    networks:
-#      - backend
-
-  # Redis 服务
-  redis-server:
-    image: registry.cn-shanghai.aliyuncs.com/odoo-1di0t/redis:alpine  # 使用 Redis 的轻量级 alpine 镜像
-    restart: always
-    command: redis-server --save 20 1 --loglevel warning --requirepass ${RD_PASS:-odoo}
-    volumes:
-      - ./cache:/data
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "16m"
-        max-file: "8"
-#    ports:
-#      - "6379:6379"  # 映射 Redis 的端口
-    networks:
-      - backend
-
-# 网络配置
-networks:
-  backend:
-    driver: bridge
