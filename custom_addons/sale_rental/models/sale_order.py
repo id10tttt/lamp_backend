@@ -17,6 +17,13 @@ logger = logging.getLogger(__name__)
 class SaleOrder(models.Model):
     _inherit = "sale.order"
 
+    total_rental_qty = fields.Float('总租赁数', compute='_compute_total_rental_qty', store=True)
+
+    @api.depends('order_line.rental_qty', 'order_line.product_uom_qty')
+    def _compute_total_rental_qty(self):
+        for order_id in self:
+            order_id.total_rental_qty = sum(x.product_uom_qty for x in order_id.order_line.filtered(lambda x: x.product_id.rental_product_id))
+
     def action_cancel(self):
         """
         When the user cancels a rental extension, Odoo writes the initial
