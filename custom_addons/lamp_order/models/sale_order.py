@@ -137,11 +137,19 @@ class SaleOrder(models.Model):
             'status': '20'
         })
 
+    def action_execute_run_push_if_rental_order(self):
+        picking_ids = self.picking_ids
+
+        move_line = picking_ids.move_ids
+
+        move_line._push_apply()
+
     def action_confirm(self):
         res = super().action_confirm()
 
         self.sudo().action_confirm_sale_order()
 
+        self.action_execute_run_push_if_rental_order()
         return res
 
 
