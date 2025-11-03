@@ -22,9 +22,25 @@
         <record id="utm.menu_link_tracker_root" model="ir.ui.menu">
             <field name="group_ids" eval="[(6, 0, [ref('lamp_order.group_menu_field_invisible')])]"/>
         </record>
+        <record id="account.menu_finance" model="ir.ui.menu">
+            <field name="group_ids" eval="[(6, 0, [ref('lamp_order.group_menu_field_invisible')])]"/>
+        </record>
+        <record id="sale.sale_menu_root" model="ir.ui.menu">
+            <field name="group_ids" eval="[(6, 0, [ref('lamp_order.group_menu_field_invisible')])]"/>
+        </record>
+        <record id="stock.menu_stock_root" model="ir.ui.menu">
+            <field name="group_ids" eval="[(6, 0, [ref('lamp_order.group_menu_field_invisible')])]"/>
+        </record>
+        <record id="repair.menu_repair_order" model="ir.ui.menu">
+            <field name="group_ids" eval="[(6, 0, [ref('lamp_order.group_menu_field_invisible')])]"/>
+        </record>
+        <record id="base.menu_apps" model="ir.ui.menu">
+            <field name="group_ids" eval="[(6, 0, [ref('lamp_order.group_menu_field_invisible')])]"/>
+        </record>
 
-        <menuitem id="stock.menu_stock_inventory_control" name="设备管理"/>
-        <menuitem id="stock.menu_product_variant_config_stock" name="设备" action="stock.product_template_action_product"
+        <menuitem id="stock.menu_stock_inventory_control" name="设备管理" parent="stock.menu_stock_root"/>
+        <menuitem id="stock.menu_product_variant_config_stock" name="设备"
+                  action="stock.product_template_action_product"
                   parent="stock.menu_stock_inventory_control" sequence="1"/>
         <menuitem id="menu_product_variant_config_stock" name="设备类型" action="product.product_category_action_form"
                   parent="stock.menu_stock_inventory_control" sequence="2"/>
@@ -74,5 +90,83 @@
                   parent="menu_warehouse_manage_config" sequence="1"/>
         <menuitem id="menu_location" name="位置" action="stock.action_location_form"
                   parent="menu_warehouse_manage_config" sequence="2"/>
+
+        <record id="action_order_report_quotation_month_all" model="ir.actions.act_window">
+            <field name="name">月度销售总量</field>
+            <field name="res_model">sale.report</field>
+            <field name="view_mode">graph,list</field>
+            <field name="context">
+                {
+                'search_default_group_by_month': 1
+                }
+            </field>
+        </record>
+        <record id="action_order_report_quotation_year_all" model="ir.actions.act_window">
+            <field name="name">年度销售总量</field>
+            <field name="res_model">sale.report</field>
+            <field name="view_mode">graph,list</field>
+            <field name="context">
+                {
+                'search_default_group_by_year': 1
+                }
+            </field>
+        </record>
+        <menuitem id="lamp_sale_menu_root" name="销售管理" groups="lamp_order.group_sale_manage" sequence="10">
+            <menuitem id="lamp_task_menu" name="作业" sequence="1">
+                <menuitem id="repair_menu" name="报修审核" sequence="1" action="repair.action_repair_order_tree"/>
+                <menuitem id="scrap_menu" name="报废审核" sequence="1" action="stock.action_stock_scrap"/>
+                <menuitem id="quant_inventory_menu" name="盘点" sequence="1" action="stock.action_view_inventory_tree"/>
+            </menuitem>
+            <menuitem id="order_manage" name="订单" sequence="2">
+                <menuitem id="order_menu" name="订单管理" sequence="1" action="sale.action_quotations_with_onboarding"/>
+                <menuitem id="order_customer_menu" name="客户管理" sequence="2"
+                          action="account.res_partner_action_customer"/>
+            </menuitem>
+            <menuitem id="report_manage" name="报表" sequence="3">
+                <menuitem id="menu_report_stock_quantity_forecast_action" name="单仓日可用量" sequence="1"
+                          action="lamp_order.report_stock_quantity_forecast_action"/>
+                <menuitem id="menu_compute_quant_forecast_id" name="计算库存预测"
+                          action="lamp_order.action_recompute_stock_inv_fee_wizard" sequence="2"/>
+                <menuitem id="menu_year_sale" name="年度销售总量"
+                          action="lamp_order.action_order_report_quotation_year_all" sequence="3"/>
+                <menuitem id="menu_month_sale" name="月度销售总量"
+                          action="lamp_order.action_order_report_quotation_month_all" sequence="4"/>
+            </menuitem>
+            <menuitem id="product_manage" name="设备管理" sequence="4">
+                <menuitem id="product_menu" name="设备" sequence="1" action="stock.product_template_action_product"/>
+                <menuitem id="product_type_menu" name="设备类型" sequence="2" action="product.product_category_action_form"/>
+            </menuitem>
+            <menuitem id="warehouse_manage_menu" name="仓库管理" sequence="5">
+                <menuitem id="menu_warehouse" name="仓库" sequence="1" action="stock.action_warehouse_form"/>
+            </menuitem>
+        </menuitem>
+        <menuitem id="lamp_warehouse_menu_root" name="仓库管理" groups="lamp_order.group_sale_manage" sequence="20">
+            <menuitem id="picking_type_menu" name="概览（工作台）" sequence="1" action="stock.stock_picking_type_action"/>
+            <menuitem id="lamp_task_menu" name="作业" sequence="1">
+                <menuitem id="inventory_incoming" name="出库管理" sequence="1" action="stock.action_picking_tree_incoming"/>
+                <menuitem id="inventory_outgoing" name="入库管理" sequence="2" action="stock.action_picking_tree_outgoing"/>
+                <menuitem id="inventory_repair_menu" name="报修审核" sequence="3" action="repair.action_repair_order_tree"/>
+                <menuitem id="inventory_scrap_menu" name="报废审核" sequence="4" action="stock.action_stock_scrap"/>
+                <menuitem id="inventory_quant_inventory_menu" name="盘点" sequence="5" action="stock.action_view_inventory_tree"/>
+            </menuitem>
+
+            <menuitem id="report_manage" name="报表" sequence="3">
+                <menuitem id="inventory_menu_report_stock_quantity_forecast_action" name="单仓日可用量" sequence="1"
+                          action="lamp_order.report_stock_quantity_forecast_action"/>
+                <menuitem id="inventory_menu_compute_quant_forecast_id" name="计算库存预测"
+                          action="lamp_order.action_recompute_stock_inv_fee_wizard" sequence="2"/>
+                <menuitem id="inventory_menu_year_sale" name="年度销售总量"
+                          action="lamp_order.action_order_report_quotation_year_all" sequence="3"/>
+                <menuitem id="inventory_menu_month_sale" name="月度销售总量"
+                          action="lamp_order.action_order_report_quotation_month_all" sequence="4"/>
+            </menuitem>
+            <menuitem id="product_manage" name="设备管理" sequence="4">
+                <menuitem id="inventory_product_menu" name="设备" sequence="1" action="stock.product_template_action_product"/>
+                <menuitem id="inventory_product_type_menu" name="设备类型" sequence="2" action="product.product_category_action_form"/>
+            </menuitem>
+            <menuitem id="warehouse_manage_menu" name="仓库管理" sequence="5">
+                <menuitem id="inventory_menu_warehouse" name="仓库" sequence="1" action="stock.action_warehouse_form"/>
+            </menuitem>
+        </menuitem>
     </data>
 </odoo>
