@@ -46,7 +46,7 @@
             <field name="view_mode">list,form</field>
         </record>
 
-        <menuitem id="main_menu" name="Loyalty Points"
+        <menuitem id="main_menu" name="Loyalty Points" groups="lamp_order.group_menu_loyalty"
                   parent="sale.sale_menu_root"/>
 
         <menuitem id="sub_menu_earned" name="Earned Points"

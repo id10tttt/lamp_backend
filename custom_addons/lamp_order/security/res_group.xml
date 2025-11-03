@@ -4,5 +4,15 @@
         <record model="res.groups" id="group_menu_field_invisible">
             <field name="name">Hidden items</field>
         </record>
+        <record model="res.groups" id="group_menu_loyalty">
+            <field name="name">Loyalty manage</field>
+        </record>
+
+        <record model="res.groups" id="group_sale_manage">
+            <field name="name">销售管理</field>
+        </record>
+        <record model="res.groups" id="group_stock_manage">
+            <field name="name">库存管理</field>
+        </record>
     </data>
 </odoo>

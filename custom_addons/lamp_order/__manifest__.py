@@ -18,7 +18,7 @@
         "views/stock_location_view.xml",
         # "views/product_image_view.xml",
         "views/stock_picking_view.xml",
-        "views/loyalty_view.xml",
+        # "views/loyalty_view.xml",
         "views/report_stock_quantity_view.xml",
         "report/stock_report_forecast_view.xml",
         "wizards/stock_report_wizard_view.xml",
