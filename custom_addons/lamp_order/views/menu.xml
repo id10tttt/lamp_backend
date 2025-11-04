@@ -111,11 +111,32 @@
                 }
             </field>
         </record>
+
+        <record id="stock_move_line_action" model="ir.actions.act_window">
+            <field name="name">盘点记录</field>
+            <field name="res_model">stock.move.line</field>
+            <field name="path">moves-history</field>
+            <field name="view_mode">list,kanban,pivot,form</field>
+            <field name="view_id" ref="view_move_line_tree"/>
+            <field name="domain">['|', ('location_id.usage', '=', 'inventory'), ('location_dest_id.usage', '=', 'inventory')]</field>
+            <field name="context">{}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_empty_folder">
+                    There's no product move yet
+                </p>
+                <p>
+                    This menu gives you the full traceability of inventory operations on a specific product.
+                    You can filter on the product to see all the past movements for the product.
+                </p>
+            </field>
+        </record>
+
         <menuitem id="lamp_sale_menu_root" name="销售管理" groups="lamp_order.group_sale_manage" sequence="10">
             <menuitem id="lamp_task_menu" name="作业" sequence="1">
                 <menuitem id="repair_menu" name="报修审核" sequence="1" action="repair.action_repair_order_tree"/>
-                <menuitem id="scrap_menu" name="报废审核" sequence="1" action="stock.action_stock_scrap"/>
-                <menuitem id="quant_inventory_menu" name="盘点" sequence="1" action="stock.action_view_inventory_tree"/>
+                <menuitem id="scrap_menu" name="报废审核" sequence="2" action="stock.action_stock_scrap"/>
+                <menuitem id="quant_inventory_menu" name="盘点" sequence="3" action="stock.action_view_inventory_tree"/>
+                <menuitem id="quant_inventory_quant_menu" name="盘点汇总" sequence="4" action="stock_move_line_action"/>
             </menuitem>
             <menuitem id="order_manage" name="订单" sequence="2">
                 <menuitem id="order_menu" name="订单管理" sequence="1" action="sale.action_quotations_with_onboarding"/>
@@ -134,7 +155,8 @@
             </menuitem>
             <menuitem id="product_manage" name="设备管理" sequence="4">
                 <menuitem id="product_menu" name="设备" sequence="1" action="stock.product_template_action_product"/>
-                <menuitem id="product_type_menu" name="设备类型" sequence="2" action="product.product_category_action_form"/>
+                <menuitem id="product_type_menu" name="设备类型" sequence="2"
+                          action="product.product_category_action_form"/>
             </menuitem>
             <menuitem id="warehouse_manage_menu" name="仓库管理" sequence="5">
                 <menuitem id="menu_warehouse" name="仓库" sequence="1" action="stock.action_warehouse_form"/>
@@ -143,11 +165,16 @@
         <menuitem id="lamp_warehouse_menu_root" name="仓库管理" groups="lamp_order.group_sale_manage" sequence="20">
             <menuitem id="picking_type_menu" name="概览（工作台）" sequence="1" action="stock.stock_picking_type_action"/>
             <menuitem id="lamp_task_menu" name="作业" sequence="1">
-                <menuitem id="inventory_incoming" name="出库管理" sequence="1" action="stock.action_picking_tree_incoming"/>
-                <menuitem id="inventory_outgoing" name="入库管理" sequence="2" action="stock.action_picking_tree_outgoing"/>
-                <menuitem id="inventory_repair_menu" name="报修审核" sequence="3" action="repair.action_repair_order_tree"/>
+                <menuitem id="inventory_incoming" name="出库管理" sequence="1"
+                          action="stock.action_picking_tree_incoming"/>
+                <menuitem id="inventory_outgoing" name="入库管理" sequence="2"
+                          action="stock.action_picking_tree_outgoing"/>
+                <menuitem id="inventory_repair_menu" name="报修审核" sequence="3"
+                          action="repair.action_repair_order_tree"/>
                 <menuitem id="inventory_scrap_menu" name="报废审核" sequence="4" action="stock.action_stock_scrap"/>
-                <menuitem id="inventory_quant_inventory_menu" name="盘点" sequence="5" action="stock.action_view_inventory_tree"/>
+                <menuitem id="inventory_quant_inventory_menu" name="盘点" sequence="5"
+                          action="stock.action_view_inventory_tree"/>
+                <menuitem id="inventory_quant_inventory_quant_menu" name="盘点汇总" sequence="6" action="stock_move_line_action"/>
             </menuitem>
 
             <menuitem id="report_manage" name="报表" sequence="3">
@@ -161,8 +188,10 @@
                           action="lamp_order.action_order_report_quotation_month_all" sequence="4"/>
             </menuitem>
             <menuitem id="product_manage" name="设备管理" sequence="4">
-                <menuitem id="inventory_product_menu" name="设备" sequence="1" action="stock.product_template_action_product"/>
-                <menuitem id="inventory_product_type_menu" name="设备类型" sequence="2" action="product.product_category_action_form"/>
+                <menuitem id="inventory_product_menu" name="设备" sequence="1"
+                          action="stock.product_template_action_product"/>
+                <menuitem id="inventory_product_type_menu" name="设备类型" sequence="2"
+                          action="product.product_category_action_form"/>
             </menuitem>
             <menuitem id="warehouse_manage_menu" name="仓库管理" sequence="5">
                 <menuitem id="inventory_menu_warehouse" name="仓库" sequence="1" action="stock.action_warehouse_form"/>
