@@ -160,9 +160,9 @@
                 <menuitem id="menu_warehouse" name="仓库" sequence="1" action="stock.action_warehouse_form"/>
             </menuitem>
         </menuitem>
-        <menuitem id="lamp_warehouse_menu_root" name="仓库管理" groups="lamp_order.group_sale_manage" sequence="20">
-            <menuitem id="picking_type_menu" name="概览（工作台）" sequence="1" action="stock.stock_picking_type_action"/>
-            <menuitem id="lamp_task_menu" name="作业" sequence="1">
+        <menuitem id="inventory_lamp_warehouse_menu_root" name="仓库管理" groups="lamp_order.group_stock_manage" sequence="20">
+            <menuitem id="inventory_picking_type_menu" name="概览（工作台）" sequence="1" action="stock.stock_picking_type_action"/>
+            <menuitem id="inventory_lamp_task_menu" name="作业" sequence="1">
                 <menuitem id="inventory_incoming" name="出库管理" sequence="1"
                           action="stock.action_picking_tree_incoming"/>
                 <menuitem id="inventory_outgoing" name="入库管理" sequence="2"
@@ -175,7 +175,7 @@
                 <menuitem id="inventory_quant_inventory_quant_menu" name="盘点汇总" sequence="6" action="stock_move_line_action"/>
             </menuitem>
 
-            <menuitem id="report_manage" name="报表" sequence="3">
+            <menuitem id="inventory_report_manage" name="报表" sequence="3">
                 <menuitem id="inventory_menu_report_stock_quantity_forecast_action" name="单仓日可用量" sequence="1"
                           action="lamp_order.report_stock_quantity_forecast_action"/>
                 <menuitem id="inventory_menu_compute_quant_forecast_id" name="计算库存预测"
@@ -185,13 +185,13 @@
                 <menuitem id="inventory_menu_month_sale" name="月度销售总量"
                           action="lamp_order.action_order_report_quotation_month_all" sequence="4"/>
             </menuitem>
-            <menuitem id="product_manage" name="设备管理" sequence="4">
+            <menuitem id="inventory_product_manage" name="设备管理" sequence="4">
                 <menuitem id="inventory_product_menu" name="设备" sequence="1"
                           action="stock.product_template_action_product"/>
                 <menuitem id="inventory_product_type_menu" name="设备类型" sequence="2"
                           action="product.product_category_action_form"/>
             </menuitem>
-            <menuitem id="warehouse_manage_menu" name="仓库管理" sequence="5">
+            <menuitem id="inventory_warehouse_manage_menu" name="仓库管理" sequence="5">
                 <menuitem id="inventory_menu_warehouse" name="仓库" sequence="1" action="stock.action_warehouse_form"/>
             </menuitem>
         </menuitem>
